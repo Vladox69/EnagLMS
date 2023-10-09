@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user{
+  id Int            @id @default(autoincrement())
+  username String   @unique
+  password  String 
+  email     String
+  rol       Role     @default(USER)
+  photo_url String
+  students  student[] 
+  teacher   teacher[]
+}
+
+enum Role{
+  ADMIN
+  USER
+  TEACHER
+  STUDENT
+}
+
+model student{
+  id                    Int            @id @default(autoincrement())
+  ID_card_url           String
+  study_certificate_url String
+  activities            submission[]
+  user                  user @relation(fields: [user_id],references: [id])
+  user_id               Int 
+}
+
+model teacher{
+  id                 Int            @id @default(autoincrement())
+  ID_card_url        String
+  cv_url             String
+  third_level_degree String
+  courses            course[]  
+  user               user @relation(fields: [user_id],references: [id])
+  user_id            Int 
+}
+
+model course{
+  id         Int            @id @default(autoincrement())
+  topic      String
+  content    String
+  modules    module[]
+  teacher    teacher @relation(fields: [teacher_id],references: [id])
+  teacher_id Int
+}
+
+model module{
+  id         Int            @id @default(autoincrement())
+  title      String
+  content    String
+  modules    section[]
+  course     course @relation(fields: [course_id],references: [id])
+  course_id  Int
+}
+
+model section{
+  id         Int            @id @default(autoincrement())
+  title      String
+  content    String
+  activities activity[]
+  module     module @relation(fields: [module_id],references: [id])
+  module_id  Int
+}
+
+model activity{
+  id         Int            @id @default(autoincrement())
+  content    String
+  time_due   DateTime
+  activities submission[]
+  section    section @relation(fields: [section_id],references: [id])
+  section_id Int
+}
+
+model submission{
+  id          Int            @id @default(autoincrement())
+  files       Json
+  grade       Float
+  comment     String
+  student     student @relation(fields: [student_id],references: [id])
+  student_id  Int
+  acticity    activity @relation(fields: [acticity_id],references: [id])
+  acticity_id Int
+}
