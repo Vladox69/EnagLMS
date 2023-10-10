@@ -12,10 +12,11 @@ export const ListCourse = () => {
   
   const {courses} = useContext(MyContext);
 
+  
     return (
     <Container className='container bg-primary' >
         {courses.map((course)=>(
-          <ItemLineCourse course={course} key={course._id} />
+          <ItemLineCourse course={course} key={course.id} />
         ))}
     </Container>
   )

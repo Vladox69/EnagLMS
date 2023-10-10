@@ -1,11 +1,11 @@
-import { Course } from "@/interface";
-import { StudentModel, UserModel } from "@/models";
+import { CourseModel, InscriptionModel, StudentModel, UserModel } from "@/models";
 import { createContext } from "react";
 
 
 interface ContextProps{
-    courses:Course[];
-    user:UserModel|StudentModel|null
+    courses:CourseModel[];
+    user:UserModel|StudentModel|null;
+    inscriptions:InscriptionModel[];
     //Methods
 
 }

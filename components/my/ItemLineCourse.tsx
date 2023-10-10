@@ -1,12 +1,12 @@
-import { Course } from '@/interface'
 import { Container, Typography, Divider, Box } from '@mui/material';
 import React, { FC } from 'react'
 import Image from 'next/image';
 import bgImage from '@/assets/fondo.jpg';
 import { useRouter } from 'next/router';
+import { CourseModel } from '@/models';
 
 interface Props {
-    course: Course
+    course: CourseModel
 }
 
 export const ItemLineCourse: FC<Props> = ({ course }) => {
@@ -14,7 +14,7 @@ export const ItemLineCourse: FC<Props> = ({ course }) => {
     const router= useRouter();
 
     const goToCourseById=()=>{
-        router.push(`/my/course/${course._id}`)
+        router.push(`/my/course/${course.id}`)
     }
 
     return (
@@ -31,7 +31,7 @@ export const ItemLineCourse: FC<Props> = ({ course }) => {
                         {course.topic}
                     </Typography>
                     <Typography component='h6' >
-                        {course.start_date}-{course.end_date}
+                        {course.start_at.toLocaleString()}-{course.end_at.toLocaleString()}
                     </Typography>
                 </Container>
             </Container>

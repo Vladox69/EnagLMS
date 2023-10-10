@@ -28,7 +28,7 @@ const getInscription = async (req: NextApiRequest, res: NextApiResponse<Data>) =
         })
         if(!inscriptions){
             return res.status(200).json({
-                message:'No hay el curso con ese ID:'+id
+                message:'No hay esa inscripricion con ese ID:'+id
             });
         }
         return res.status(200).json(inscriptions);

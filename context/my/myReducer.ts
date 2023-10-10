@@ -1,9 +1,8 @@
-import { Course } from "@/interface";
 import { MyState } from "./MyProvider";
-import { StudentModel, UserModel } from "@/models";
+import { CourseModel, InscriptionModel, StudentModel, UserModel } from "@/models";
 
 type MyType =
-    | { type: '[My] Get-Data', payload: { courses: Course[],user:UserModel|StudentModel } }
+    | { type: '[My] Get-Data', payload: { courses: CourseModel[],user:UserModel|StudentModel,inscriptions:InscriptionModel[] } }
 
 
 export const myReducer = (state: MyState, action: MyType): MyState => {
@@ -12,6 +11,7 @@ export const myReducer = (state: MyState, action: MyType): MyState => {
             return {
                 ...state,
                 courses: [...action.payload.courses],
+                inscriptions:[...action.payload.inscriptions],
                 user:action.payload.user
             };
 
