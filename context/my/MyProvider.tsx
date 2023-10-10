@@ -2,9 +2,13 @@ import { Course } from '@/interface'
 import React, { FC, useEffect, useReducer } from 'react'
 import { MyContext } from './MyContext';
 import { myReducer } from './myReducer';
+import { InscriptionModel, UserModel } from '@/models';
+import { enagApi } from '@/apis';
+import { StudentModel } from '@/models/student';
 
 export interface MyState {
     courses: Course[];
+    user: UserModel |StudentModel | null
 }
 
 interface Props {
@@ -13,6 +17,7 @@ interface Props {
 
 const MY_INITIAL_STATE: MyState = {
     courses: [],
+    user: null
 }
 
 export const MyProvider: FC<Props> = ({ children }) => {
@@ -36,7 +41,21 @@ export const MyProvider: FC<Props> = ({ children }) => {
             topic: 'Pasateleria',
             teacher_id: '111244'
         }]
-        dispatch({type:'[My] Get-Data',payload:data})
+        // const dUser: UserModel = {
+        //     email: 'student',
+        //     id: 11,
+        //     password: 'student',
+        //     photo_url: '',
+        //     rol: 'STUDENT',
+        //     username: 'student'
+        // }
+
+        const { data: user } = await enagApi.get<UserModel>(`/users/${1}`);
+        const {data:student}=await enagApi.get<StudentModel>(`/students/${1}`);
+        const {data:inscriptions}=await enagApi.get<InscriptionModel>(`/inscriptions/${student.id}`)
+        console.log(inscriptions);
+
+        dispatch({ type: '[My] Get-Data', payload: { courses: data, user:student } })
     }
 
     useEffect(() => {

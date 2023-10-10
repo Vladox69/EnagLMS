@@ -33,6 +33,7 @@ model student{
   ID_card_url           String
   study_certificate_url String
   activities            submission[]
+  inscriptions          inscription[]
   user                  user @relation(fields: [user_id],references: [id])
   user_id               Int 
 }
@@ -47,13 +48,24 @@ model teacher{
   user_id            Int 
 }
 
-model course{
+model inscription{
   id         Int            @id @default(autoincrement())
-  topic      String
-  content    String
-  modules    module[]
-  teacher    teacher @relation(fields: [teacher_id],references: [id])
-  teacher_id Int
+  student    student @relation(fields: [student_id],references: [id])
+  student_id Int
+  course     course @relation(fields: [course_id],references: [id])     
+  course_id  Int
+}
+
+model course{
+  id           Int            @id @default(autoincrement())
+  topic        String
+  content      String
+  start_at     DateTime
+  end_at       DateTime
+  modules      module[]
+  inscriptions inscription[]
+  teacher      teacher @relation(fields: [teacher_id],references: [id])
+  teacher_id   Int
 }
 
 model module{
@@ -93,3 +105,4 @@ model submission{
   acticity    activity @relation(fields: [acticity_id],references: [id])
   acticity_id Int
 }
+
