@@ -1,9 +1,15 @@
+import { enagApi } from '@/apis';
 import { Layout } from '@/components/layouts'
 import { Asistance } from '@/interface';
+import { AsistanceModel } from '@/models';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import React from 'react'
 import { Container } from 'react-bootstrap';
 
+interface Props {
+    asistances: AsistanceModel[]
+}
 
 const rows: Asistance[] = [
     {
@@ -16,7 +22,8 @@ const rows: Asistance[] = [
 ];
 
 
-export default function MyAsistance() {
+export const MyAsistanceById: NextPage<Props> = ({ asistances }) => {
+    
     return (
         <Layout>
             <Container className='container bg-primary ' >
@@ -41,17 +48,17 @@ export default function MyAsistance() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => (
+                            {asistances.map((asistance) => (
                                 <TableRow
-                                    key={row._id}
+                                    key={asistance.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {row.fecha}
+                                        {asistance.date.toLocaleString()}
                                     </TableCell>
                                     <TableCell align="right">sss</TableCell>
-                                    <TableCell align="right">{row.state}</TableCell>
-                                    <TableCell align="right">sss</TableCell>
+                                    <TableCell align="right">{asistance.status}</TableCell>
+                                    <TableCell align="right">{asistance.description}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -64,3 +71,50 @@ export default function MyAsistance() {
         </Layout>
     )
 }
+
+export const getStaticPaths: GetStaticPaths = async (ctx) => {
+
+    const data: any[] = []
+
+    return {
+        paths: data.map(a => ({
+            params: { asistance: a.asistance }
+        })),
+        fallback: 'blocking'
+    }
+}
+
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    const { asistance } = params as { asistance: string };
+
+    const regex = /^student=([0-9]+)&course=([0-9]+)$/;
+    const isValid = regex.test(asistance);
+    if (isValid) {
+        const {data:asistances} = await enagApi.get<AsistanceModel[]>(`/asistances?${asistance}`);
+        
+        if (!asistances) {
+            return {
+                redirect: {
+                    destination: `/my`,
+                    permanent: false
+                }
+            }
+        }
+        return {
+            props: {
+               asistances
+            }
+        }
+    } else {
+        return {
+            redirect: {
+                destination: `/my`,
+                permanent: false
+            }
+        }
+    }
+
+}
+
+export default MyAsistanceById;

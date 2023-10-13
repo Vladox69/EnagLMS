@@ -34,6 +34,7 @@ model student{
   study_certificate_url String
   activities            submission[]
   inscriptions          inscription[]
+  asistances   asistance[]
   user                  user @relation(fields: [user_id],references: [id])
   user_id               Int 
 }
@@ -64,6 +65,7 @@ model course{
   end_at       DateTime
   modules      module[]
   inscriptions inscription[]
+  asistances   asistance[]
   teacher      teacher @relation(fields: [teacher_id],references: [id])
   teacher_id   Int
 }
@@ -72,9 +74,17 @@ model module{
   id         Int            @id @default(autoincrement())
   title      String
   content    String
-  modules    section[]
+  sections   section[]
+  resources  module_resource[]
   course     course @relation(fields: [course_id],references: [id])
   course_id  Int
+}
+
+model module_resource{
+    id           Int            @id @default(autoincrement())
+    url_resource String
+    module       module @relation(fields: [module_id],references: [id])
+    module_id    Int
 }
 
 model section{
@@ -82,17 +92,33 @@ model section{
   title      String
   content    String
   activities activity[]
+  resources  section_resource[]
   module     module @relation(fields: [module_id],references: [id])
   module_id  Int
+}
+
+model section_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  section       section @relation(fields: [section_id],references: [id])
+  section_id    Int
 }
 
 model activity{
   id         Int            @id @default(autoincrement())
   content    String
   time_due   DateTime
-  activities submission[]
+  submission submission[]
+  resources  activity_resource[]
   section    section @relation(fields: [section_id],references: [id])
   section_id Int
+}
+
+model activity_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  activity      activity @relation(fields: [activity_id],references: [id])
+  activity_id   Int
 }
 
 model submission{
@@ -106,3 +132,19 @@ model submission{
   acticity_id Int
 }
 
+model asistance{
+  id         Int              @id @default(autoincrement())
+  status      StatusAsistance  @default(PRESENTE)
+  description String
+  date        DateTime    
+  student    student @relation(fields: [student_id],references: [id])
+  student_id Int
+  course     course @relation(fields: [course_id],references: [id])     
+  course_id  Int    
+}
+
+enum StatusAsistance{
+  PRESENTE
+  ATRASO
+  FALTA
+}

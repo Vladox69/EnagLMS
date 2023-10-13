@@ -4,12 +4,25 @@ import { Container, Typography, Divider } from '@mui/material';
 
 import ArticleIcon from '@mui/icons-material/Article';
 import { GridCourse } from '../../../components/my/GridCourse';
+import { useRouter } from 'next/router';
 
 interface Props {
     course: string;
 }
 
 export const MyCourseByName: NextPage<Props> = ({ course }) => {
+    
+    const router=useRouter();
+
+    const goToResource=(id:number)=>{
+        router.push(`/my/course/resource/${id}`);
+    }
+
+    const goToAsistance=()=>{
+        router.push(`/my/course/asistance/student=${course}&course=${course}`);
+    }
+
+
     return (
         <Layout title='My Course'>
             <Container className='container bg-primary'>
@@ -20,7 +33,7 @@ export const MyCourseByName: NextPage<Props> = ({ course }) => {
                 <Typography component='p' >
                     Bienvenidos a la materia {course}
                 </Typography>
-                <Container className='container bg-danger d-flex ' >
+                <Container className='container bg-danger d-flex ' component='div' onClick={()=>goToResource(1)} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
@@ -29,7 +42,7 @@ export const MyCourseByName: NextPage<Props> = ({ course }) => {
 
                 </Container>
                 <Divider />
-                <Container className='container bg-danger d-flex' >
+                <Container className='container bg-danger d-flex' component='div' onClick={()=>goToResource(2)} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
@@ -43,7 +56,7 @@ export const MyCourseByName: NextPage<Props> = ({ course }) => {
                     Asistencia
                 </Typography>
 
-                <Container className='container bg-danger d-flex' >
+                <Container className='container bg-danger d-flex' component='div' onClick={goToAsistance} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
