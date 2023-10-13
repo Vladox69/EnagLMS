@@ -2,6 +2,7 @@ import { Layout } from '@/components/layouts';
 import React from 'react'
 import { Container, Button } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { Dropzone } from '../../../../components/my/Dropzone';
 
 interface Props {
     submission: string;
@@ -12,7 +13,7 @@ export const MySubmissionById:NextPage<Props> = () => {
     <Layout title='My submision' >
         <Container className='container bg-primary' >
             <Container className='container bg-danger'>
-                ss
+                <Dropzone />
             </Container>
             
             <Button variant='contained' >
