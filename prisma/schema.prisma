@@ -34,7 +34,7 @@ model student{
   study_certificate_url String
   activities            submission[]
   inscriptions          inscription[]
-  asistances   asistance[]
+  asistances            asistance[]
   user                  user @relation(fields: [user_id],references: [id])
   user_id               Int 
 }
@@ -123,13 +123,20 @@ model activity_resource{
 
 model submission{
   id          Int            @id @default(autoincrement())
-  files       Json
   grade       Float
   comment     String
+  resources   submission_resource[] 
   student     student @relation(fields: [student_id],references: [id])
   student_id  Int
   acticity    activity @relation(fields: [acticity_id],references: [id])
   acticity_id Int
+}
+
+model submission_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  submission    submission @relation(fields: [submission_id],references: [id])
+  submission_id   Int
 }
 
 model asistance{

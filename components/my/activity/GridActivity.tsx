@@ -3,7 +3,7 @@ import { Container } from '@mui/material';
 import { ItemActivity } from '.';
 
 export const GridActivity = () => {
-    const activities = ['ac111', 'ac222', 'ac333'];
+    const activities = ['1', '2', '3'];
 
     return (
         <>

@@ -34,9 +34,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
     const resource = ['123', '456', '789']
 
     const data: any[] = [
-        { resource: 'sss' },
-        { resource: 'sss2' },
-        { resource: 'sss3' },
+        { resource: '1' },
+        { resource: '2' },
+        { resource: '3' },
     ]
 
     return {

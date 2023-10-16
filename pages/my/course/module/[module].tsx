@@ -24,9 +24,9 @@ export const MyModuleByName: NextPage<Props> = ({ module }) => {
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
     const data: any[] = [
-        { module: 'sss' },
-        { module: 'sss2' },
-        { module: 'sss3' },
+        { module: '1' },
+        { module: '2' },
+        { module: '3' },
     ]
 
     return {
