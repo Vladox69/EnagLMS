@@ -5,7 +5,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Button } from '@mui/material';
 import { uploadFile } from '@/utils';
 import { SubmissionModel, SubmissionResourceModel } from '@/models';
-import axios from 'axios';
+import { enagApi } from '@/apis';
 
 interface Props {
   submission: SubmissionModel,
@@ -14,18 +14,11 @@ interface Props {
 
 
 export const Dropzone: FC<Props> = ({ submission, resources }) => {
-
   const [files, setFiles] = useState<any[]>([])
 
   //Descargar archivos 
   const handleDownload = (url:string, filename:string) => {
-    axios
-      .get(url, {
-        responseType: "blob"
-      })
-      .then((res) => {
-        // fileDownload(res.data, filename);
-      });
+
   };
 
   // Guardada de archivo
@@ -36,12 +29,18 @@ export const Dropzone: FC<Props> = ({ submission, resources }) => {
     }
     const responses = await Promise.all(fileUploadPromises);
 
+    const resourcePromises=[]
+
     for (const res of responses) {
       if (res.status === 200) {
-
+        resourcePromises.push(enagApi.post(`/submissions/resources`,{url_resource:res.url,submission_id:'1'}))
       }
     }
-
+    const responsesResources = await Promise.all(resourcePromises);
+  
+    if(responsesResources[0].status==200){
+      setFiles([])
+    }
   }
 
   // Quitar archivos
@@ -96,10 +95,8 @@ export const Dropzone: FC<Props> = ({ submission, resources }) => {
         <ol>
           {
             resources.map((rs) => (
-              <li key={rs.id}>
-                <a href={rs.url_resource} download='ss.docx' >
-                  {rs.url_resource}
-                </a>
+              <li key={rs.id} onClick={()=>handleDownload(rs.url_resource,`archivo${rs.id}.docx`)}>
+                {rs.url_resource}
               </li>
             ))
           }

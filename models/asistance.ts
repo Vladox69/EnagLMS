@@ -4,7 +4,7 @@ export interface AsistanceModel{
     description:string;
     date:Date;    
     student_id:number;
-    course_id:number;    
+    module_id:number;    
   }
 
 export type AsistanceStatus='PRESENTE'|'ATRASO'|'FALTA'

@@ -1,15 +1,20 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Grid } from '@mui/material';
 import { ItemCourse } from './ItemCourse';
+import { ModuleModel } from '@/models';
 
-export const GridCourse = () => {
+interface Props{
+  modules:ModuleModel[]
+}
+
+export const GridCourse:FC<Props> = ({modules}) => {
 
     const items:any[]=[{course:'sss'},{course:'ddd'},{course:'aaa'},{course:'bbb'}]
 
   return (
     <Grid container spacing={2} >
-        {items.map((ic,index)=> (
-            <ItemCourse course={ic.course} key={index} />
+        {modules.map((module)=> (
+            <ItemCourse  module={module} key={module.id} />
         ) )}
     </Grid>
   )

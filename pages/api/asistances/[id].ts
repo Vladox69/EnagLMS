@@ -24,11 +24,9 @@ const getAsistancesByIdCourseStudent=async(req:NextApiRequest,res:NextApiRespons
     try {
 
         const { student, course } = req.query;
-        console.log("Course",course);
-        console.log("Student",student);
         const asistances=await prisma.asistance.findMany({
             where:{
-                course_id:Number(course)
+                module_id:Number(course)
             }
         }) ;
         return res.status(200).json(asistances);

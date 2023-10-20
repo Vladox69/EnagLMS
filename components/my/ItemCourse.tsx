@@ -1,19 +1,20 @@
 import React, { FC } from 'react'
 import { Grid, Card, CardActionArea, CardMedia, CardContent, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
+import { ModuleModel } from '@/models';
 
 
 
 interface Props {
-    course: string;
+    module: ModuleModel;
 }
 
-export const ItemCourse: FC<Props> = ({ course }) => {
+export const ItemCourse: FC<Props> = ({ module }) => {
 
     const router = useRouter();
 
     const goToModuleById=()=>{
-        router.push(`/my/course/module/${course}`);
+        router.push(`/my/course/module/${module.id}`);
     }
 
     return (
@@ -28,7 +29,7 @@ export const ItemCourse: FC<Props> = ({ course }) => {
                     />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
-                            {course}
+                            {module.title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Lizards are a widespread group of squamate reptiles, with over 6,000

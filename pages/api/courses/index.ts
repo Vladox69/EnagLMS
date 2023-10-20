@@ -18,7 +18,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 }
 
 
-
 const getCourses=async(res:NextApiResponse<Data>)=>{
     try {
         const courses=await prisma.course.findMany();

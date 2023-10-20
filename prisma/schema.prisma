@@ -44,7 +44,7 @@ model teacher{
   ID_card_url        String
   cv_url             String
   third_level_degree String
-  courses            course[]  
+  modules            module[]  
   user               user @relation(fields: [user_id],references: [id])
   user_id            Int 
 }
@@ -65,9 +65,8 @@ model course{
   end_at       DateTime
   modules      module[]
   inscriptions inscription[]
-  asistances   asistance[]
-  teacher      teacher @relation(fields: [teacher_id],references: [id])
-  teacher_id   Int
+
+
 }
 
 model module{
@@ -76,6 +75,9 @@ model module{
   content    String
   sections   section[]
   resources  module_resource[]
+  asistances   asistance[]
+  teacher      teacher @relation(fields: [teacher_id],references: [id])
+  teacher_id   Int
   course     course @relation(fields: [course_id],references: [id])
   course_id  Int
 }
@@ -106,6 +108,7 @@ model section_resource{
 
 model activity{
   id         Int            @id @default(autoincrement())
+  title      String
   content    String
   time_due   DateTime
   submission submission[]
@@ -146,8 +149,8 @@ model asistance{
   date        DateTime    
   student    student @relation(fields: [student_id],references: [id])
   student_id Int
-  course     course @relation(fields: [course_id],references: [id])     
-  course_id  Int    
+  module     module @relation(fields: [module_id],references: [id])     
+  module_id  Int    
 }
 
 enum StatusAsistance{

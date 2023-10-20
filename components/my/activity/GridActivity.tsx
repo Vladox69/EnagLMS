@@ -1,15 +1,33 @@
-import React from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Container } from '@mui/material';
 import { ItemActivity } from '.';
+import { ActivityModel } from '@/models';
+import { enagApi } from '@/apis';
 
-export const GridActivity = () => {
-    const activities = ['1', '2', '3'];
+interface Props{
+    section:number
+}
+
+export const GridActivity:FC<Props> = ({section}) => {
+    
+    const [activities, setActivities] = useState<ActivityModel[]>([])
+    
+
+    useEffect(() => {
+        getData();
+    }, [])
+    
+
+    const getData=async()=>{
+        const {data}=await enagApi.get(`/activities/${section}`)
+        setActivities(data)
+    }
 
     return (
         <>
             <Container>
-                {activities.map((ac) => (
-                    <ItemActivity key={ac} activity={ac} />
+                {activities.map((activity,index) => (
+                    <ItemActivity key={index} activity={activity} />
                 ))}
             </Container>
         </>

@@ -4,5 +4,4 @@ export interface CourseModel{
     content:string;
     start_at:Date;
     end_at:Date;
-    teacher_id:number;
   }

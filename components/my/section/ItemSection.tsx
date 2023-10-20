@@ -2,12 +2,15 @@ import React, { FC } from 'react'
 import { Container, Typography } from '@mui/material';
 import ArticleIcon from '@mui/icons-material/Article';
 import { GridActivity } from '../activity/';
+import { SectionModel } from '@/models';
+import { GridSectionResource } from '.';
 
-interface Props{
-  section:string
+interface Props {
+  section: SectionModel
 }
 
-export const ItemSection:FC<Props> = ({section}) => {
+export const ItemSection: FC<Props> = ({ section }) => {
+
   
   return (
     <>
@@ -17,10 +20,16 @@ export const ItemSection:FC<Props> = ({section}) => {
           width: 50,
           height: 50
         }} />
-        <Typography component='p' className=''> Zona de {section} </Typography>
+        <Typography component='p' className=''> Zona de {section.title} </Typography>
       </Container>
-        <GridActivity />
-
+      <Container>
+        <Typography component='p' className=''> Información de la sección  </Typography>
+        <Typography component='p' className=''> {section.content} </Typography>
+      </Container>
+      <Typography component='p' className=''> Recursos  </Typography>
+      <GridSectionResource section={section.id} />
+      <Typography component='p' className=''> Actividad  </Typography>
+      <GridActivity section={section.id} />
     </>
   )
 }

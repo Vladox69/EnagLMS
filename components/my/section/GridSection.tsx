@@ -1,16 +1,20 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { Container } from '@mui/material';
 import {ItemSection} from './'
+import { SectionModel } from '@/models';
 
-export const GridSection = () => {
+interface Props{
+  sections:SectionModel[]
+}
 
-    const sections= ['sss','ddd','aaaa'];
+export const GridSection:FC<Props> = ({sections}) => {
+
 
   return (
     <Container className='container bg-danger ' >
         {
-            sections.map((s)=>(
-                <ItemSection  key={s} section={s} />
+            sections.map((section)=>(
+                <ItemSection  key={section.id} section={section} />
             ))
         }
     </Container>

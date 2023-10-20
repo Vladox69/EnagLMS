@@ -1,26 +1,20 @@
 import { Layout } from '@/components/layouts'
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { Container, Typography, Divider } from '@mui/material';
+import { Container, Typography,  } from '@mui/material';
 
-import ArticleIcon from '@mui/icons-material/Article';
+
 import { GridCourse } from '../../../components/my/GridCourse';
 import { useRouter } from 'next/router';
+import enagApi from '../../../apis/enagApi';
+import { ModuleModel } from '@/models';
 
 interface Props {
     course: string;
+    modulos: ModuleModel[];
 }
 
-export const MyCourseByName: NextPage<Props> = ({ course }) => {
-    
-    const router=useRouter();
+export const MyCourseByName: NextPage<Props> = ({ course, modulos }) => {
 
-    const goToResource=(id:number)=>{
-        router.push(`/my/course/resource/${id}`);
-    }
-
-    const goToAsistance=()=>{
-        router.push(`/my/course/asistance/student=${course}&course=${course}`);
-    }
 
 
     return (
@@ -31,45 +25,13 @@ export const MyCourseByName: NextPage<Props> = ({ course }) => {
                 </Typography>
 
                 <Typography component='p' >
-                    Bienvenidos a la materia {course}
+                    Bienvenidos a al {course}
                 </Typography>
-                <Container className='container bg-danger d-flex ' component='div' onClick={()=>goToResource(1)} >
-                    <ArticleIcon sx={{
-                        width: 50,
-                        height: 50
-                    }} />
-                    <Typography component='p' className=''> Hoja de vida del Docente </Typography>
-
-                </Container>
-                <Divider />
-                <Container className='container bg-danger d-flex' component='div' onClick={()=>goToResource(2)} >
-                    <ArticleIcon sx={{
-                        width: 50,
-                        height: 50
-                    }} />
-                    <Typography component='p' >Planificación académica de la materia </Typography>
-
-                </Container>
-                <Divider />
-
-                <Typography variant='h2' >
-                    Asistencia
-                </Typography>
-
-                <Container className='container bg-danger d-flex' component='div' onClick={goToAsistance} >
-                    <ArticleIcon sx={{
-                        width: 50,
-                        height: 50
-                    }} />
-                    <Typography component='p' >Planificación académica de la materia </Typography>
-
-                </Container>
-
                 <Typography variant='h2' >
                     Información del curso
                 </Typography>
 
-                 <GridCourse />       
+                <GridCourse modules={modulos} />
             </Container>
 
         </Layout>
@@ -79,12 +41,10 @@ export const MyCourseByName: NextPage<Props> = ({ course }) => {
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
-    const course=['123','456','789']
+    const course = []
 
     const data: any[] = [
-        { course: 'sss' },
-        { course: 'sss2' },
-        { course: 'sss3' },
+
     ]
 
     return {
@@ -100,10 +60,12 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { course } = params as { course: string };
+    const { data: modulos } = await enagApi.get<ModuleModel[]>(`/modules/${course}`)
 
     return {
         props: {
-            course
+            course,
+            modulos
         }
     }
 

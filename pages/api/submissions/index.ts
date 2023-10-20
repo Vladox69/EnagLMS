@@ -31,3 +31,8 @@ const getSubmissions=async(res:NextApiResponse<Data>)=>{
         res.status(500).json({message:'Error interno del servidor'});
     }
 }
+
+
+const putSubmission=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    
+}
