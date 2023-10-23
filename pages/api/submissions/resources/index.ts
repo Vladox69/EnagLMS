@@ -33,7 +33,7 @@ const getSubmissionsResource = async (res: NextApiResponse<Data>) => {
 
 const createSubmissionResource = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const  {id,url_resource,submission_id}  = req.body;
+        const  {url_resource,submission_id}  = req.body;
         
         const submissios_resource = await prisma.submission_resource.create({
             data:{

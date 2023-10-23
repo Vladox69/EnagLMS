@@ -3,10 +3,10 @@ import { prisma } from '@/apis';
 import { SubmissionModel } from '@/models';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-type Data=
-|{message:string}
-|SubmissionModel
-|SubmissionModel[]
+type Data =
+    | { message: string }
+    | SubmissionModel
+    | SubmissionModel[]
 
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -22,17 +22,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     }
 }
 
-const getSubmissions=async(res:NextApiResponse<Data>)=>{
+const getSubmissions = async (res: NextApiResponse<Data>) => {
     try {
         const submissions = await prisma.submission.findMany();
-        return res.status(200).json(submissions); 
+        return res.status(200).json(submissions);
     } catch (error) {
-        console.log('Error al obtener los usuarios',error);
-        res.status(500).json({message:'Error interno del servidor'});
+        console.log('Error al obtener los usuarios', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
     }
 }
 
 
-const putSubmission=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
-    
+const putSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+
 }

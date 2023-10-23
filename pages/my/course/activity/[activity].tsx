@@ -2,6 +2,8 @@ import { Layout } from '@/components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import React from 'react'
 import { Activity } from '../../../../components/my/activity';
+import { enagApi } from '@/apis';
+import { ActivityModel } from '@/models';
 
 function createData(
     name: string,
@@ -17,14 +19,14 @@ const rows = [
 ];
 
 interface Props {
-    activity: string;
+    activity: ActivityModel;
 }
 
 
 export const MyActivityById: NextPage<Props> = ({ activity }) => {
     return (
         <Layout title='Activity' >
-            <Activity submission={activity} />
+            <Activity activity={activity} />
         </Layout>
     )
 }
@@ -33,9 +35,6 @@ export const MyActivityById: NextPage<Props> = ({ activity }) => {
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
     const data: any[] = [
-        { activity: 'sss' },
-        { activity: 'sss2' },
-        { activity: 'sss3' },
     ]
 
     return {
@@ -50,8 +49,8 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const { activity } = params as { activity: string };
-
+    const { activity:id } = params as { activity: string };
+    const {data:activity}= await enagApi.get<ActivityModel>(`/activities/activity_id=${id}`)
     return {
         props: {
             activity

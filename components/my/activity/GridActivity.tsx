@@ -19,7 +19,7 @@ export const GridActivity:FC<Props> = ({section}) => {
     
 
     const getData=async()=>{
-        const {data}=await enagApi.get(`/activities/${section}`)
+        const {data}=await enagApi.get(`/activities/section_id=${section}`)
         setActivities(data)
     }
 

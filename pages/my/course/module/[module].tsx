@@ -6,6 +6,8 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { enagApi } from '@/apis';
 import { SectionModel } from '@/models';
+import {useContext} from 'react';
+import { MyContext } from '@/context/my';
 
 interface Props {
     module: string;
@@ -15,12 +17,14 @@ interface Props {
 export const MyModuleByName: NextPage<Props> = ({ module,sections }) => {
     const router = useRouter();
 
+    const {user} = useContext(MyContext)
+
     const goToResource = (id: number) => {
         router.push(`/my/course/resource/${id}`);
     }
 
     const goToAsistance = () => {
-        router.push(`/my/course/asistance/student=${module}&course=${module}`);
+        router.push(`/my/course/asistance/student_id=${user?.id}&module_id=${module}`);
     }
 
     return (

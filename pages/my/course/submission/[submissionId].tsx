@@ -42,7 +42,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { submissionId } = params as { submissionId: string };
     
-    const {data:submission} = await enagApi.get<SubmissionModel>(`/submissions/${submissionId}`);
+    const {data:submission} = await enagApi.get<SubmissionModel>(`/submissions/submission_id=${submissionId}`);
     const {data:resources} = await enagApi.get<SubmissionModel>(`/submissions/resources/${submissionId}`)
 
     return {

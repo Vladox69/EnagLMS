@@ -33,7 +33,11 @@ export const Dropzone: FC<Props> = ({ submission, resources }) => {
 
     for (const res of responses) {
       if (res.status === 200) {
-        resourcePromises.push(enagApi.post(`/submissions/resources`,{url_resource:res.url,submission_id:'1'}))
+        const body={
+          url_resource:res.url,
+          submission_id:submission.id
+        }
+        resourcePromises.push(enagApi.post(`/submissions/resources`,body))
       }
     }
     const responsesResources = await Promise.all(resourcePromises);

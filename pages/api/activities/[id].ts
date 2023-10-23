@@ -10,7 +10,13 @@ type Data =
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     switch (req.method) {
         case 'GET':
-            return getActivitiesByIdSection(req, res);
+            const { id } = req.query;
+
+            if (id?.includes('activity_id=')) {
+                return getActivityById(req, res);
+            } else {
+                return getActivitiesByIdSection(req, res);
+            }
         default:
             break;
     }
@@ -20,13 +26,33 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getActivitiesByIdSection = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const activity = await prisma.activity.findMany({
+        const section_id = id?.toString().substring("section_id=".length)
+        const activities = await prisma.activity.findMany({
             where: {
-                section_id: Number(id)
+                section_id: Number(section_id)
+            }
+        })
+        if (!activities) {
+            return res.status(200).json({ message: 'No hay actividaes con ese ID de seccion:' + section_id });
+        }
+        return res.status(200).json(activities)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener actividades' });
+    }
+}
+
+const getActivityById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const activity_id = id?.toString().substring("activity_id=".length)
+        const activity = await prisma.activity.findFirst({
+            where: {
+                id: Number(activity_id)
             }
         })
         if (!activity) {
-            return res.status(200).json({ message: 'No hay actividaes con ese ID de seccion:' + id });
+            return res.status(200).json({ message: 'No hay actividaes con ese ID de seccion:' + activity_id });
         }
         return res.status(200).json(activity)
     } catch (error) {

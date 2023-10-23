@@ -88,10 +88,10 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { asistance } = params as { asistance: string };
 
-    const regex = /^student=([0-9]+)&course=([0-9]+)$/;
+    const regex = /^student_id=([0-9]+)&module_id=([0-9]+)$/;
     const isValid = regex.test(asistance);
     if (isValid) {
-        const {data:asistances} = await enagApi.get<AsistanceModel[]>(`/asistances?${asistance}`);
+        const {data:asistances} = await enagApi.get<AsistanceModel[]>(`/asistances/${asistance}`);
         
         if (!asistances) {
             return {
