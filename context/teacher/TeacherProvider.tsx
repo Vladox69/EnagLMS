@@ -7,6 +7,7 @@ import { enagApi } from "@/apis";
 export interface TeacherState {
     modules: ModuleModel[];
     teacher: TeacherModel | null;
+    active_module:ModuleModel|null;
 }
 
 interface Props {
@@ -15,7 +16,8 @@ interface Props {
 
 const TEACHER_INITIAL_STATE: TeacherState = {
     modules: [],
-    teacher: null
+    teacher: null,
+    active_module:null,
 }
 
 export const TeacherProvider: FC<Props> = ({ children }) => {
@@ -23,9 +25,14 @@ export const TeacherProvider: FC<Props> = ({ children }) => {
 
     const getDataTeacher = async () => {
         // Vamos a obtener quien es el profesor y todos sus módulos 
-        const { data:teacher } = await enagApi.get<TeacherModel>(`/teachers/${1}`);
+        const { data:teacher } = await enagApi.get<TeacherModel>(`/teachers/${3}`);
         const {data:modules}=await enagApi.get<ModuleModel[]>(`/modules/teacher_id=${teacher.id}`);
         dispatch({ type: '[Teacher] Get-Data', payload: { modules, teacher} })
+    }
+
+    const setActiveModule=(md:ModuleModel)=>{
+        //Poner el modulo activo
+        dispatch({type:'[Teacher] Set-active-module',payload:{active_module:md}})
     }
 
     useEffect(() => {
@@ -35,7 +42,8 @@ export const TeacherProvider: FC<Props> = ({ children }) => {
 
     return (
         <TeacherContext.Provider value={{
-            ...state
+            ...state,
+            setActiveModule
         }}>
             {children}
         </TeacherContext.Provider>

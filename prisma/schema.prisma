@@ -34,7 +34,8 @@ model student{
   study_certificate_url String
   activities            submission[]
   inscriptions          inscription[]
-  asistances            asistance[]
+  // asistances            asistance[]
+  asistances_register   asistance_register[]
   user                  user @relation(fields: [user_id],references: [id])
   user_id               Int 
 }
@@ -146,13 +147,23 @@ model submission_resource{
 
 model asistance{
   id         Int              @id @default(autoincrement())
-  status      StatusAsistance  @default(PRESENTE)
+  // status      StatusAsistance  @default(PRESENTE)
   description String
-  date        DateTime    
-  student    student @relation(fields: [student_id],references: [id])
-  student_id Int
+  date        DateTime   
+  registers   asistance_register[] 
+  // student    student @relation(fields: [student_id],references: [id])
+  // student_id Int
   module     module @relation(fields: [module_id],references: [id])     
   module_id  Int    
+}
+
+model asistance_register{
+  id            Int              @id @default(autoincrement())
+  status        StatusAsistance  @default(PRESENTE)
+  student       student @relation(fields: [student_id],references: [id])
+  student_id    Int
+  asistance     asistance @relation(fields: [asistance_id],references: [id])
+  asistance_id  Int  
 }
 
 enum StatusAsistance{

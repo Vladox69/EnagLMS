@@ -13,6 +13,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             const { id } = req.query
             if (id?.includes('course_id=')) {
                 return getModulesByIdCourse(req, res);
+            } else if (id?.includes('module_id=')) {
+                return getModuleById(req, res)
             } else {
                 return getModulesByIdTeacher(req, res);
             }
@@ -57,6 +59,25 @@ const getModulesByIdTeacher = async (req: NextApiRequest, res: NextApiResponse<D
             return res.status(200).json({ message: 'No hay modulos en ese curso' + id });
         }
         return res.status(200).json(modules)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener los modulos' });
+    }
+}
+
+const getModuleById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const module_id = id?.toString().substring("module_id=".length);
+        const module = await prisma.module.findFirst({
+            where: {
+                id: Number(module_id)
+            }
+        })
+        if (!module) {
+            return res.status(200).json({ message: 'No hay modulo con ese' + id });
+        }
+        return res.status(200).json(module)
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener los modulos' });
