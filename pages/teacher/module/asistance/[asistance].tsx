@@ -5,15 +5,26 @@ import { Button } from '@mui/material';
 import { TableAsistance } from '../../../../components/teacher/Asistance/TableAsistance';
 import { AsistanceModel } from '@/models';
 import { enagApi } from '@/apis';
+import { useRouter } from 'next/router';
 
 interface Props{
   asistances:AsistanceModel[]
 }
 
 export const MyAsistanceModuleById:NextPage<Props> = ({asistances}) => {
+
+  const router = useRouter();
+  const goToNewRegister=()=>{
+    const {asistance}=router.query
+    router.push({
+      pathname:'/teacher/module/asistance/new',
+      query:{module_id:asistance}
+    });
+  }
+
   return (
     <Layout title='My asistance module'>
-      <Button variant='contained'> Nuevo registro de asistencia </Button>
+      <Button variant='contained' onClick={goToNewRegister} > Nuevo registro de asistencia </Button>
       <TableAsistance asistances={asistances} />
     </Layout>
   )

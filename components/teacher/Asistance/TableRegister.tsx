@@ -1,46 +1,80 @@
-import { StudentModel } from '@/models'
 import React, { FC, useState } from 'react'
-import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, FormControl, RadioGroup, Radio, FormControlLabel } from '@mui/material';
+import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, FormControl, RadioGroup, Radio, FormControlLabel, Grid, Button } from '@mui/material';
+import { AsistanceStudentI } from '@/interface';
+import { saveAsistanceRegisters } from '@/utils/saveAsistanceRegisters';
 
 interface Props {
-    students: StudentModel[]
+    asistance_students: AsistanceStudentI[]
 }
 
-export const TableRegister: FC<Props> = ({ students }) => {
-    const [selectedValue, setSelectedValue] = useState('a');
+export const TableRegister: FC<Props> = ({ asistance_students }) => {
+    
+    const [asistances, setAsistances] = useState(asistance_students)
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedValue(event.target.value);
-    };
+    const handleChange=(event: React.ChangeEvent<HTMLInputElement>,id:number)=>{
+
+        const nuevoArray = asistances.map((estudiante) => {
+            if (estudiante.id === id) {
+              return {
+                ...estudiante,
+                estado: event.target.value,
+              };
+            }
+            return estudiante;
+          });
+          setAsistances(nuevoArray)
+    }
+
+    const onSaveRegisters=async ()=>{
+       const res = await saveAsistanceRegisters(asistances);
+       console.log(res);
+    }
+ 
     return (
+        <>
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
                         <TableCell>Estudiantes</TableCell>
                         <TableCell >Tipo de sesión</TableCell>
-                        <TableCell >ESTADO</TableCell>
+                        <TableCell >
+                            <Grid container>
+                                <Grid item xs={2}>
+                                    P
+                                </Grid>
+                                <Grid item xs={2}>
+                                    A
+                                </Grid>
+                                <Grid item xs={2}> 
+                                    F
+                                </Grid>
+                            </Grid>
+                        </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {students.map((student) => (
+                    {asistances.map((student) => (
                         <TableRow
                             key={student.id}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                {student.ID_card_url}
+                                {student.student}
                             </TableCell>
-                            <TableCell >Sesión regular</TableCell>
+                            <TableCell >{student.tipo_sesion}</TableCell>
                             <TableCell >
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="row-radio-buttons-group"
+                                    name="estado"
+                                    id='estado'
+                                    value={student.estado}
+                                    onChange={(event)=> handleChange(event,student.id)}
                                 >
-                                    <FormControlLabel value="p" control={<Radio />} label="" />
-                                    <FormControlLabel value="a" control={<Radio />} label="" />
-                                    <FormControlLabel value="f" control={<Radio />} label="" />
+                                    <FormControlLabel value="PRESENTE"  control={<Radio />} label="" />
+                                    <FormControlLabel value="ATRASO"    className='ps-3' control={<Radio />} label="" />
+                                    <FormControlLabel value="FALTA"     className='ps-3' control={<Radio />} label="" />
                                 </RadioGroup>
                             </TableCell>
                         </TableRow>
@@ -48,5 +82,9 @@ export const TableRegister: FC<Props> = ({ students }) => {
                 </TableBody>
             </Table>
         </TableContainer>
+        <Button variant='contained' onClick={onSaveRegisters} >
+            Guardar asistencias
+        </Button>
+        </>
     )
 }
