@@ -22,6 +22,7 @@ export const MyAsistanceModuleById:NextPage<Props> = ({asistances}) => {
     });
   }
 
+
   return (
     <Layout title='My asistance module'>
       <Button variant='contained' onClick={goToNewRegister} > Nuevo registro de asistencia </Button>

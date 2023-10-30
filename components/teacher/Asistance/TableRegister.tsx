@@ -67,14 +67,15 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
+                                    className='d-flex'
                                     name="estado"
                                     id='estado'
                                     value={student.estado}
                                     onChange={(event)=> handleChange(event,student.id)}
                                 >
-                                    <FormControlLabel value="PRESENTE"  control={<Radio />} label="" />
-                                    <FormControlLabel value="ATRASO"    className='ps-3' control={<Radio />} label="" />
-                                    <FormControlLabel value="FALTA"     className='ps-3' control={<Radio />} label="" />
+                                    <FormControlLabel value="PRESENTE"   className='col-md-2' control={<Radio />} label="" />
+                                    <FormControlLabel value="ATRASO"    className='col-md-2' control={<Radio />} label="" />
+                                    <FormControlLabel value="FALTA"     className='col-md-2' control={<Radio />} label="" />
                                 </RadioGroup>
                             </TableCell>
                         </TableRow>

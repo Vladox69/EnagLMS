@@ -1,6 +1,5 @@
 import { Layout } from '@/components/layouts'
 import { FormRegisterAsistance } from '@/components/teacher/Asistance/FormRegisterAsistance'
-import { NextPage } from 'next'
 import React from 'react'
 import { useRouter } from 'next/router';
 

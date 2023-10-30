@@ -20,6 +20,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             } else {
                 return getAsistancesById(req, res);
             }
+        case 'PUT':
+            return updateAsistance(req,res);
         case 'DELETE':
             return deleteAsistanceById(req, res);
         default:
@@ -82,6 +84,35 @@ const getAsistancesByIdModule = async (req: NextApiRequest, res: NextApiResponse
     } catch (error) {
         console.log('Error al obtener asistencias', error);
         return res.status(500).json({ message: 'Error interno del servidor' });
+    }
+}
+
+const updateAsistance=async(req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query;
+        const {date,description} =req.body;
+
+        console.log('booody');
+        console.log(req.body);
+        
+        const asistance_id=id?.toString().substring('asistance_id='.length);
+
+        const asistance=await prisma.asistance.update({
+            where:{
+                id:Number(asistance_id)
+            },
+            data:{
+                date,
+                description
+            }
+        })
+
+        if(!asistance){
+            return res.status(200).json({message:'No existe ningún registo para actualizar'})
+        }
+        return res.status(200).json(asistance)
+    } catch (error) {
+        return res.status(400).json({message:'Error al actualizar registro'})        
     }
 }
 

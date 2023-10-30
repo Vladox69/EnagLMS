@@ -24,6 +24,13 @@ export const TableAsistance: FC<Props> = (props) => {
         router.push(`/teacher/module/asistance/register/asistance_id=${asistance_id}&module_id=${module_id}`)
     }
 
+    const goToEditRegister=(asistance_id:number)=>{
+        router.push({
+          pathname:'/teacher/module/asistance/edit',
+          query:{asistance_id}
+        })
+    }
+
     const onDeleteAsistance = async (asistance_id: number) => {
         const res = await enagApi.delete(`/asistances/asistance_id=${asistance_id}`);
         if (res.status == 200) {
@@ -58,7 +65,7 @@ export const TableAsistance: FC<Props> = (props) => {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                {asistance.date.toLocaleString()}
+                                {asistance.date.toString().slice(0,asistance.date.toString().lastIndexOf('T'))}
                             </TableCell>
                             <TableCell >{asistance.description}</TableCell>
                             <TableCell align='left'  >
@@ -66,7 +73,7 @@ export const TableAsistance: FC<Props> = (props) => {
                                     <IconButton onClick={() => goToRegisterAsistance(asistance.id, asistance.module_id)} >
                                         <PlayArrowIcon />
                                     </IconButton>
-                                    <IconButton>
+                                    <IconButton onClick={()=>goToEditRegister(asistance.id)} >
                                         <SettingsIcon />
                                     </IconButton>
                                     <IconButton onClick={() => onDeleteAsistance(asistance.id)} >

@@ -8,9 +8,14 @@ type Data =
     | SectionResourceModel
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query
     switch (req.method) {
         case 'GET':
-            return getResourcesByIdSection(req, res);
+            if (id?.includes('section_id=')) {
+                return getResourcesByIdSection(req, res);
+            } else if (id?.includes('resource_id=')) {
+                return getResourceById(req, res);
+            }
         default:
             break;
     }
@@ -20,9 +25,29 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getResourcesByIdSection = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
+        const section_id = id?.toString().substring('section_id='.length);
         const section_resources = await prisma.section_resource.findMany({
             where: {
-                section_id: Number(id)
+                section_id: Number(section_id)
+            }
+        })
+        if (!section_resources) {
+            return res.status(200).json({ message: 'No hay recursos con ese ID de seccion:' + id });
+        }
+        return res.status(200).json(section_resources)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener los recursos' });
+    }
+}
+
+const getResourceById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const resource_id = id?.toString().substring('resource_id='.length)
+        const section_resources = await prisma.section_resource.findMany({
+            where: {
+                id: Number(resource_id)
             }
         })
         if (!section_resources) {

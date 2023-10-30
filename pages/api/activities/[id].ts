@@ -8,13 +8,12 @@ type Data =
     | ActivityModel
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query;
     switch (req.method) {
         case 'GET':
-            const { id } = req.query;
-
             if (id?.includes('activity_id=')) {
                 return getActivityById(req, res);
-            } else {
+            } else if(id?.includes('section_id=')){
                 return getActivitiesByIdSection(req, res);
             }
         default:
