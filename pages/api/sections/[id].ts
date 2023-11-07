@@ -17,6 +17,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             } else {
                 return getSectionById(req, res);
             }
+        case 'PUT':
+            return updateSection(req,res);
         default:
             break;
     }
@@ -58,5 +60,30 @@ const getSectionById = async (req: NextApiRequest, res: NextApiResponse<Data>) =
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener secciones' });
+    }
+}
+
+const updateSection = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query;
+        const {title,content}=req.body;
+
+        const section_id=id?.toString().substring('section_id='.length)
+        const section=await prisma.section.update({
+            where:{
+                id:Number(section_id)
+            },
+            data:{
+                title,
+                content
+            }
+        })
+        if(!section){
+            return res.status(401).json({message:'No existe sección con el id para actualizar'+section_id})
+        }
+        return res.status(200).json(section);
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'No se pudo actualizar'})
     }
 }

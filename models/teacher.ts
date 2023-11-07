@@ -4,4 +4,6 @@ export interface TeacherModel {
     cv_url: string;
     third_level_degree: string;
     user_id: number;
+    names:string;
+    last_names:string;
 }

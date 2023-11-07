@@ -30,6 +30,8 @@ enum Role{
 
 model student{
   id                    Int            @id @default(autoincrement())
+  names                 String
+  last_names            String
   ID_card_url           String
   study_certificate_url String
   activities            submission[]
@@ -42,6 +44,8 @@ model student{
 
 model teacher{
   id                 Int            @id @default(autoincrement())
+  names                 String
+  last_names            String
   ID_card_url        String
   cv_url             String
   third_level_degree String
@@ -88,6 +92,7 @@ model module_resource{
     url_resource String
     module       module @relation(fields: [module_id],references: [id])
     module_id    Int
+    title        String
 }
 
 model section{
@@ -105,6 +110,7 @@ model section_resource{
   url_resource  String
   section       section @relation(fields: [section_id],references: [id])
   section_id    Int
+  title         String
 }
 
 model activity{
@@ -123,6 +129,7 @@ model activity_resource{
   url_resource  String
   activity      activity @relation(fields: [activity_id],references: [id])
   activity_id   Int
+  title         String
 }
 
 model submission{
@@ -134,8 +141,8 @@ model submission{
   resources   submission_resource[] 
   student     student @relation(fields: [student_id],references: [id])
   student_id  Int
-  acticity    activity @relation(fields: [acticity_id],references: [id])
-  acticity_id Int
+  activity    activity @relation(fields: [activity_id],references: [id])
+  activity_id Int
 }
 
 model submission_resource{
@@ -143,6 +150,7 @@ model submission_resource{
   url_resource  String
   submission    submission @relation(fields: [submission_id],references: [id])
   submission_id   Int
+  title           String
 }
 
 model asistance{

@@ -22,6 +22,14 @@ export const TeacherModuleById: NextPage<Props> = ({ sections }) => {
         router.push(`/teacher/module/asistance/${module}`)
     }
 
+    const goToNewSection=()=>{
+        const { module } = router.query
+        router.push({
+            pathname:'/teacher/module/section/new',
+            query:{module_id:module}
+        })
+    }
+
     return (
         <Layout title='My teacher module'>
             <Container className='container bg-primary'>
@@ -60,7 +68,7 @@ export const TeacherModuleById: NextPage<Props> = ({ sections }) => {
                 <Typography variant='h2' >
                     Nombre del módulo
                 </Typography>
-                <Button variant='contained' >
+                <Button variant='contained' onClick={goToNewSection} >
                     Crear nueva sección
                 </Button>
                 <GridTSection sections={sections} />

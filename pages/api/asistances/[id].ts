@@ -91,9 +91,6 @@ const updateAsistance=async(req: NextApiRequest, res: NextApiResponse<Data>) => 
     try {
         const {id}=req.query;
         const {date,description} =req.body;
-
-        console.log('booody');
-        console.log(req.body);
         
         const asistance_id=id?.toString().substring('asistance_id='.length);
 

@@ -14,7 +14,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         case 'GET':
             return getSubmissions(res)
         case 'POST':
-            return {}
+            return createSubmission(req,res)
         case 'PUT':
             return {}
         default:
@@ -32,6 +32,29 @@ const getSubmissions = async (res: NextApiResponse<Data>) => {
     }
 }
 
+
+const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+
+    try {
+        const { grade, comment, student_id, activity_id, state_gra, state_sub } = req.body
+        const submission=await prisma.submission.create({
+            data:{
+                grade,
+                comment,
+                student_id,
+                acticity_id:activity_id,
+                state_gra,
+                state_sub
+            }
+        })
+        return res.status(200).json(submission)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'Error al crear las entregas'})
+        
+    }
+
+}
 
 const putSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 

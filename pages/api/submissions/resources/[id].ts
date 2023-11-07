@@ -4,42 +4,59 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
     | { message: string }
+    | { message: string; count: number }
+    | SubmissionResourceModel
     | SubmissionResourceModel[]
 
+
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query
     switch (req.method) {
         case 'GET':
-            return getResourceBySubmissionId(req, res);
+            if (id?.includes('submission_id=')) {
+                return getResourceBySubmissionId(req, res);
+            } else if (id?.includes('resource_id=')) {
+                return getResourceById(req, res);
+            }
+        case 'DELETE':
+            if(id?.includes('submission_id=')){
+                return deleteSubmissionByIdSubmission(req,res)
+            }else if(id?.includes('resource_id=')){
+                return deleteResourceById(req,res)
+            }
         default:
             break;
     }
     res.status(200).json({ message: 'Example' })
 }
 
-// const getResourceById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-//     try {
-//         const { id } = req.query;
-//         const submission_resource = await prisma.submission_resource.findFirst({
-//             where: {
-//                 id: Number(id)
-//             }
-//         })
-//         if (!submission_resource) {
-//             return res.status(200).json({ message: 'No hay entrega con ese ID:' + id });
-//         }
-//         return res.status(200).json(submission_resource)
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(400).json({ message: 'Error al obtener entrega' });
-//     }
-// }
 
-const getResourceBySubmissionId= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const getResourceBySubmissionId = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
+        const submission_id = id?.toString().substring('submission_id='.length)
         const submission_resource = await prisma.submission_resource.findMany({
             where: {
-                submission_id:Number(id)
+                submission_id: Number(submission_id)
+            }
+        })
+        if (!submission_resource) {
+            return res.status(200).json(submission_resource);
+        }
+        return res.status(200).json(submission_resource)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+const getResourceById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const resource_id=id?.toString().substring('resource_id='.length)
+        const submission_resource = await prisma.submission_resource.findFirst({
+            where: {
+                id: Number(resource_id)
             }
         })
         if (!submission_resource) {
@@ -49,5 +66,43 @@ const getResourceBySubmissionId= async (req: NextApiRequest, res: NextApiRespons
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+
+const deleteSubmissionByIdSubmission=async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query;
+        const submission_id=id?.toString().substring('submission_id='.length)
+        const submission_resource=await prisma.submission_resource.deleteMany({
+            where:{
+                submission_id:Number(submission_id)
+            }
+        })
+
+        if(submission_resource.count == 0){
+            return res.status(200).json({message:'No hay recursos para eliminar'})    
+        }
+        return res.status(200).json({message:'Recursos eliminados',count:submission_resource.count})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al eliminar recurso' });
+    }
+}
+
+
+const deleteResourceById=async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.body;
+        const resource_id=id?.toString().substring('resource_id='.length)
+        const submission_resource=await prisma.submission_resource.delete({
+            where:{
+                id:Number(resource_id)
+            }
+        })
+        return res.status(200).json(submission_resource)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({message:'No se pudo eliminar'})
     }
 }
