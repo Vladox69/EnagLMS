@@ -1,13 +1,13 @@
 import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
 import React, { FC, useEffect } from 'react'
 import { Button, TextField, Container } from '@mui/material';
-import { newAsistance } from '@/utils/newAsistance';
+import { newAsistance } from '@/utils/asistance/newAsistance';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2'
 import { enagApi } from '@/apis';
 import { useState } from 'react';
 import { AsistanceModel } from '@/models';
-import { updateAsistance } from '@/utils/updateAsistance';
+import { updateAsistance } from '@/utils/asistance/updateAsistance';
 
 interface Props {
   module_id?: number;
@@ -65,14 +65,14 @@ export const FormRegisterAsistance: FC<Props> = ({ module_id, asistance_id }) =>
           icon: 'success',
           title: 'Los datos de guardaron',
         }).then(() => {
-          router.push(`/teacher/module/asistance/${res.data.module_id}`)
+          router.back()
         })
       } else {
         Swal.fire({
           icon: 'error',
           title: 'No se pudo guardar los datos',
         }).then(() => {
-          router.push(`/teacher/module/asistance/${res.data.module_id}`)
+          router.back()
         })
       }
       resetForm();

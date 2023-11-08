@@ -32,7 +32,7 @@ export const newAsistance = async (asistance: AsistanceModel) => {
             return asistance_register;
         })
 
-        const asistance_registers=await Promise.all(asistanceRegisterPromises);
+        await Promise.all(asistanceRegisterPromises);
         
         return res;
     } catch (error) {

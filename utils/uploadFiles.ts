@@ -4,7 +4,6 @@ export const uploadFile = async (file: File) => {
 
     formData.append('upload_preset', 'files-enag');
     formData.append('file', file);
-
     try {
         const resp = await fetch(cloudUrl, {
             method: 'POST',
@@ -14,10 +13,13 @@ export const uploadFile = async (file: File) => {
         if (!resp.ok) throw new Error('No se pudo subir imagen');
 
         const cloudResp = await resp.json();
+        console.log(cloudResp);
         return {
             url:cloudResp.secure_url,
             status:200,
-            message:'Archivo enviado'
+            message:'Archivo enviado',
+            title:file.name,
+            type:file.type
         };
 
     } catch (error) {

@@ -1,7 +1,9 @@
 import React, { FC, useState } from 'react'
 import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, FormControl, RadioGroup, Radio, FormControlLabel, Grid, Button } from '@mui/material';
 import { AsistanceStudentI } from '@/interface';
-import { saveAsistanceRegisters } from '@/utils/saveAsistanceRegisters';
+import { saveAsistanceRegisters } from '@/utils/asistance/saveAsistanceRegisters';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/router';
 
 interface Props {
     asistance_students: AsistanceStudentI[]
@@ -9,6 +11,8 @@ interface Props {
 
 export const TableRegister: FC<Props> = ({ asistance_students }) => {
     
+    const router=useRouter()
+
     const [asistances, setAsistances] = useState(asistance_students)
 
     const handleChange=(event: React.ChangeEvent<HTMLInputElement>,id:number)=>{
@@ -26,8 +30,22 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
     }
 
     const onSaveRegisters=async ()=>{
-       const res = await saveAsistanceRegisters(asistances);
-       console.log(res);
+       const res:any = await saveAsistanceRegisters(asistances);
+       if (res.status == 200) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Los datos de guardaron',
+        }).then(() => {
+          router.back()
+        })
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'No se pudo guardar los datos',
+        }).then(() => {
+          router.back()
+        })
+      }
     }
  
     return (

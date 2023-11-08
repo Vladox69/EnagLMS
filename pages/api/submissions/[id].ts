@@ -44,7 +44,7 @@ const getSubmissionByIdActivityAndStudent = async (req: NextApiRequest, res: Nex
 
         const submission = await prisma.submission.findFirst({
             where: {
-                acticity_id: Number(activity_id),
+                activity_id: Number(activity_id),
                 student_id: Number(student_id)
             }
         })
@@ -67,7 +67,7 @@ const getSubmissionsByIdActivity = async (req: NextApiRequest, res: NextApiRespo
 
         const submissions = await prisma.submission.findMany({
             where: {
-                acticity_id: Number(activity_id),
+                activity_id: Number(activity_id),
             }
         })
         if (!submissions) {
@@ -139,7 +139,7 @@ const deleteSubmissionsByIdActivity = async (req: NextApiRequest, res: NextApiRe
 
         const submissions = await prisma.submission.deleteMany({
             where: {
-                acticity_id: Number(activity_id)
+                activity_id: Number(activity_id)
             }
         })
 

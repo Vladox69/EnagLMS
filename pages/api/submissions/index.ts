@@ -42,9 +42,9 @@ const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>)
                 grade,
                 comment,
                 student_id,
-                acticity_id:activity_id,
                 state_gra,
-                state_sub
+                state_sub,
+                activity_id
             }
         })
         return res.status(200).json(submission)

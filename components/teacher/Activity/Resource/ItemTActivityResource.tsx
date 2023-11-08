@@ -1,23 +1,22 @@
-import { SectionResourceModel } from '@/models'
 import { Container, IconButton, Typography } from '@mui/material'
-import ArticleIcon from '@mui/icons-material/Article';
-import React, { FC } from 'react'
-import { handleDownload } from '@/utils/file/handleDownload';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ArticleIcon from '@mui/icons-material/Article';
+import React,{FC} from 'react'
+import { ActivityResourceModel } from '@/models';
+import { handleDownload } from '@/utils/file/handleDownload';
 import Swal from 'sweetalert2';
-import { deleteSectionResource } from '@/utils/section/resource/deleteSectionResource';
+import { deleteActivityResource } from '@/utils/activity/resource/deleteActivityResource';
 
-interface Props {
-    section_resource: SectionResourceModel,
-    onDeleteResource:(section_resource:SectionResourceModel)=>void
+interface Props{
+    activity_resource:ActivityResourceModel,
+    onDeleteResource:(activity_resource:ActivityResourceModel)=>void
 }
 
-export const ItemTResource: FC<Props> = ({ section_resource,onDeleteResource }) => {
+export const ItemTActivityResource:FC<Props> = ({activity_resource,onDeleteResource}) => {
 
-    const handleDelete = () => {
-
-        let res: any;
+    const handleDelete=()=>{
+        let res:any;
         Swal.fire({
             icon: 'question',
             title: '¿Está seguro de eliminar?',
@@ -25,13 +24,13 @@ export const ItemTResource: FC<Props> = ({ section_resource,onDeleteResource }) 
             showDenyButton: true,
         }).then(async (result) => {
             if (result.isConfirmed) {
-                res = await deleteSectionResource(section_resource);
+                res = await deleteActivityResource(activity_resource);
                 if (res.status == 200) {
                   Swal.fire({
                     icon: 'success',
                     title: 'Datos eliminados',
                   }).then(() => {
-                    onDeleteResource(section_resource)
+                    onDeleteResource(activity_resource)
                   })
                 } else {
                   Swal.fire({
@@ -41,26 +40,25 @@ export const ItemTResource: FC<Props> = ({ section_resource,onDeleteResource }) 
                 }
               }
         })
-
     }
 
-    return (
-        <Container className='container bg-danger d-flex justify-content-between p-0' >
+  return (
+    <Container className='container bg-danger d-flex justify-content-between p-0' >
             <div className='d-flex align-items-center'>
                 <ArticleIcon sx={{
                     width: 50,
                     height: 50
                 }} />
-                <Typography component='p' onClick={() => handleDownload(section_resource.url_resource, section_resource.title)} > {section_resource.title} </Typography>
+                <Typography component='p' onClick={()=>handleDownload(activity_resource.url_resource,activity_resource.title)} > {activity_resource.title} </Typography>
             </div>
             <div>
                 <IconButton >
                     <SettingsIcon />
                 </IconButton>
-                <IconButton onClick={handleDelete} >
+                <IconButton onClick={handleDelete}>
                     <DeleteIcon />
                 </IconButton>
             </div>
         </Container>
-    )
+  )
 }

@@ -57,20 +57,22 @@ export const ItemTActivity: FC<Props> = ({ activity, onDeleteActivity }) => {
   }
 
   return (
-    <>
-      <Container className='container bg-danger d-flex' component='div' onClick={goToActivity} >
+    <Container className='container bg-danger d-flex justify-content-between p-0'>
+      <div className='d-flex align-items-center'>
         <ArticleIcon sx={{
           width: 50,
           height: 50
         }} />
-        <Typography component='p' > {activity.title} </Typography>
-      </Container>
-      <IconButton onClick={() => goToEditActivity(activity.id)} >
-        <SettingsIcon />
-      </IconButton>
-      <IconButton onClick={handleDelete} >
-        <DeleteIcon />
-      </IconButton>
-    </>
+        <Typography component='p' onClick={goToActivity} > {activity.title} </Typography>
+      </div>
+      <div>
+        <IconButton onClick={() => goToEditActivity(activity.id)} >
+          <SettingsIcon />
+        </IconButton>
+        <IconButton onClick={handleDelete} >
+          <DeleteIcon />
+        </IconButton>
+      </div>
+    </Container>
   )
 }

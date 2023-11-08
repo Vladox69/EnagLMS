@@ -7,11 +7,14 @@ export const saveAsistanceRegisters = async (asistance_registers: AsistanceStude
             const body = {
                 status: regis.estado
             }
-            const { data: register } = await enagApi.put(`/asistances/registers/register_id=${regis.id}`, body)
+            const register = await enagApi.put(`/asistances/registers/register_id=${regis.id}`, body)
             return register
         })
         const registers = await Promise.all(registersPromises);
-        return registers;
+        return {
+            status:200,
+            registers
+        }
     } catch (error) {
         return error;
     }

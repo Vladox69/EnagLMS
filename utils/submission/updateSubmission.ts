@@ -9,7 +9,7 @@ export const updateSubmission=async(submission:SubmissionModel)=>{
             grade: submission.grade,
             comment: submission.comment,
             student_id: submission.student_id,
-            acticity_id: submission.acticity_id,
+            activity_id: submission.activity_id,
             state_gra:submission.state_gra,
             state_sub:submission.state_sub,
         }

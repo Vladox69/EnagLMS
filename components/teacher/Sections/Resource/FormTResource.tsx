@@ -4,6 +4,8 @@ import { enagApi } from '@/apis';
 import { SectionResourceModel } from '@/models';
 import { useFormik } from 'formik';
 import { Button, Container, TextField } from '@mui/material';
+import { newSectionResource } from '@/utils/section/resource/newSectionResource';
+import Swal from 'sweetalert2';
 
 interface Props {
     section_id?: number;
@@ -18,7 +20,7 @@ export const FormTResource: FC<Props> = ({ section_id, resource_id }) => {
     const [initialValues, setInitialValues] = useState({
         id: 0,
         url_resource: '',
-        section_id: 0,
+        section_id: section_id,
         title: '',
         file:null
     })
@@ -57,8 +59,26 @@ export const FormTResource: FC<Props> = ({ section_id, resource_id }) => {
                 title: values.title,
                 file:values.file
             }
+            
+            const res:any = await newSectionResource(body);
 
-            console.log(values);
+            if(res.status==200){
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Los datos se guardaron',
+                }).then(() => {
+                    router.back()
+                })
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se pudo guardar los datos',
+                }).then(() => {
+                    router.back()
+                })
+            }
+
+            resetForm();
         }
     })
 

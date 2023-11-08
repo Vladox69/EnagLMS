@@ -4,9 +4,8 @@ import { Container, Typography, Button } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ActivityModel, SectionModel, SectionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
-import { GridTActivity } from '../../../../components/teacher/Activity/GridTActivity';
-import { GridTResource } from '../../../../components/teacher/Sections/Resource/GridTResource';
-import ReactQuill from 'react-quill';
+import { GridTActivity } from '@/components/teacher/Activity/GridTActivity';
+import { GridTResource } from '@/components/teacher/Sections/Resource/GridTResource';
 import { useRouter } from 'next/router';
 
 interface Props {

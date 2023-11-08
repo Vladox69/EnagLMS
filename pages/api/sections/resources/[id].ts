@@ -4,6 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
     | { message: string }
+    | { message: string ,count:number}    
     | SectionResourceModel[]
     | SectionResourceModel
 
@@ -15,6 +16,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                 return getResourcesByIdSection(req, res);
             } else if (id?.includes('resource_id=')) {
                 return getResourceById(req, res);
+            }
+        case 'DELETE':
+            if(id?.includes('section_id=')){
+                return deleteResourcesByIdSection(req,res)
+            }else if(id?.includes('resource_id=')){
+                return deleteResourceById(req,res)
             }
         default:
             break;
@@ -57,5 +64,40 @@ const getResourceById = async (req: NextApiRequest, res: NextApiResponse<Data>) 
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener los recursos' });
+    }
+}
+
+const deleteResourcesByIdSection = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const section_id=id?.toString().substring('section_id='.length)
+        const section_resources=await prisma.section_resource.deleteMany({
+            where:{
+                section_id:Number(section_id)
+            }
+        })
+        if(section_resources.count==0){
+            return res.status(200).json({message:'No hay datos por eliminar'})
+        }
+        return res.status(200).json({message:'Recursos eliminados',count:section_resources.count})
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al eliminar el recurso' })
+    }
+}
+
+const deleteResourceById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const resource_id = id?.toString().substring('resource_id='.length)
+        const section_resource = await prisma.section_resource.delete({
+            where: {
+                id: Number(resource_id)
+            }
+        })
+        return res.status(200).json(section_resource)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al eliminar el recurso' })
     }
 }

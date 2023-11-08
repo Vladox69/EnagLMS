@@ -73,14 +73,14 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
                     icon: 'success',
                     title: 'Los datos se guardaron',
                 }).then(() => {
-                    router.push(`/teacher/module/section/${res.data.section_id}`)
+                    router.back()
                 })
             }else{
                 Swal.fire({
                     icon: 'error',
                     title: 'No se pudo guardar los datos',
                 }).then(() => {
-                    router.push(`/teacher/module/section/${res.data.section_id}`)
+                    router.back()
                 })
             }
 

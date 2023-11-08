@@ -21,7 +21,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
         grade: 0,
         comment: '',
         student_id: 0,
-        acticity_id: 0,
+        activity_id: 0,
         state_gra:'',
         state_sub:''
     })
@@ -41,7 +41,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 grade: submission.grade,
                 comment: submission.comment,
                 student_id: submission.student_id,
-                acticity_id: submission.acticity_id,
+                activity_id: submission.activity_id,
                 state_gra:submission.state_gra,
                 state_sub:submission.state_sub
             })
@@ -57,7 +57,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 grade: values.grade,
                 comment: values.comment,
                 student_id: values.student_id,
-                acticity_id: values.acticity_id,
+                activity_id: values.activity_id,
                 state_gra:values.state_gra,
                 state_sub:values.state_sub
             }

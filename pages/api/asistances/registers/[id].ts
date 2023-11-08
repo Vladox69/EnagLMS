@@ -4,18 +4,25 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
     | { message: string }
+    | { message: string ,count:number}    
     | AsistanceRegisterModel
     | AsistanceRegisterModel[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query;
     switch (req.method) {
         case 'GET':
-            const { id } = req.query;
             if (id?.includes('asistance_id=')) {
                 return getAsistanceRegisterByIdAsistance(req, res);
             }
         case 'PUT':
             return updateAsistanceRegister(req, res);
+        case 'DELETE':
+            if(id?.includes('asistance_id=')){
+                return deleteRegistersByIdAsistance(req,res)
+            }else if(id?.includes('register_id=')){
+                return deleteRegisterByI(req,res)
+            }
         default:
             break;
     }
@@ -61,5 +68,42 @@ const updateAsistanceRegister = async (req: NextApiRequest, res: NextApiResponse
         return res.status(200).json(asistance_register);
     } catch (error) {
         return res.status(400).json({ message: 'Error actualizar el registro' });
+    }
+}
+
+const deleteRegistersByIdAsistance = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const asistance_id=id?.toString().substring('asistance_id='.length)
+
+        const registers=await prisma.asistance_register.deleteMany({
+            where:{
+                asistance_id:Number(asistance_id)
+            }
+        })
+
+        if(registers.count==0){
+            return res.status(200).json({message:'No hay registros por eliminar'})
+        }
+        return res.status(200).json({message:'Registros eliminados',count:registers.count})
+
+    } catch (error) {
+        return res.status(400).json({message:'Error al eliminar los registros'})
+    }
+}
+
+const deleteRegisterByI = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const register_id=id?.toString().substring('register_id='.length)
+
+        const register=await prisma.asistance_register.delete({
+            where:{
+                id:Number(register_id)
+            }
+        })
+        return res.status(200).json(register)
+    } catch (error) {
+        return res.status(400).json({message:'Error al eliminar los registros'})
     }
 }

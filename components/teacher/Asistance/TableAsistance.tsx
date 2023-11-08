@@ -6,8 +6,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
 import { useRouter } from 'next/router';
-import { enagApi } from '@/apis';
 import Swal from 'sweetalert2';
+import { deleteAsistance } from '@/utils/asistance/deleteAsistance';
 
 interface Props {
     asistances: AsistanceModel[]
@@ -31,14 +31,14 @@ export const TableAsistance: FC<Props> = (props) => {
         })
     }
 
-    const onDeleteAsistance = async (asistance_id: number) => {
-        const res = await enagApi.delete(`/asistances/asistance_id=${asistance_id}`);
+    const onDeleteAsistance = async (asistance:AsistanceModel) => {
+        const res:any = await deleteAsistance(asistance)
         if (res.status == 200) {
             Swal.fire({
                 icon: 'success',
                 title: 'Registro eliminado',
             }).then((res) => {
-                setAsistances(asistances.filter((asistance) => asistance.id != asistance_id))
+                setAsistances(asistances.filter((asis) => asis.id != asistance.id))
             })
         } else {
             Swal.fire({
@@ -76,7 +76,7 @@ export const TableAsistance: FC<Props> = (props) => {
                                     <IconButton onClick={()=>goToEditRegister(asistance.id)} >
                                         <SettingsIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => onDeleteAsistance(asistance.id)} >
+                                    <IconButton onClick={() => onDeleteAsistance(asistance)} >
                                         <DeleteIcon />
                                     </IconButton>
                                 </Container>
