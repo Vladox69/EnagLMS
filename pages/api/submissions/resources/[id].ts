@@ -93,7 +93,7 @@ const deleteSubmissionByIdSubmission=async (req: NextApiRequest, res: NextApiRes
 
 const deleteResourceById=async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const {id}=req.body;
+        const {id}=req.query;
         const resource_id=id?.toString().substring('resource_id='.length)
         const submission_resource=await prisma.submission_resource.delete({
             where:{

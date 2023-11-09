@@ -1,12 +1,13 @@
 import { Layout } from '@/components/layouts';
-import React from 'react'
-import { Container, Typography, Button } from '@mui/material';
+import React, { useState } from 'react'
+import { Container, Typography, Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ActivityModel, SectionModel, SectionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
 import { GridTActivity } from '@/components/teacher/Activity/GridTActivity';
 import { GridTResource } from '@/components/teacher/Sections/Resource/GridTResource';
 import { useRouter } from 'next/router';
+import { FormTResource } from '../../../../components/teacher/Sections/Resource/FormTResource';
 
 interface Props {
     section: SectionModel,
@@ -15,24 +16,44 @@ interface Props {
 }
 
 export const TeacherSectionById: NextPage<Props> = ({ section, activities, resources }) => {
-    
-    const router= useRouter()
 
-    const goToNewActivity=()=>{
-        const {section:id}=router.query;
+    const router = useRouter()
+
+    const [open, setOpen] = useState(false)
+
+    const handleOpen = () => {
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        setOpen(false)
+    }
+
+
+    const handleFormSubmit = (formData: any) => {
+        if (formData.status == 200) {
+            //TODO: Rehidratación de la página añadir a la lista el nuevo recurso       
+            handleClose();
+        } else {
+
+        }
+    }
+
+    const goToNewActivity = () => {
+        const { section: id } = router.query;
         router.push({
-            pathname:'/teacher/module/section/activity/new',
-            query:{section_id:id}
+            pathname: '/teacher/module/section/activity/new',
+            query: { section_id: id }
         });
     }
 
-    const goToNewResource=()=>{
-        const {section:id}=router.query;
-        router.push({
-            pathname:'/teacher/module/section/resource/new',
-            query:{section_id:id}
-        });
-    }
+    // const goToNewResource=()=>{
+    //     const {section:id}=router.query;
+    //     router.push({
+    //         pathname:'/teacher/module/section/resource/new',
+    //         query:{section_id:id}
+    //     });
+    // }
 
     return (
         <Layout title='Teacher section'>
@@ -46,7 +67,14 @@ export const TeacherSectionById: NextPage<Props> = ({ section, activities, resou
                     }} />
 
                     <Typography component='p' > Recursos </Typography>
-                    <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button>
+                    {/* <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button> */}
+                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
+                        <DialogTitle id="form-dialog-title">Nuevo recurso</DialogTitle>
+                        <DialogContent>
+                            <FormTResource section_id={section.id}  onSubmitResource={handleFormSubmit} />
+                        </DialogContent>
+                    </Dialog>
+                    <Button variant='contained' onClick={handleOpen} >Nuevo recurso</Button>
                     <GridTResource section_resources={resources} />
 
                     <Typography component='p' > Actividades </Typography>

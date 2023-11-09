@@ -13,16 +13,16 @@ export const ItemActivity:FC<Props> = ({activity}) => {
     const router =useRouter();
 
     const goToActivityById=()=>{
-        router.push(`/my/course/activity/${activity.id}`)
+        router.push(`/my/course/module/activity/${activity.id}`)
     }
 
     return (
-        <Container className='container bg-danger d-flex ' component='div' onClick={goToActivityById} >
+        <Container className='container bg-danger d-flex align-items-center' component='div' onClick={goToActivityById} >
             <ArticleIcon sx={{
                 width: 50,
                 height: 50
             }} />
-            <Typography component='p' className=''> Nombre de la {activity.title} </Typography>
+            <Typography component='p' className=''>{activity.title} </Typography>
         </Container>
     )
 }

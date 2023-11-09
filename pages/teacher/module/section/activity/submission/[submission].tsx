@@ -19,8 +19,8 @@ export const TeacherSubmissionById:NextPage<Props>  = ({submission,student,resou
         <Container className='container bg-primary'>
             <Container className='container bg-danger'>
                 <Typography component='p'> Entrega </Typography>
-                <Typography component='p'> {submission.state_gra} Sin calificar</Typography>
-                <Typography component='p'> {submission.state_sub} Enviado para calificar</Typography>
+                <Typography component='p'> {submission.state_gra} </Typography>
+                <Typography component='p'> {submission.state_sub}</Typography>
                 <Typography component='p'> {resource.url_resource} </Typography>
                 <FormSubmission submission={submission} />
             </Container>

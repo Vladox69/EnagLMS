@@ -2,7 +2,7 @@ import { Layout } from '@/components/layouts';
 import React from 'react'
 import { Container, Button } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { Dropzone } from '../../../../components/my/Dropzone';
+import { Dropzone } from '../../../../../../components/my/Dropzone';
 import { SubmissionModel, SubmissionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
 
@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { submissionId } = params as { submissionId: string };
     
     const {data:submission} = await enagApi.get<SubmissionModel>(`/submissions/submission_id=${submissionId}`);
-    const {data:resources} = await enagApi.get<SubmissionModel>(`/submissions/resources/${submissionId}`)
+    const {data:resources} = await enagApi.get<SubmissionModel>(`/submissions/resources/submission_id=${submissionId}`)
 
     return {
         props: {

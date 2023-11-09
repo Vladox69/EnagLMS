@@ -11,7 +11,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     switch (req.method) {
         case 'GET':
             const { id } = req.query;
-            console.log(id);
             if (id?.includes('student_id=')) {
                 return getStudentById(req, res);
             }else{

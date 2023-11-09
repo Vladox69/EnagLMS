@@ -2,7 +2,6 @@ import { SubmissionModel } from '@/models'
 import React, { FC,useState,useEffect } from 'react'
 import { Container } from 'react-bootstrap'
 import { useRouter } from 'next/router';
-import { enagApi } from '@/apis';
 import { useFormik } from 'formik';
 import Swal from 'sweetalert2';
 import { TextField, Button } from '@mui/material';
@@ -58,8 +57,8 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 comment: values.comment,
                 student_id: values.student_id,
                 activity_id: values.activity_id,
-                state_gra:values.state_gra,
-                state_sub:values.state_sub
+                state_gra:'Calificado',
+                state_sub:'Revisado'
             }
 
             let res:any;
@@ -93,7 +92,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
         <Container>
             <form onSubmit={formik.handleSubmit}>
                 <TextField
-                    type='text'
+                    type='number'
                     variant='outlined'
                     label='Calificación'
                     id="grade"
@@ -103,6 +102,12 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                     onBlur={formik.handleBlur}
                     error={formik.touched.grade && Boolean(formik.errors.grade)}
                     helperText={formik.touched.grade && formik.errors.grade}
+                    inputProps={
+                        {
+                            min:0,
+                            max:10
+                        }
+                    }
                 />
                 <TextField
                     type='text'

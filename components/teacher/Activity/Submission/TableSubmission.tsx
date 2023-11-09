@@ -2,6 +2,7 @@ import { SubmissionStudentI } from '@/interface/submission_student'
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
 import React, { FC } from 'react'
 import { useRouter } from 'next/router';
+import { handleDownload } from '@/utils/file/handleDownload';
 
 interface Props {
     submissions: SubmissionStudentI[]
@@ -11,7 +12,7 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
 
     const router = useRouter()
 
-    const goToQualify=(id:number)=>{
+    const goToQualify = (id: number) => {
         router.push(`/teacher/module/section/activity/submission/${id}`)
     }
 
@@ -35,9 +36,23 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
                             <TableCell component="th" scope="row">
                                 {submission.student}
                             </TableCell>
-                            <TableCell >{submission.grade}</TableCell>
-                            <TableCell >{submission.resource}</TableCell>
-                            <TableCell > <Button variant='contained' color='primary' onClick={()=>goToQualify(submission.id_submission)} > Calificar </Button> </TableCell>
+                            <TableCell >{  submission.submission.state_gra=='Sin calificar' ? submission.submission.state_gra : submission.submission.grade }</TableCell>
+                            <TableCell >
+                                {
+                                    submission.resources.length == 0 ?
+                                        (<span>No entregado</span>)
+                                        :
+                                        (submission.resources.map((resource) => (
+                                            <li key={resource.id} onClick={() => handleDownload(resource.url_resource, resource.title)} >
+                                                <span  >
+                                                    {resource.title}
+                                                </span>
+                                                <br />
+                                            </li>
+                                        )))
+                                }
+                            </TableCell>
+                            <TableCell > <Button variant='contained' color='primary' onClick={() => goToQualify(submission.id_submission)} > Calificar </Button> </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

@@ -18,7 +18,7 @@ export const GridSectionResource: FC<Props> = ({ section }) => {
     }, [])
 
     const getData = async () => {
-        const { data } = await enagApi.get(`/sections/resources/${section}`)
+        const { data } = await enagApi.get(`/sections/resources/section_id=${section}`)
         setSectionResources(data);
     }
 

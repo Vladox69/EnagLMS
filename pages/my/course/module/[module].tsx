@@ -92,7 +92,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { module } = params as { module: string };
-    const {data:sections} = await enagApi.get<SectionModel[]>(`/sections/${module}`);
+    const {data:sections} = await enagApi.get<SectionModel[]>(`/sections/module_id=${module}`);
     
     return {
         props: {

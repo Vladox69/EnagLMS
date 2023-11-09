@@ -6,6 +6,9 @@ import { Button } from '@mui/material';
 import { uploadFile } from '@/utils';
 import { SubmissionModel, SubmissionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
+import { handleDownload } from '@/utils/file/handleDownload';
+import { useRouter } from 'next/router';
+import { deleteSubmissionResource } from '@/utils/submission/resource/deleteSubmissionResource';
 
 interface Props {
   submission: SubmissionModel,
@@ -13,38 +16,52 @@ interface Props {
 }
 
 
-export const Dropzone: FC<Props> = ({ submission, resources }) => {
+export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
+
+
   const [files, setFiles] = useState<any[]>([])
+  const [resources, setResources] = useState(resc)
+  const [resourceRemoved, setResourceRemoved] = useState<SubmissionResourceModel[]>([])
 
-  //Descargar archivos 
-  const handleDownload = (url:string, filename:string) => {
-
-  };
+  const router = useRouter()
 
   // Guardada de archivo
   const onSave = async () => {
     const fileUploadPromises = [];
-    for (const file of files) {
-      fileUploadPromises.push(uploadFile(file.file))
-    }
-    const responses = await Promise.all(fileUploadPromises);
 
-    const resourcePromises=[]
-
-    for (const res of responses) {
-      if (res.status === 200) {
-        const body={
-          url_resource:res.url,
-          submission_id:submission.id
-        }
-        resourcePromises.push(enagApi.post(`/submissions/resources`,body))
+    if (resourceRemoved.length > 0) {
+      const deletedResourcesPromises = [];
+      for (const sub_res of resourceRemoved) {
+        deletedResourcesPromises.push(deleteSubmissionResource(sub_res))
       }
+      await Promise.all(deletedResourcesPromises)
     }
-    const responsesResources = await Promise.all(resourcePromises);
-  
-    if(responsesResources[0].status==200){
-      setFiles([])
+
+    if (files.length > 0) {
+
+      for (const file of files) {
+        fileUploadPromises.push(uploadFile(file.file))
+      }
+      const responses = await Promise.all(fileUploadPromises);
+
+      const resourcePromises = []
+
+      for (const res of responses) {
+        if (res.status === 200) {
+          const body = {
+            url_resource: res.url,
+            submission_id: submission.id,
+            title: res.title
+          }
+          resourcePromises.push(enagApi.post(`/submissions/resources`, body))
+        }
+      }
+      const responsesResources = await Promise.all(resourcePromises);
+
     }
+
+    router.back();
+
   }
 
   // Quitar archivos
@@ -59,11 +76,35 @@ export const Dropzone: FC<Props> = ({ submission, resources }) => {
     return (
       <li key={index} >
         {icon}
-        <span>{name}</span>
+        <span >{name}</span>
         <Button onClick={() => onRemove(name)} >Quitar</Button>
       </li>
     );
   };
+
+  const renderResources = (resource: SubmissionResourceModel) => {
+    const icon = resource.title.includes('.docx') || resource.title.includes('.pdf') ? <ImageIcon /> : <PictureAsPdfIcon />;
+    return (
+      <li key={resource.id} >
+        {icon}
+        <span onClick={() => handleDownload(resource.url_resource, resource.title)}>{resource.title}</span>
+        <Button onClick={() => onRemoveResource(resource)} >Quitar</Button>
+      </li>
+    )
+  }
+
+  const onCancel = () => {
+    router.back();
+  }
+
+  // useEffect(() => {
+  //   console.log(resourceRemoved);
+  // }, [resourceRemoved]);
+
+  const onRemoveResource = (resource: SubmissionResourceModel) => {
+    setResourceRemoved(resourceRemoved => [resource, ...resourceRemoved])
+    setResources(resources => resources.filter(rsc => rsc.id !== resource.id))
+  }
 
   // Métodos de drop de los archivos
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -98,18 +139,14 @@ export const Dropzone: FC<Props> = ({ submission, resources }) => {
         </ul>
         <ol>
           {
-            resources.map((rs) => (
-              <li key={rs.id} onClick={()=>handleDownload(rs.url_resource,`archivo${rs.id}.docx`)}>
-                {rs.url_resource}
-              </li>
-            ))
+            resources.map(renderResources)
           }
         </ol>
       </form>
       <Button variant='contained' onClick={onSave} >
         Guardar Cambios
       </Button>
-      <Button variant='contained' color='error'>
+      <Button variant='contained' color='error' onClick={onCancel} >
         Cancelar
       </Button>
     </>

@@ -9,7 +9,7 @@ export const NewSectionResource = () => {
 
     return (
         <Layout>
-            <FormTResource  section_id={Number(section_id)}/>
+            {/* <FormTResource  section_id={Number(section_id)}/> */}
         </Layout>
     )
 }

@@ -9,10 +9,10 @@ import Swal from 'sweetalert2';
 
 interface Props {
     section_id?: number;
-    resource_id?: number;
+    onSubmitResource: (formData: any) => void
 }
 
-export const FormTResource: FC<Props> = ({ section_id, resource_id }) => {
+export const FormTResource: FC<Props> = ({ section_id,onSubmitResource }) => {
 
     const router = useRouter()
 
@@ -24,27 +24,6 @@ export const FormTResource: FC<Props> = ({ section_id, resource_id }) => {
         title: '',
         file:null
     })
-
-
-    useEffect(() => {
-        if (!!resource_id) {
-            getDataResource()
-        }
-    }, [resource_id])
-
-    const getDataResource = async () => {
-        if (!!resource_id) {
-            const { data } = await enagApi.get<SectionResourceModel>(`/sections/resources/resource_id=${resource_id}`)
-
-            setInitialValues({
-                id: data.id,
-                url_resource: data.url_resource,
-                section_id: data.section_id,
-                title: data.title,
-                file:null
-            })
-        }
-    }
 
 
     const formik = useFormik({
@@ -66,17 +45,15 @@ export const FormTResource: FC<Props> = ({ section_id, resource_id }) => {
                 Swal.fire({
                     icon: 'success',
                     title: 'Los datos se guardaron',
-                }).then(() => {
-                    router.back()
                 })
             }else{
                 Swal.fire({
                     icon: 'error',
                     title: 'No se pudo guardar los datos',
-                }).then(() => {
-                    router.back()
                 })
             }
+
+            onSubmitResource(res)
 
             resetForm();
         }

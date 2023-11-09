@@ -7,9 +7,10 @@ import { useRouter } from 'next/router';
 
 interface Props {
     activity_id: number,
+    onSubmitResource: (formData: any) => void
 }
 
-export const FormActivityResource: FC<Props> = ({ activity_id }) => {
+export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }) => {
 
     const router = useRouter()
 
@@ -33,22 +34,19 @@ export const FormActivityResource: FC<Props> = ({ activity_id }) => {
                 file: values.file
             }
             const res:any =await newActivityResource(body)
+
             if(res.status==200){
                 Swal.fire({
                     icon: 'success',
                     title: 'Los datos se guardaron',
-                }).then(() => {
-                    router.back()
                 })
             }else{
                 Swal.fire({
                     icon: 'error',
                     title: 'No se pudo guardar los datos',
-                }).then(() => {
-                    router.back()
                 })
             }
-
+            onSubmitResource(res)
             resetForm();
         }
     })

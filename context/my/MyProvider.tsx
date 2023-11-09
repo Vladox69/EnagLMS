@@ -28,22 +28,6 @@ export const MyProvider: FC<Props> = ({ children }) => {
 
     const getData = async () => {
         
-        const data: Course[] = [{
-            _id: '1111',
-            description: 'Primero',
-            start_date: '01-01-2023',
-            end_date: '06-01-2023',
-            topic: 'Panaderia',
-            teacher_id: '111233'
-        },
-        {
-            _id: '2222',
-            description: 'Segundo',
-            start_date: '01-01-2023',
-            end_date: '06-01-2023',
-            topic: 'Pasateleria',
-            teacher_id: '111244'
-        }]
         // const dUser: UserModel = {
         //     email: 'student',
         //     id: 11,
@@ -55,12 +39,12 @@ export const MyProvider: FC<Props> = ({ children }) => {
 
         const { data: user } = await enagApi.get<UserModel>(`/users/${1}`);
         
-        const {data:student}=await enagApi.get<StudentModel>(`/students/${1}`);
+        const {data:student}=await enagApi.get<StudentModel>(`/students/student_id=${1}`);
         
-        const {data:inscriptions}=await enagApi.get<InscriptionModel[]>(`/inscriptions/${student.id}`);
+        const {data:inscriptions}=await enagApi.get<InscriptionModel[]>(`/inscriptions/student_id=${student.id}`);
 
         const coursesPromises = inscriptions.map(async(insc)=>{
-            const {data:course}= await enagApi.get<CourseModel>(`/courses/${insc.course_id}`)
+            const {data:course}= await enagApi.get<CourseModel>(`/courses/course_id=${insc.course_id}`)
             return course;
         })
         

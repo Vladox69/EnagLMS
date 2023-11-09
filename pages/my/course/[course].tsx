@@ -13,9 +13,6 @@ interface Props {
 }
 
 export const MyCourseByName: NextPage<Props> = ({ course, modulos }) => {
-
-
-
     return (
         <Layout title='My Course'>
             <Container className='container bg-primary'>
@@ -59,7 +56,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { course } = params as { course: string };
-    const { data: modulos } = await enagApi.get<ModuleModel[]>(`/modules/${course}`)
+    const { data: modulos } = await enagApi.get<ModuleModel[]>(`/modules/course_id=${course}`)
 
     return {
         props: {

@@ -1,7 +1,7 @@
 import { Layout } from '@/components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import React from 'react'
-import { Activity } from '../../../../components/my/activity';
+import { Activity } from '../../../../../components/my/activity';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
 

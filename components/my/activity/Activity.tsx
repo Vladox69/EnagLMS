@@ -11,23 +11,26 @@ interface Props {
 
 export const Activity: FC<Props> = ({ activity }) => {
 
+    const { user:student } = useContext(MyContext)
+
     useEffect(() => {
-        getDataSubmission();
-    }, [])
+        if(!!student){
+            getDataSubmission();
+        }
+    }, [student])
 
     const [submission, setSubmission] = useState<SubmissionModel>();
 
-    const {user:student} = useContext(MyContext)
 
     const router = useRouter()
 
     const goToSubmissionById = () => {
-        router.push(`/my/course/submission/${submission?.id}`)
+        router.push(`/my/course/module/activity/submission/${submission?.id}`)
     }
 
     const getDataSubmission = async () => {
-
         const { data } = await enagApi.get<SubmissionModel>(`/submissions/student_id=${student?.id}&activity_id=${activity.id}`)
+        console.log(data);
         setSubmission(data)
     }
 
