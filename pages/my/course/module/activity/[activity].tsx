@@ -4,22 +4,11 @@ import React from 'react'
 import { Activity } from '../../../../../components/my/activity';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
-
-function createData(
-    name: string,
-    calories: number,
-) {
-    return { name, calories };
-}
-
-const rows = [
-    createData('Frozen yoghurt', 159),
-    createData('Ice cream sandwich', 237),
-    createData('Eclair', 262),
-];
+import { SubmissionStudentI } from '@/interface/submission_student';
 
 interface Props {
     activity: ActivityModel;
+    submission:SubmissionStudentI
 }
 
 
@@ -51,6 +40,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { activity:id } = params as { activity: string };
     const {data:activity}= await enagApi.get<ActivityModel>(`/activities/activity_id=${id}`)
+    
     return {
         props: {
             activity

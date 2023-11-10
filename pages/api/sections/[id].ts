@@ -13,7 +13,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         case 'GET':
             if (id?.includes('module_id=')) {
                 return getSectionsByIdModule(req, res);
-
             } else {
                 return getSectionById(req, res);
             }

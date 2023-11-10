@@ -1,25 +1,13 @@
 import { enagApi } from '@/apis';
 import { Layout } from '@/components/layouts'
-import { Asistance } from '@/interface';
 import { AsistanceModel } from '@/models';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import React from 'react'
-import { Container } from 'react-bootstrap';
 
 interface Props {
     asistances: AsistanceModel[]
 }
-
-const rows: Asistance[] = [
-    {
-        _id: '1111',
-        course_id: '111',
-        fecha: '22-02-2023',
-        state: 'Presente',
-        student_id: '123'
-    }
-];
 
 
 export const MyAsistanceById: NextPage<Props> = ({ asistances }) => {
@@ -57,7 +45,7 @@ export const MyAsistanceById: NextPage<Props> = ({ asistances }) => {
                                         {asistance.date.toLocaleString()}
                                     </TableCell>
                                     <TableCell align="right">sss</TableCell>
-                                    <TableCell align="right">{asistance.status}</TableCell>
+                                    <TableCell align="right">{asistance.date.toString() }</TableCell>
                                     <TableCell align="right">{asistance.description}</TableCell>
                                 </TableRow>
                             ))}

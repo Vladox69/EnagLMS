@@ -1,12 +1,13 @@
 import { enagApi } from '@/apis';
 import { MyContext } from '@/context/my';
-import { ActivityModel, SubmissionModel } from '@/models';
+import { SubmissionStudentI } from '@/interface/submission_student';
+import { ActivityModel, SubmissionModel, SubmissionResourceModel } from '@/models';
 import { Button, Container, Paper, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import React, { FC, useContext, useEffect, useState } from 'react'
 
 interface Props {
-    activity: ActivityModel
+    activity: ActivityModel,
 }
 
 export const Activity: FC<Props> = ({ activity }) => {
@@ -19,7 +20,8 @@ export const Activity: FC<Props> = ({ activity }) => {
         }
     }, [student])
 
-    const [submission, setSubmission] = useState<SubmissionModel>();
+    const [submission, setSubmission] = useState<SubmissionModel>()
+    const [resources, setResources] = useState<SubmissionResourceModel[]>()
 
 
     const router = useRouter()
@@ -29,15 +31,16 @@ export const Activity: FC<Props> = ({ activity }) => {
     }
 
     const getDataSubmission = async () => {
-        const { data } = await enagApi.get<SubmissionModel>(`/submissions/student_id=${student?.id}&activity_id=${activity.id}`)
-        console.log(data);
-        setSubmission(data)
+        const { data:sub } = await enagApi.get<SubmissionModel>(`/submissions/student_id=${student?.id}&activity_id=${activity.id}`)
+        const { data:reso } = await enagApi.get<SubmissionResourceModel[]>(`/submissions/resources/submission_id=${sub.id}`)
+        setSubmission(sub)
+        setResources(reso)
     }
 
     return (
         <Container className='container bg-primary'>
             <Typography variant='h3' >
-                Nombre de la actividad {activity.title}
+                {activity.title}
             </Typography>
             <Typography variant='h3' >
                 Estado de la actividad
@@ -52,19 +55,25 @@ export const Activity: FC<Props> = ({ activity }) => {
                             <TableCell width={300} >
                                 Estado de la entrega
                             </TableCell>
-                            <TableCell className='text-start' > Enviado para calificar </TableCell>
+                            <TableCell className='text-start' > {submission?.state_sub} </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell width={300} >
                                 Estado de la calificación
                             </TableCell>
-                            <TableCell className='text-start' > {submission?.grade}</TableCell>
+                            <TableCell className='text-start' > {submission?.state_gra}</TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell width={300} >
-                                Estado de la entrega
+                                Archivos enviados
                             </TableCell>
-                            <TableCell className='text-start' > Sin entregar </TableCell>
+                            <TableCell className='text-start' > 
+                                {
+                                    (resources?.length==0) ? 
+                                    (<span> No hay archivos </span>)
+                                    :(resources?.map((resource)=>( <li key={resource.id} > {resource.title} </li> )))
+                                }
+                            </TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell width={300} >
