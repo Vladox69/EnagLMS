@@ -7,21 +7,30 @@ type Data =
     | TeacherModel
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const {id}=req.query
     switch (req.method) {
         case 'GET':
-            return getTeacher(req, res);
+            if(id?.includes('teacher_id=')){
+                return getTeacherById(req, res);
+            }    
+
         default:
             break;
     }
     res.status(200).json({ message: 'Example' })
 }
 
-const getTeacher = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+
+const getTeacherById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
+        console.log('Aca esta el query');
+        
+        console.log(req.query);
+        const teacher_id= id?.toString().substring('teacher_id='.length)
         const teacher = await prisma.teacher.findFirst({
             where: {
-                id: Number(id)
+                id: Number(teacher_id)
             }
         })
         if (!teacher) {

@@ -25,7 +25,7 @@ export const TeacherProvider: FC<Props> = ({ children }) => {
 
     const getDataTeacher = async () => {
         // Vamos a obtener quien es el profesor y todos sus módulos 
-        const { data:teacher } = await enagApi.get<TeacherModel>(`/teachers/${1}`);
+        const { data:teacher } = await enagApi.get<TeacherModel>(`/teachers/teacher_id=${1}`);
         const {data:modules}=await enagApi.get<ModuleModel[]>(`/modules/teacher_id=${teacher.id}`);
         dispatch({ type: '[Teacher] Get-Data', payload: { modules, teacher} })
     }

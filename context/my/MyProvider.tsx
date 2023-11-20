@@ -37,7 +37,7 @@ export const MyProvider: FC<Props> = ({ children }) => {
         //     username: 'student'
         // }
 
-        const { data: user } = await enagApi.get<UserModel>(`/users/${1}`);
+        const { data: user } = await enagApi.get<UserModel>(`/users/user_id=${1}`);
         
         const {data:student}=await enagApi.get<StudentModel>(`/students/student_id=${1}`);
         

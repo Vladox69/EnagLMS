@@ -1,40 +1,45 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Layout } from '@/components/layouts';
-import { Container, Typography, Divider, Dialog, DialogTitle, IconButton, DialogContent, DialogActions, Button } from '@mui/material';
+import { Container, Typography, Divider} from '@mui/material';
 import { GridSection } from '../../../../components/my/section/';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { enagApi } from '@/apis';
-import { SectionModel } from '@/models';
+import { ModuleModel, ModuleResourceModel, SectionModel, TeacherModel } from '@/models';
 import { useContext, useState } from 'react';
 import { MyContext } from '@/context/my';
 import ViewListIcon from '@mui/icons-material/ViewList';
-import CloseIcon from '@mui/icons-material/Close';
 import '@react-pdf-viewer/core/lib/styles/index.css';
-import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { CustomDialog } from '../../../../components/my/CustomDialog';
 
 interface Props {
     module: string;
-    sections: SectionModel[]
+    sections: SectionModel[];
+    teacher:TeacherModel;
+    resources:ModuleResourceModel[]
 }
 
-export const MyModuleByName: NextPage<Props> = ({ module, sections }) => {
+export const MyModuleByName: NextPage<Props> = ({ module, sections,teacher,resources }) => {
     const router = useRouter();
 
     const { user } = useContext(MyContext)
-    const [open, setOpen] = useState(false)
+    const [openPlanificacion, setPlanificacion] = useState(false)
+    const [openDocente, setDocente] = useState(false)
 
-    const handleOpen=()=>{
-        setOpen(true)
+    const handleOpenPlanificacion=()=>{
+        setPlanificacion(true)
     }
 
-    const handleClose=()=>{
-        setOpen(false)
+    const handleClosePlanificacion=()=>{
+        setPlanificacion(false)
     }
 
-    const goToResource = (id: number) => {
-        router.push(`/my/course/resource/${id}`);
+    const handleOpenDocente=()=>{
+        setDocente(true)
+    }
+
+    const handleCloseDocente=()=>{
+        setDocente(false)
     }
 
     const goToAsistance = () => {
@@ -48,16 +53,17 @@ export const MyModuleByName: NextPage<Props> = ({ module, sections }) => {
     return (
         <Layout title='My Module'>
             <Container className='container bg-primary'  >
-                <Container className='container bg-danger d-flex ' component='div'  onClick={handleOpen} >
+                <Container className='container bg-danger d-flex ' component='div'  onClick={handleOpenDocente} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
                     }} />
                     <Typography component='p' className=''> Hoja de vida del Docente </Typography>
                 </Container>
-                 <CustomDialog open={open} handleClose={handleClose}  />   
+                <CustomDialog open={openDocente} handleClose={handleCloseDocente} title='Hoja de vida del docente' url={teacher.cv_url} />   
+
                 <Divider />
-                <Container className='container bg-danger d-flex align-items-center' component='div' onClick={() => goToResource(2)} >
+                <Container className='container bg-danger d-flex align-items-center' component='div' onClick={handleOpenPlanificacion} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
@@ -65,6 +71,7 @@ export const MyModuleByName: NextPage<Props> = ({ module, sections }) => {
                     <Typography component='p' >Planificación académica de la materia </Typography>
 
                 </Container>
+                <CustomDialog open={openPlanificacion} handleClose={handleClosePlanificacion} title='Planificación de la materia' url='' />   
                 <Divider />
 
                 <Typography variant='h2' >
@@ -123,12 +130,17 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const { module } = params as { module: string };
-    const { data: sections } = await enagApi.get<SectionModel[]>(`/sections/module_id=${module}`);
+    const { data: sections } = await enagApi.get<SectionModel[]>(`/sections/module_id=${module}`)
+    const {data:md}= await enagApi.get<ModuleModel>(`/modules/module_id=${module}`)
+    const {data:resources}= await enagApi.get(`/modules/resources/module_id=${module}`)
+    const {data:teacher} = await enagApi.get<TeacherModel>(`/teachers/teacher_id=${md.teacher_id}`)
 
     return {
         props: {
             module,
-            sections
+            sections,
+            teacher,
+            resources
         }
     }
 

@@ -15,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                 return getModulesByIdCourse(req, res);
             } else if (id?.includes('module_id=')) {
                 return getModuleById(req, res)
-            } else {
+            } else if (id?.includes('teacher_id=')){
                 return getModulesByIdTeacher(req, res);
             }
         default:
@@ -49,7 +49,6 @@ const getModulesByIdTeacher = async (req: NextApiRequest, res: NextApiResponse<D
     try {
         const { id } = req.query;
         const teacher_id = id?.toString().substring("teacher_id=".length);
-        console.log(req.query);
         const modules = await prisma.module.findMany({
             where: {
                 teacher_id: Number(teacher_id)
