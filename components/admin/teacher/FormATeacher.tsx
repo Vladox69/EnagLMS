@@ -1,30 +1,109 @@
-import React, { useEffect, useState } from 'react'
-import { Container, TextField, Typography } from '@mui/material';
+import React, { ChangeEvent, useEffect, useState, FC } from 'react'
+import { Button, Container, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { enagApi } from '@/apis';
+import { TeacherModel, UserModel } from '@/models';
+import { newTeacher } from '@/utils/admin/teacher/newTeacher';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/router';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import { handleDownload } from '@/utils/file/handleDownload';
+import { CustomDialog } from '@/components/my/CustomDialog';
 
-export const FormATeacher = () => {
+
+interface Props {
+    teacher_id?: number;
+}
+
+export const FormATeacher: FC<Props> = ({ teacher_id }) => {
+
+    const router = useRouter()
 
     useEffect(() => {
         getData();
     }, [])
-    
+
 
     const [initialValues, setInitialValues] = useState({
         id: 0,
         ID_card_url: '',
+        id_card_file: null,
         cv_url: '',
+        cv_file: null,
         third_level_degree: '',
+        third_level_degree_file: null,
         user_id: 0,
         names: '',
         last_names: ''
     })
 
-    const [users, setUsers] = useState()
+    const [ID, setID] = useState(false)
+    const [CV, setCV] = useState(false)
+    const [TLD, setTLD] = useState(false)
 
-    const getData=async ()=>{
-        const {data}=await enagApi.get(`/users/user_rol=TEACHER`)
-        console.log(data);
+    const onIdCardInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target
+        if (target.files && target.files.length === 0) return
+        formik.setFieldValue('id_card_file', target.files?.[0])
+    }
+
+    const onCVInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target
+        if (target.files && target.files.length === 0) return
+        formik.setFieldValue('cv_file', target.files?.[0])
+    }
+
+    const onThridLevelInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target
+        if (target.files && target.files.length === 0) return
+        formik.setFieldValue('third_level_degree_file', target.files?.[0])
+    }
+
+    const [users, setUsers] = useState<UserModel[]>([])
+
+    const getData = async () => {
+        const { data: users } = await enagApi.get(`/users/user_rol=TEACHER`)
+        setUsers(users)
+        if (!!teacher_id) {
+            const { data: teacher } = await enagApi.get<TeacherModel>(`/teachers/teacher_id=${teacher_id}`)
+            setInitialValues({
+                id: teacher.id,
+                ID_card_url: teacher.ID_card_url,
+                id_card_file: null,
+                cv_url: teacher.cv_url,
+                cv_file: null,
+                third_level_degree: teacher.third_level_degree,
+                third_level_degree_file: null,
+                user_id: teacher.user_id,
+                names: teacher.names,
+                last_names: teacher.last_names
+            })
+        }
+    }
+
+
+
+    const renderResource = (title: string,
+        url: string,
+        state: boolean,
+        setState: React.Dispatch<React.SetStateAction<boolean>>,
+        ) => {
+
+        const handleOpen=()=>{
+            setState(!state)
+        }
+
+        const handleClose=()=>{
+            setState(!state)
+        }
+
+        return (
+            <li onClick={handleOpen} >
+                <PictureAsPdfIcon />
+                <span >{title}</span>
+                <CustomDialog open={state} handleClose={handleClose} title={title} url={url} />
+            </li>
+        )
     }
 
     const formik = useFormik({
@@ -38,11 +117,30 @@ export const FormATeacher = () => {
                 third_level_degree: values.third_level_degree,
                 user_id: values.user_id,
                 names: values.names,
-                last_names: values.last_names
+                last_names: values.last_names,
+                id_card_file: values.id_card_file,
+                cv_file: values.cv_file,
+                third_level_degree_file: values.third_level_degree_file,
             }
 
             let res: any;
-
+            res = await newTeacher(body);
+            console.log(res);
+            if (res.status == 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Los datos se guardaron',
+                }).then(() => {
+                    router.back()
+                })
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No se pudo guardar los datos',
+                }).then(() => {
+                    router.back()
+                })
+            }
             resetForm();
 
         }
@@ -50,7 +148,7 @@ export const FormATeacher = () => {
 
     return (
         <Container>
-            <form action="">
+            <form action="" onSubmit={formik.handleSubmit} >
                 <TextField
                     type='text'
                     variant='outlined'
@@ -81,36 +179,58 @@ export const FormATeacher = () => {
                     variant='outlined'
                     id="cv_url"
                     name="cv_url"
-                    value={formik.values.cv_url}
-                    onChange={formik.handleChange}
+                    // value={formik.values.cv_url}
+                    onChange={onIdCardInputChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.cv_url && Boolean(formik.errors.cv_url)}
                     helperText={formik.touched.cv_url && formik.errors.cv_url}
                 />
+                {(!!teacher_id) ? renderResource('Cédula.pdf', formik.values.cv_url, ID,setID) : <></>}
                 <Typography component='p' > Título de tercer grado </Typography>
                 <TextField
                     type='file'
                     variant='outlined'
                     id="third_level_degree"
                     name="third_level_degree"
-                    value={formik.values.third_level_degree}
-                    onChange={formik.handleChange}
+                    // value={formik.values.third_level_degree}
+                    onChange={onCVInputChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.third_level_degree && Boolean(formik.errors.third_level_degree)}
                     helperText={formik.touched.third_level_degree && formik.errors.third_level_degree}
                 />
+                {(!!teacher_id) ? renderResource('Hoja de vida.pdf', formik.values.cv_url,CV, setCV) : <></>}
                 <Typography component='p' > Hoja de vida </Typography>
                 <TextField
                     type='file'
                     variant='outlined'
                     id="cv_url"
                     name="cv_url"
-                    value={formik.values.cv_url}
-                    onChange={formik.handleChange}
+                    // value={formik.values.cv_url}
+                    onChange={onThridLevelInputChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.cv_url && Boolean(formik.errors.cv_url)}
                     helperText={formik.touched.cv_url && formik.errors.cv_url}
                 />
+                {(!!teacher_id) ? renderResource('Certificado de tercer nivel.pdf', formik.values.third_level_degree, TLD, setTLD) : <></>}
+                <TextField
+                    id="user_id"
+                    select
+                    name='user_id'
+                    label="Usuarios"
+                    variant='outlined'
+                    value={formik.values.user_id}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.user_id && Boolean(formik.errors.user_id)}
+                >
+                    <MenuItem value={0}>No seleccionado</MenuItem>
+                    {users.map((user) => (
+                        <MenuItem key={user.id} value={user.id}  >
+                            {user.username}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
             </form>
         </Container>
     )

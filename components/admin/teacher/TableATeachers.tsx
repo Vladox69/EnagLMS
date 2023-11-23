@@ -15,6 +15,12 @@ export const TableATeachers: FC<Props> = ({ teachers }) => {
   const goToNewTeacher=()=>{
     router.push(`/admin/teachers/new`)
   }
+  const goToEditTeacher=(id:number)=>{
+    router.push({
+      pathname:'/admin/teachers/edit',
+      query:{teacher_id:id}
+    })
+  }
 
   return (
     <>
@@ -34,7 +40,7 @@ export const TableATeachers: FC<Props> = ({ teachers }) => {
             >
               <TableCell >{teacher.names} {teacher.last_names}</TableCell>
               <TableCell>
-                <IconButton aria-label="delete" size="medium">
+                <IconButton aria-label="delete" size="medium" onClick={()=>goToEditTeacher(teacher.id)} >
                   <EditIcon fontSize="inherit" />
                 </IconButton>
                 <IconButton aria-label="delete" size="medium">

@@ -12,7 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     switch (req.method) {
         case 'GET':
             if (id?.includes('user_rol=')) {
-                return getUserByROL(req, res)
+                return getUserByRol(req, res)
             } else if (id?.includes('user_id=')) {
                 return getUserById(req, res);
             }
@@ -23,13 +23,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 }
 
 
-const getUserByROL = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const getUserByRol = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const rol = id?.toString().substring('user_rol='.length)
+        const rol:any = id?.toString().substring('user_rol='.length)
         const users = await prisma.user.findMany({
             where: {
-                rol: 'TEACHER'
+                rol: rol
             }
         })
         if (!users) {
@@ -37,7 +37,6 @@ const getUserByROL = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
         }
         return res.status(200).json(users)
     } catch (error) {
-        console.log(error);
         return res.status(400).json({ message: 'Error al obtener usuario' })
     }
 }
