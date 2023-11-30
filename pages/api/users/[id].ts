@@ -16,6 +16,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             } else if (id?.includes('user_id=')) {
                 return getUserById(req, res);
             }
+        case 'PUT':
+            if(id?.includes('user_id=')){
+                return updateUser(req, res)
+            }
         default:
             break;
     }
@@ -57,5 +61,28 @@ const getUserById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener usuario' })
+    }
+}
+
+const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    try {
+        const {id}=req.query
+        const user_id=id?.toString().substring('user_id='.length)
+        const {username,password,email,rol,photo_url}=req.body
+        const user=await prisma.user.update({
+            where:{
+                id:Number(user_id)
+            },
+            data:{
+                username,
+                password,
+                email,
+                rol,
+                photo_url
+            }
+        })
+        return res.status(200).json(user)
+    } catch (error) {
+        return res.status(400).json({message:'Error al actualizar el usuario'})
     }
 }

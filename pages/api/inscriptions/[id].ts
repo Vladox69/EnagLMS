@@ -5,18 +5,23 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 type Data =
     | { message: string }
     | InscriptionModel[]
+    | InscriptionModel
 
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query;
     switch (req.method) {
         case 'GET':
-            const { id } = req.query;
             if (id?.includes('course_id=')) {
                 return getIsncriptionByIdCourse(req, res);
-            }else if(id?.includes('student_id=')){ 
-                return getIsncriptionsByIdStudent(req,res)
-             }else {
+            } else if (id?.includes('student_id=')) {
+                return getIsncriptionsByIdStudent(req, res)
+            } else {
                 return getInscription(req, res);
+            }
+        case 'DELETE':
+            if (id?.includes('inscription_id=')) {
+                return deleteInscriptionById(req, res);
             }
         default:
             break;
@@ -82,5 +87,21 @@ const getIsncriptionsByIdStudent = async (req: NextApiRequest, res: NextApiRespo
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener inscripcion' })
+    }
+}
+
+const deleteInscriptionById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const inscription_id = id?.toString().substring('inscription_id='.length)
+        const inscription = await prisma.inscription.delete({
+            where: {
+                id: Number(inscription_id)
+            }
+        })
+        return res.status(200).json(inscription)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al eliminar' })
     }
 }

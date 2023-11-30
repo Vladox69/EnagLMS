@@ -8,13 +8,17 @@ type Data =
 
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query;
     switch (req.method) {
         case 'GET':
-            const { id } = req.query;
             if (id?.includes('student_id=')) {
                 return getStudentById(req, res);
-            }else{
-                return getStudentByIdUser(req,res);
+            } else {
+                return getStudentByIdUser(req, res);
+            }
+        case 'PUT':
+            if (id?.includes('student_id=')) {
+                return updateStudent(req, res);
             }
         default:
             break;
@@ -25,7 +29,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getStudentById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const student_id= id?.toString().substring('student_id='.length);
+        const student_id = id?.toString().substring('student_id='.length);
         const student = await prisma.student.findFirst({
             where: {
                 id: Number(student_id)
@@ -44,7 +48,7 @@ const getStudentById = async (req: NextApiRequest, res: NextApiResponse<Data>) =
 const getStudentByIdUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const user_id= id?.toString().substring('user_id='.length);
+        const user_id = id?.toString().substring('user_id='.length);
         const student = await prisma.student.findFirst({
             where: {
                 user_id: Number(user_id)
@@ -57,5 +61,32 @@ const getStudentByIdUser = async (req: NextApiRequest, res: NextApiResponse<Data
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener estudiante' })
+    }
+}
+
+const updateStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {ID_card_url,study_certificate_url,user_id,names,last_names } = req.body
+        const { id } = req.query
+        const student_id = id?.toString().substring("student_id=".length)
+        const student = await prisma.student.update({
+            where:{
+                id:Number(student_id)
+            },
+            data:{
+                ID_card_url,
+                study_certificate_url,
+                user_id,
+                names,
+                last_names
+            }
+        })
+        if(!student){
+            return res.status(200).json({message:'No existe ningún registo para actualizar'})
+        }
+        return res.status(200).json(student)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'No se puedo actualizar el estudiante' })
     }
 }

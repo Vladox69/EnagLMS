@@ -2,8 +2,16 @@ import React from 'react'
 import { Footer, Navbar } from '@/components/ui';
 import { Typography,Button } from '@mui/material';
 import { Container } from 'react-bootstrap';
+import { useRouter } from 'next/router';
 
 export default function Pasantias() {
+
+    const router= useRouter()
+    
+    const goToPostular=()=>{
+        router.push(`/pasantias/postular`)
+    }
+
     return (
         <>
             <Navbar />
@@ -21,7 +29,7 @@ export default function Pasantias() {
                      voluptatibus dolores dicta voluptates magnam pariatur, fugiat reprehenderit! 
                     Ipsum at eligendi commodi minus saepe nostrum culpa?
                 </p>
-                <Button variant='contained' className='text-uppercase'>
+                <Button variant='contained' className='text-uppercase' onClick={goToPostular} >
                     postular
                 </Button>
             </Container>

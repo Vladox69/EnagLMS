@@ -8,9 +8,9 @@ type Data =
     | ModuleModel
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    const { id } = req.query
     switch (req.method) {
         case 'GET':
-            const { id } = req.query
             if (id?.includes('course_id=')) {
                 return getModulesByIdCourse(req, res);
             } else if (id?.includes('module_id=')) {
@@ -18,6 +18,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             } else if (id?.includes('teacher_id=')){
                 return getModulesByIdTeacher(req, res);
             }
+        case 'PUT':
+            if(id?.includes('module_id=')){
+                return updateModule(req,res)
+            }    
+        case 'DELETE':
+            if(id?.includes('module_id=')){
+                return deleteModuleById(req,res)
+            }        
         default:
             break;
     }
@@ -80,5 +88,44 @@ const getModuleById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener los modulos' });
+    }
+}
+
+const updateModule = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+try {
+    const {id}=req.query;
+    const module_id=id?.toString().substring("module_id=".length)
+    const {title,content,course_id,teacher_id}=req.body
+    const module=await prisma.module.update({
+        where:{
+            id:Number(module_id)
+        },
+        data:{
+            title,
+            content,
+            course_id,
+            teacher_id
+        }
+    })
+    return res.status(200).json(module)
+} catch (error) {
+    console.log(error);
+    return res.status(400).json({message:'Error al actualizar modulo'})
+}
+}
+
+const deleteModuleById= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const module_id=id?.toString().substring("module_id=".length)
+        const module=await prisma.module.delete({
+            where:{
+                id:Number(module_id)
+            }
+        })
+        return res.status(200).json(module)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({message:'No se pudo eliminar el módulo'})
     }
 }

@@ -12,7 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         case 'GET':
             return getInscriptions(res)
         case 'POST':
-            return {}
+            return createInscription(req,res)
         case 'PUT':
             return {}
         default:
@@ -26,6 +26,22 @@ const getInscriptions=async(res:NextApiResponse<Data>)=>{
         return res.status(200).json(inscriptions)
     } catch (error) {
         console.log('Error al obtener las inscripciones',error);
-        res.status(400).json({message:'Error interno del servidor'})
+        return res.status(400).json({message:'Error interno del servidor'})
+    }
+}
+
+const createInscription=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    try {
+        const {student_id,course_id} = req.body
+        const inscription= await prisma.inscription.create({
+            data:{
+                student_id,
+                course_id
+            }
+        })
+        return res.status(200).json(inscription)
+    } catch (error) {
+        console.log('Error al crear la inscripción');
+        return res.status(400).json({message:'Error al crear inscripción'})
     }
 }

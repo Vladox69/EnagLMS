@@ -1,0 +1,54 @@
+import { prisma } from '@/apis';
+import { InternModel } from '@/models';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+type Data =
+    | { message: string }
+    | InternModel
+    | InternModel[]
+
+export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+    switch (req.method) {
+        case 'GET':
+            return getInterns(res);
+        case 'POST':
+            return createInternCV(req, res)
+        default:
+            break;
+    }
+    res.status(200).json({ message: 'Example' })
+}
+
+const getInterns = async (res: NextApiResponse<Data>) => {
+    try {
+        const interns_cv = await prisma.intern_cv.findMany()
+        if (!interns_cv) {
+            return res.status(200).json({ message: 'No hay hojas de vida'});
+        }
+        return res.status(200).json(interns_cv)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+const createInternCV = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { name, phone, email, cv_url } = req.body
+        const intern_cv = await prisma.intern_cv.create({
+            data: {
+                name,
+                phone,
+                email,
+                cv_url
+            }
+        })
+
+        return res.status(200).json(intern_cv)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'No se pudo crear la hoja de vida' })
+    }
+
+
+}
