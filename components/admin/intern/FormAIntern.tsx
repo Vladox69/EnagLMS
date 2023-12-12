@@ -1,14 +1,14 @@
 import { newIntern } from '@/utils/admin/intern/newIntern'
-import { Button, Container, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
 import React, { ChangeEvent, useState } from 'react'
 import Swal from 'sweetalert2'
 
 export const FormAIntern = () => {
-    
+
     const router = useRouter()
-    
+
     const [initialValues, setInitialValues] = useState({
         id: 0,
         name: '',
@@ -18,18 +18,18 @@ export const FormAIntern = () => {
         cv_file: null
     })
 
-    const onCVInputChange=(event: ChangeEvent<HTMLInputElement>)=>{
+    const onCVInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const target = event.target
         if (target.files && target.files.length === 0) return
         formik.setFieldValue('cv_file', target.files?.[0])
     }
 
 
-    const formik=useFormik({
-        initialValues:initialValues,
-        enableReinitialize:true,
-        onSubmit:async(values,{resetForm})=>{
-            const body={
+    const formik = useFormik({
+        initialValues: initialValues,
+        enableReinitialize: true,
+        onSubmit: async (values, { resetForm }) => {
+            const body = {
                 id: values.id,
                 name: values.name,
                 phone: values.phone,
@@ -37,7 +37,7 @@ export const FormAIntern = () => {
                 cv_url: values.cv_url,
                 cv_file: values.cv_file
             }
-            let res:any
+            let res: any
             res = await newIntern(body)
             if (res.status == 200) {
                 Swal.fire({
@@ -54,7 +54,7 @@ export const FormAIntern = () => {
                     router.replace('/pasantias')
                 })
             }
-            resetForm();      
+            resetForm();
 
         }
     })
@@ -62,7 +62,7 @@ export const FormAIntern = () => {
 
     return (
         <Container>
-            <form action="" onSubmit={formik.handleSubmit} >
+            <form action="" onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5' >
                 <TextField
                     type='text'
                     variant='outlined'
@@ -99,21 +99,22 @@ export const FormAIntern = () => {
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
                 />
-                <Typography component='p' > Hoja de vida </Typography>
+                <Typography component='p' className='text-start '> Hoja de vida </Typography>
                 <TextField
                     type='file'
+
                     variant='outlined'
                     id="cv_url"
                     name="cv_url"
                     inputProps={{
-                        accept: 'application/pdf' 
+                        accept: 'application/pdf'
                     }}
                     onChange={onCVInputChange}
                     onBlur={formik.handleBlur}
                     error={formik.touched.cv_url && Boolean(formik.errors.cv_url)}
                     helperText={formik.touched.cv_url && formik.errors.cv_url}
                 />
-                <Button color='primary' variant='contained' type='submit'> Postular </Button>
+                <Button color='error' variant='contained' className='w-25' type='submit'> Postular </Button>
             </form>
         </Container>
     )

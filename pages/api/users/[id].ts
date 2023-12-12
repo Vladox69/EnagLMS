@@ -20,6 +20,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             if(id?.includes('user_id=')){
                 return updateUser(req, res)
             }
+        case 'DELETE':
+            return deleteUser(req,res)
         default:
             break;
     }
@@ -84,5 +86,20 @@ const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
         return res.status(200).json(user)
     } catch (error) {
         return res.status(400).json({message:'Error al actualizar el usuario'})
+    }
+}
+
+const deleteUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    try {
+        const {id}=req.query
+        const user_id=id?.toString().substring('user_id='.length)
+        const user=await prisma.user.delete({
+            where:{
+                id:Number(user_id)
+            }
+        })
+        return res.status(200).json(user)
+    } catch (error) {
+        return res.status(400).json({message:'Error al eliminar'})
     }
 }

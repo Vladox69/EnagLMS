@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { CustomDialog } from '@/components/my/CustomDialog';
+import { updateTeacher } from '@/utils/admin/teacher/updateTeacher';
 
 
 interface Props {
@@ -20,7 +21,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
 
     useEffect(() => {
         getData();
-    }, [])
+    }, [teacher_id])
 
 
     const [initialValues, setInitialValues] = useState({
@@ -63,7 +64,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
     const getData = async () => {
         const { data } = await enagApi.get(`/users/user_rol=TEACHER`)
         setUsers(data)
-        if (!!teacher_id) {
+        if (teacher_id != undefined) {
             const { data: teacher } = await enagApi.get<TeacherModel>(`/teachers/teacher_id=${teacher_id}`)
             setInitialValues({
                 id: teacher.id,
@@ -86,13 +87,13 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
         url: string,
         state: boolean,
         setState: React.Dispatch<React.SetStateAction<boolean>>,
-        ) => {
+    ) => {
 
-        const handleOpen=()=>{
+        const handleOpen = () => {
             setState(!state)
         }
 
-        const handleClose=()=>{
+        const handleClose = () => {
             setState(!state)
         }
 
@@ -123,7 +124,11 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
             }
 
             let res: any;
-            res = await newTeacher(body);
+            if (teacher_id != undefined) {
+                res = await updateTeacher(body)
+            } else {
+                res = await newTeacher(body);
+            }
             if (res.status == 200) {
                 Swal.fire({
                     icon: 'success',
@@ -183,7 +188,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                     error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
                     helperText={formik.touched.ID_card_url && formik.errors.ID_card_url}
                 />
-                {(!!teacher_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID,setID) : <></>}
+                {(!!teacher_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID, setID) : <></>}
                 <Typography component='p' > Título de tercer grado </Typography>
                 <TextField
                     type='file'
@@ -196,7 +201,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                     error={formik.touched.third_level_degree && Boolean(formik.errors.third_level_degree)}
                     helperText={formik.touched.third_level_degree && formik.errors.third_level_degree}
                 />
-                {(!!teacher_id) ? renderResource('Hoja de vida.pdf', formik.values.cv_url,CV, setCV) : <></>}
+                {(!!teacher_id) ? renderResource('Hoja de vida.pdf', formik.values.cv_url, CV, setCV) : <></>}
                 <Typography component='p' > Hoja de vida </Typography>
                 <TextField
                     type='file'

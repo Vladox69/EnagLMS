@@ -10,7 +10,7 @@ interface Props{
 
 export const GridTModule:FC<Props> = ({modules}) => {
     return (
-        <Grid container spacing={2} >
+        <Grid container spacing={2} className='gap-2'>
             {modules.map((module)=>(
                 <ItemTModule key={module.id} module={module} />
             ))}

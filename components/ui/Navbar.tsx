@@ -1,8 +1,11 @@
 
-import { Container, Nav } from 'react-bootstrap'
+import {  Nav } from 'react-bootstrap'
 import NavbarReact from 'react-bootstrap/Navbar'
 
 import NextLink from 'next/link';
+import Image from 'next/image';
+import { Container } from '@mui/material';
+import { useRouter } from 'next/router';
 
 interface MenuItem {
   key: string;
@@ -21,13 +24,19 @@ const listaMenuItems: MenuItem[] = [
 
 export const Navbar = () => {
 
+  const router=useRouter()
+
+  const goToHome=()=>{
+    router.push('/')
+  }
+
   return (
     < >
       <NavbarReact  style={{
         backgroundColor:'black'
       }} >
-        <Container >
-          <NavbarReact.Brand href="#home" className='text-light' >ENAG</NavbarReact.Brand>
+        <Container className='d-flex justify-content-between align-items-center' >
+          <Image src='/assets/logosf.png' alt='enag-logo.png' width={100} height={100}  onClick={goToHome} />
           <Nav  >
             {
               listaMenuItems.map(menuItem => (

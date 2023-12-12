@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import { Navbar,Footer } from '../components/ui/';
-import { Box, Typography, Button } from '@mui/material';
-import { Container } from 'react-bootstrap'
+import { Box, Typography, Button, Container } from '@mui/material';
 
 // Iconos
 import RoomServiceOutlinedIcon from '@mui/icons-material/RoomServiceOutlined';
@@ -9,6 +8,7 @@ import RoomServiceOutlinedIcon from '@mui/icons-material/RoomServiceOutlined';
 //
 import Image from 'next/image';
 import bgImage from '@/assets/fondo.jpg';
+
 
 export default function Home() {
   return (
@@ -24,25 +24,26 @@ export default function Home() {
         <Navbar />
       </Box>
       {/** Primer sección */}
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
-        // backgroundImage:`url(${bgImage})`,
+      <div  className='d-flex flex-column justify-content-center align-items-center text-center p-0'
+      style={{
+        backgroundImage:"url('/assets/fondo.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         minHeight: '500px',
       }}>
-        <Typography variant='h2' >
+        <Typography variant='h2'color='white' >
           ENAG TU MEJOR OPCIÓN
         </Typography>
         <Container className='d-flex justify-content-center'>
-          <Typography variant='h6' width={500} >
+          <Typography variant='h6' width={500} color='white' fontWeight='bold' sx={{}} >
             Se parte de nuestros cursos en diferentes partes del Ecuador, en ENAG te convertiremos en un profesional en la gastronomía
           </Typography>
         </Container>
-        <Button variant='contained'> Mas Información </Button>
-      </Container>
+        <Button variant='contained' color='error'  > Mas Información </Button>
+      </div>
 
       {/** Segunda sección */}
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center '>
+      <Container  className='d-flex flex-column justify-content-center align-items-center text-center '>
         <Typography variant='h6' >BENEFICIOS ACADÉMICOS</Typography>
         <Typography component='p' >
           Nos dedicamos a brindar formación profesional en el campo culinario,
@@ -58,8 +59,8 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
@@ -70,8 +71,8 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
@@ -82,40 +83,39 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
             </Typography>
           </Container>
         </Container>
-
         <Button variant='contained' >Mas información</Button>
       </Container>
 
       {/**Tercer sección */}
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
-        // backgroundImage:`url(${bgImage})`,
+      <div className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+        backgroundImage:"url('/assets/fondo.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        minHeight: '500px',
+        minHeight: '250px',
       }}>
-        <Typography variant='h4' > PROGRAMA DE PASANTÍAS</Typography>
-        <Typography component='p' width={700} > ¡Descubre tu pasión culinaria y adquiere experiencia práctica en nuestra escuela de gastronomía! Únete a nuestro emocionante programa de pasantías,
+        <Typography variant='h4' color='white' > PROGRAMA DE PASANTÍAS</Typography>
+        <Typography component='p' color='white' fontWeight='bold' > ¡Descubre tu pasión culinaria y adquiere experiencia práctica en nuestra escuela de gastronomía! Únete a nuestro emocionante programa de pasantías,
           donde trabajarás junto a talentosos chefs en un entorno real de cocina. Prepárate para una exitosa carrera culinaria. </Typography>
-        <Button variant='contained' >Mas información</Button>
-      </Container>
+        <Button variant='contained' color='error' >Mas información</Button>
+      </div>
 
       {/** Cuarta sección */}
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+      <Container  className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
         // backgroundImage:`url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        minHeight: '500px',
+        minHeight: '250px',
       }}>
         <Typography variant='h4' >NUESTROS SERVICIOS</Typography>
-        <Typography component='p' width={800} >
+        <Typography component='p'  >
           Nos dedicamos a brindar formación profesional en el campo culinario,
           enfocándonos en capacitar a la comunidad de la Zona Centro del Ecuador para
           que puedan emprender su propio negocio gastronómico con éxito, adquiriendo las habilidades necesarias en el arte culinario.
@@ -129,8 +129,8 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
@@ -141,8 +141,8 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
@@ -153,8 +153,8 @@ export default function Home() {
               Título del servicio
             </Typography>
             <RoomServiceOutlinedIcon sx={{
-              width: 200,
-              height: 200
+              width: 150,
+              height: 150
             }} />
             <Typography component='p'>
               Descripción del servicio
@@ -165,7 +165,7 @@ export default function Home() {
       </Container>
       {/** Quinta sección */}
 
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+      <Container  className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
         // backgroundImage:`url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -187,7 +187,7 @@ export default function Home() {
       </Container>
 
       {/**Sexta sección */}
-      <Container fluid className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+      <Container  className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
         // backgroundImage:`url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',

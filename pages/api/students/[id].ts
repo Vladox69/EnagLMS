@@ -20,6 +20,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             if (id?.includes('student_id=')) {
                 return updateStudent(req, res);
             }
+        case 'DELETE':
+            if (id?.includes('student_id=')) {
+                return deleteStudent(req, res);
+            }
         default:
             break;
     }
@@ -88,5 +92,21 @@ const updateStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'No se puedo actualizar el estudiante' })
+    }
+}
+
+const deleteStudent= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query
+        const student_id = id?.toString().substring("student_id=".length)
+        const student = await prisma.student.delete({
+            where:{
+                id:Number(student_id)
+            }
+        })
+        return res.status(200).json(student)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'No se pudo eliminar el estudiante'})
     }
 }

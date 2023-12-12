@@ -18,7 +18,7 @@ export const ItemTModule: FC<Props> = ({ module }) => {
 
   return (
     <>
-      <Container className='bg-danger d-flex' component='div' onClick={onClickModule} >
+      <Container className=' d-flex border rounded' component='div' onClick={onClickModule} >
         <Image
           src={bgImage}
           width={100}
@@ -26,7 +26,7 @@ export const ItemTModule: FC<Props> = ({ module }) => {
           alt="Picture of the author"
         />
         <Container className='text-end'>
-          <Typography component='h6' >
+          <Typography component='h2' >
             {module.title}
           </Typography>
           <Typography component='h6' >

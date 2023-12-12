@@ -13,7 +13,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             if(id?.includes('teacher_id=')){
                 return getTeacherById(req, res);
             }    
-
+        case 'PUT':
+            if(id?.includes('teacher_id=')){
+                return updateTeacher(req, res);
+            }
+        case 'DELETE':
+            if(id?.includes('teacher_id=')){
+                return deleteTeacher(req, res);
+            }
         default:
             break;
     }
@@ -24,9 +31,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getTeacherById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        console.log('Aca esta el query');
-        
-        console.log(req.query);
         const teacher_id= id?.toString().substring('teacher_id='.length)
         const teacher = await prisma.teacher.findFirst({
             where: {
@@ -40,5 +44,46 @@ const getTeacherById = async (req: NextApiRequest, res: NextApiResponse<Data>) =
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+const updateTeacher=async (req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    try {
+        const { id } = req.query;
+        const teacher_id= id?.toString().substring('teacher_id='.length)
+        const {ID_card_url,cv_url,third_level_degree,user_id,names,last_names}=req.body
+        const teacher= await prisma.teacher.update({
+            where:{
+                id:Number(teacher_id)
+            },
+            data:{
+                ID_card_url,
+                cv_url,
+                third_level_degree,
+                user_id,
+                names,
+                last_names
+            }
+        }) 
+        return res.status(200).json(teacher)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'No se pudo actualizar el profesror'})
+    }
+}
+
+const deleteTeacher=async (req: NextApiRequest, res: NextApiResponse<Data>)=>{
+    try {
+        const { id } = req.query;
+        const teacher_id= id?.toString().substring('teacher_id='.length)
+        const teacher = await prisma.teacher.delete({
+            where:{
+                id:Number(teacher_id)
+            }
+        })       
+        return res.status(200).json(teacher)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({message:'No se pudo eliminar el profesor'})
     }
 }

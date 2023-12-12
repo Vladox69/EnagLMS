@@ -9,7 +9,7 @@ export default function Teacher() {
 
   return (
     <Layout>
-      <Container className='container bg-primary'>
+      <Container className='container'>
         <GridTModule modules={modules}/>
       </Container>
     </Layout>
