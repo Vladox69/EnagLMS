@@ -4,6 +4,8 @@ import Image from 'next/image';
 import bgImage from '@/assets/fondo.jpg';
 import { useRouter } from 'next/router';
 import { CourseModel } from '@/models';
+import styles from '@/styles/Custom.module.css'
+
 
 interface Props {
     course: CourseModel
@@ -19,7 +21,7 @@ export const ItemLineCourse: FC<Props> = ({ course }) => {
 
     return (
         <>
-            <Container className='bg-danger d-flex' component='div' onClick={goToCourseById} >
+            <Container className={styles.hover_effect+' d-flex border rounded mb-2'} component='div' onClick={goToCourseById} >
                 <Image
                     src={bgImage}
                     width={100}
@@ -31,7 +33,7 @@ export const ItemLineCourse: FC<Props> = ({ course }) => {
                         {course.topic}
                     </Typography>
                     <Typography component='h6' >
-                        {course.start_at.toLocaleString()}-{course.end_at.toLocaleString()}
+                        {course.start_at.toString().substring(0,course.start_at.toString().indexOf('T'))} - {course.end_at.toString().substring(0,course.end_at.toString().indexOf('T'))}
                     </Typography>
                 </Container>
             </Container>

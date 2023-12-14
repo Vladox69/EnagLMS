@@ -7,6 +7,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import { deleteActivity } from '@/utils/activity/deleteActivity';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
   activity: ActivityModel,
@@ -57,15 +58,15 @@ export const ItemTActivity: FC<Props> = ({ activity, onDeleteActivity }) => {
   }
 
   return (
-    <Container className='container bg-danger d-flex justify-content-between p-0'>
-      <div className='d-flex align-items-center'>
+    <Container className={styles.hover_effect + ' container d-flex justify-content-between p-0 border rounded '}>
+      <div className='d-flex align-items-center '>
         <ArticleIcon sx={{
           width: 50,
           height: 50
         }} />
         <Typography component='p' onClick={goToActivity} > {activity.title} </Typography>
       </div>
-      <div>
+      <div className='d-flex align-items-center'>
         <IconButton onClick={() => goToEditActivity(activity.id)} >
           <SettingsIcon />
         </IconButton>

@@ -25,13 +25,11 @@ export const GridSectionResource: FC<Props> = ({ section }) => {
 
     return (
         <>
-            <Container>
-                {
-                    sectionResources.map((section_resource)=>(
-                       <ItemSectionResource section_resource={section_resource} />
-                    ))
-                }
-            </Container>
+            {
+                sectionResources.map((section_resource) => (
+                    <ItemSectionResource section_resource={section_resource} />
+                ))
+            }
         </>
     )
 }

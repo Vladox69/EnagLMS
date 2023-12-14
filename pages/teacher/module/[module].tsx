@@ -7,6 +7,7 @@ import { SectionModel } from '@/models';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { GridTSection } from '../../../components/teacher/Sections/GridTSection';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     sections: SectionModel[]
@@ -32,8 +33,8 @@ export const TeacherModuleById: NextPage<Props> = ({ sections }) => {
 
     return (
         <Layout title='My teacher module'>
-            <Container className='container bg-primary'>
-                <Container className='container bg-danger d-flex ' component='div'  >
+            <Container className='container '>
+                <Container className={ styles.hover_effect +' container border rounded d-flex mb-2 align-items-center'} component='div'  >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
@@ -41,8 +42,7 @@ export const TeacherModuleById: NextPage<Props> = ({ sections }) => {
                     <Typography component='p' className=''> Hoja de vida del Docente </Typography>
 
                 </Container>
-                <Divider />
-                <Container className='container bg-danger d-flex' component='div'  >
+                <Container className={ styles.hover_effect +' container border rounded d-flex mb-2 align-items-center'} component='div'  >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
@@ -50,25 +50,24 @@ export const TeacherModuleById: NextPage<Props> = ({ sections }) => {
                     <Typography component='p' >Planificación académica de la materia </Typography>
 
                 </Container>
-                <Divider />
 
                 <Typography variant='h2' >
                     Asistencia
                 </Typography>
 
-                <Container className='container bg-danger d-flex' component='div' onClick={goToAsistance} >
+                <Container className={ styles.hover_effect +' container border rounded d-flex mb-2 align-items-center'} component='div' onClick={goToAsistance} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
                     }} />
-                    <Typography component='p' >Planificación académica de la materia </Typography>
+                    <Typography component='p' >Asistencia</Typography>
 
                 </Container>
 
                 <Typography variant='h2' >
                     Nombre del módulo
                 </Typography>
-                <Button variant='contained' onClick={goToNewSection} >
+                <Button variant='contained' color='error' className='mb-2' onClick={goToNewSection} >
                     Crear nueva sección
                 </Button>
                 <GridTSection sections={sections} />

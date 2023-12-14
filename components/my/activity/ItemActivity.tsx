@@ -3,6 +3,7 @@ import React, { FC } from 'react'
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { ActivityModel } from '@/models';
+import styles from '@/styles/Custom.module.css'
 
 interface Props{
     activity:ActivityModel;
@@ -17,7 +18,7 @@ export const ItemActivity:FC<Props> = ({activity}) => {
     }
 
     return (
-        <Container className='container bg-danger d-flex align-items-center' component='div' onClick={goToActivityById} >
+        <Container className={styles.hover_effect+' container d-flex align-items-center mb-2 border rounded'} component='div' onClick={goToActivityById} >
             <ArticleIcon sx={{
                 width: 50,
                 height: 50

@@ -49,7 +49,7 @@ export const TableAsistance: FC<Props> = (props) => {
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} className='border rounded'>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>

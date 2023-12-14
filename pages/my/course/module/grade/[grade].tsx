@@ -3,58 +3,35 @@ import { Layout } from '@/components/layouts'
 import { MyContext } from '@/context/my'
 import { GradesI } from '@/interface'
 import { ActivityModel, SectionModel, SubmissionModel } from '@/models';
-import { Container } from '@mui/material'
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
-import React, { useContext, useState } from 'react'
-import { TableGrades } from '../../../../../components/my/grade/TableGrades';
+import React, { useContext, useEffect, useState } from 'react'
+import { TableGrades } from '@/components/my/grade/TableGrades';
+import { useRouter } from 'next/router';
 
 interface Props {
     grades: GradesI
 }
 
-export const MyGradeById: NextPage<Props> = ({ grades: g }) => {
+export const MyGradeById: NextPage<Props> = ({ }) => {
 
-    const [grades, setGrades] = useState<GradesI>(g)
+    const [grades, setGrades] = useState<GradesI>()
     const { user } = useContext(MyContext)
-    console.log(grades);
 
-    return (
-        <Layout>
-            <Container className='container bg-primary' >
-                <TableGrades  grades={grades} />
-            </Container>
-        </Layout>
-    )
-}
+    const router = useRouter()
 
+    useEffect(() => {
+        if (router.isReady) {
+            getData()
+        }
+    }, [router.isReady])
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-
-    const data: any[] = [
-
-    ]
-
-    return {
-        paths: data.map(m => ({
-            params: {
-                grade: m.grade
-            }
-        })),
-        fallback: 'blocking'
-    }
-}
-
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const { grade } = params as { grade: string };
-
-    const regex = /^student_id=([0-9]+)&module_id=([0-9]+)$/;
-    const isValid = regex.test(grade);
-
-    if (isValid) {
-        const qp = grade.split('&')
-        const student_id = qp[0].substring(`student_id=`.length)
-        const module_id = qp[1].substring(`module_id=`.length)
+    const getData = async () => {
+        const { grade } = router.query
+        const qp = (grade ?? '').toString().split('&')
+        const [q1, q2] = qp
+        const student_id = q1.substring(`student_id=`.length)
+        const module_id = q2.substring(`module_id=`.length)
 
         const { data: sect } = await enagApi.get<SectionModel[]>(`/sections/module_id=${module_id}`)
         const activitiesPromises = sect.map(async (section) => {
@@ -72,15 +49,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
         const submissions = await Promise.all(submissionsPromises)
 
-
-
         const sections = sect.map((section) => {
             const activities_no_sub = acts.filter((activity) => activity.section_id == section.id)
-            let total=0
+            let total = 0
 
             const activities = activities_no_sub.map((act) => {
                 const submission = submissions.find((s) => s.activity_id == act.id)
-                total= total + submission?.grade!;    
+                total = total + submission?.grade!;
                 return {
                     ...act,
                     submission
@@ -91,34 +66,39 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
                 ...section,
                 activities
             }
-            total=total/activities.length;
+            total = total / activities.length;
             return {
                 ...sections,
                 total
             }
         })
-        const grades = {
-            id:0,
+        const gr: any = {
+            id: 0,
             sections
         }
-
-        return {
-            props: {
-                grades,
-            }
-        }
-    } else {
-        return {
-            redirect: {
-                destination: `/my`,
-                permanent: false
-            }
-        }
+        setGrades(gr)
     }
 
-    // console.log(grades);
-
-
+    return (
+        <Layout>
+            <Container >
+                {
+                    (grades == undefined) ? (
+                        <Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            minHeight="80vh" // Ajusta esta altura según tus necesidades
+                        >
+                            <CircularProgress size={100} color='error' />
+                        </Box>
+                    ) :
+                        (<TableGrades grades={grades} />)
+                }
+            </Container>
+        </Layout>
+    )
 }
+
 
 export default MyGradeById;

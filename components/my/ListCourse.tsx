@@ -14,7 +14,7 @@ export const ListCourse = () => {
 
   
     return (
-    <Container className='container bg-primary' >
+    <Container className='container'>
         {courses.map((course)=>(
           <ItemLineCourse course={course} key={course.id} />
         ))}

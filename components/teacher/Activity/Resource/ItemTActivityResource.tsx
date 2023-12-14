@@ -7,6 +7,7 @@ import { ActivityResourceModel } from '@/models';
 import { handleDownload } from '@/utils/file/handleDownload';
 import Swal from 'sweetalert2';
 import { deleteActivityResource } from '@/utils/activity/resource/deleteActivityResource';
+import styles from '@/styles/Custom.module.css';
 
 interface Props{
     activity_resource:ActivityResourceModel,
@@ -43,7 +44,7 @@ export const ItemTActivityResource:FC<Props> = ({activity_resource,onDeleteResou
     }
 
   return (
-    <Container className='container bg-danger d-flex justify-content-between p-0' >
+    <Container className={styles.hover_effect +' container  d-flex justify-content-between p-0 border rounded'} >
             <div className='d-flex align-items-center'>
                 <ArticleIcon sx={{
                     width: 50,
@@ -51,10 +52,7 @@ export const ItemTActivityResource:FC<Props> = ({activity_resource,onDeleteResou
                 }} />
                 <Typography component='p' onClick={()=>handleDownload(activity_resource.url_resource,activity_resource.title)} > {activity_resource.title} </Typography>
             </div>
-            <div>
-                <IconButton >
-                    <SettingsIcon />
-                </IconButton>
+            <div className='d-flex align-items-center'>
                 <IconButton onClick={handleDelete}>
                     <DeleteIcon />
                 </IconButton>

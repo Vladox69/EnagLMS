@@ -1,6 +1,6 @@
 import { ErrorMessage, Field, Form, Formik, useFormik } from 'formik'
 import React, { FC, useEffect } from 'react'
-import { Button, TextField, Container } from '@mui/material';
+import { Button, TextField, Container, Typography } from '@mui/material';
 import { newAsistance } from '@/utils/asistance/newAsistance';
 import { useRouter } from 'next/router';
 import Swal from 'sweetalert2'
@@ -8,6 +8,7 @@ import { enagApi } from '@/apis';
 import { useState } from 'react';
 import { AsistanceModel } from '@/models';
 import { updateAsistance } from '@/utils/asistance/updateAsistance';
+import styles from '@/styles/Custom.module.css';
 
 interface Props {
   module_id?: number;
@@ -19,13 +20,13 @@ export const FormRegisterAsistance: FC<Props> = ({ module_id, asistance_id }) =>
   const router = useRouter();
   const [initialValues, setInitialValues] = useState({
     id:0,
-    date: '',
+    date: '00:00:00T00:00:00.000Z',
     description: '',
     module_id:0
   })
 
   useEffect(() => {
-    if (!!asistance_id) {
+    if (asistance_id!=undefined) {
       getDataRegister();
     }
   }, [asistance_id])
@@ -80,13 +81,18 @@ export const FormRegisterAsistance: FC<Props> = ({ module_id, asistance_id }) =>
 
   });
 
+  const goBack=()=>{
+    router.back()
+  }
+
   return (
     <Container>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5'>
+        <Typography variant='h4' >Formulario para { (asistance_id!=undefined)? ' edición ':' creación '} de asistencia </Typography>
         <TextField
           type='date'
           variant='outlined'
-          label='Fecha'
+          label='Fecha de asistencia'
           id="date"
           name="date"
           value={formik.values.date}
@@ -106,9 +112,15 @@ export const FormRegisterAsistance: FC<Props> = ({ module_id, asistance_id }) =>
           error={formik.touched.description && Boolean(formik.errors.description)}
           helperText={formik.touched.description && formik.errors.description}
         />
-        <Button color="primary" variant="contained" type="submit">
+        <div>
+        <Button color="error" variant="contained" type="submit" className='me-2'>
           Guardar
         </Button>
+        <Button  variant="contained"  className={styles.black_button} onClick={goBack}>
+          Cancelar
+        </Button>
+        </div>
+        
       </form>
     </Container>
   )

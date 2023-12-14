@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react'
-import { Container, TextField, Button } from '@mui/material';
+import { Container, TextField, Button, Typography } from '@mui/material';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
 import { useFormik } from 'formik';
@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import { updateActivity } from '@/utils/activity/updateActivity';
 import { newActivity } from '@/utils/activity/newActivity';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     section_id?: number;
@@ -17,7 +18,7 @@ interface Props {
 
 export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
 
-    const router =useRouter()
+    const router = useRouter()
 
     const [content, setContent] = useState('')
 
@@ -25,7 +26,7 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
         id: 0,
         title: '',
         content: '',
-        time_due: '',
+        time_due: '00-00-0000T00:00:00.000z',
         section_id: 0
     })
 
@@ -50,6 +51,10 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
 
     }
 
+    const goBack = () => {
+        router.back()
+    }
+
     const formik = useFormik({
         initialValues: initialValues,
         enableReinitialize: true,
@@ -63,19 +68,19 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
             }
 
             let res: any;
-            if(!!activity_id){
+            if (activity_id != undefined) {
                 res = await updateActivity(body);
-            }else{
+            } else {
                 res = await newActivity(body);
             }
-            if(res.status==200){
+            if (res.status == 200) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Los datos se guardaron',
                 }).then(() => {
                     router.back()
                 })
-            }else{
+            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'No se pudo guardar los datos',
@@ -92,7 +97,8 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
 
     return (
         <Container>
-            <form  onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3'>
+                <Typography variant='h5' className='' >Formulario de {(activity_id != undefined) ? ' edición ' : ' creación '} de actividad </Typography>
                 <TextField
                     type='text'
                     variant='outlined'
@@ -105,11 +111,11 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
                     error={formik.touched.title && Boolean(formik.errors.title)}
                     helperText={formik.touched.title && formik.errors.title}
                 />
-                
+
                 <TextField
                     type='date'
                     variant='outlined'
-                    label='Fecha'
+                    label='Fecha límite de entrega'
                     id="time_due"
                     name="time_due"
                     value={formik.values.time_due}
@@ -118,14 +124,20 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
                     error={formik.touched.time_due && Boolean(formik.errors.time_due)}
                     helperText={formik.touched.time_due && formik.errors.time_due}
                 />
-              
-                <ReactQuill 
-                    theme="snow"
-                    id="content"
-                    value={content}
-                    onChange={setContent}
-                />
-                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
+                <div>
+                    <Typography className='fw-bold' >Contenido de la actividad </Typography>
+                    <ReactQuill
+                        theme="snow"
+                        id="content"
+                        value={content}
+                        onChange={setContent}
+                    />
+                </div>
+
+                <div>
+                    <Button color='error' variant='contained' type='submit'> Guardar </Button>
+                    <Button className={styles.black_button + ' ms-2'} variant='contained' onClick={goBack} > Cancelar </Button>
+                </div>
             </form>
         </Container>
     )

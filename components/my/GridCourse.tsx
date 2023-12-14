@@ -9,10 +9,8 @@ interface Props{
 
 export const GridCourse:FC<Props> = ({modules}) => {
 
-    const items:any[]=[{course:'sss'},{course:'ddd'},{course:'aaa'},{course:'bbb'}]
-
   return (
-    <Grid container spacing={2} >
+    <Grid container spacing={2}  >
         {modules.map((module)=> (
             <ItemCourse  module={module} key={module.id} />
         ) )}

@@ -18,12 +18,19 @@ export const ItemTModule: FC<Props> = ({ module }) => {
 
   return (
     <>
-      <Container className=' d-flex border rounded' component='div' onClick={onClickModule} >
+      <Container className='d-flex border rounded' component='div' onClick={onClickModule} style={{ cursor: 'pointer' }} sx={{
+        '&:hover': {
+          backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        },
+      }} >
         <Image
           src={bgImage}
           width={100}
           height={100}
           alt="Picture of the author"
+          style={{
+            transition: 'transform 0.3s',
+          }}
         />
         <Container className='text-end'>
           <Typography component='h2' >

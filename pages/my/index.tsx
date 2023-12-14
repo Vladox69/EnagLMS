@@ -8,7 +8,7 @@ import { ListCourse } from '../../components/my/ListCourse';
 export default function My() {
 
     return (
-        <Layout title='Mi espacio personal' >
+        <Layout title='Mi espacio personal'>
             <Container className='container bg-primary' >
                 <Image
                     src="/profile.png"

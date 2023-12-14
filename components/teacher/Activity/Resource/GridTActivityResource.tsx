@@ -15,7 +15,7 @@ export const GridTActivityResource: FC<Props> = ({ resources: reso }) => {
     }
 
     return (
-        <Grid container>
+        <Grid container className='gap-2'>
             {
                 resources.map((resource) => (
                     <ItemTActivityResource

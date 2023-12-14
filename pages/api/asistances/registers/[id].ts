@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
     | { message: string }
-    | { message: string ,count:number}    
+    | { message: string, count: number }
     | AsistanceRegisterModel
     | AsistanceRegisterModel[]
 
@@ -12,16 +12,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
     const { id } = req.query;
     switch (req.method) {
         case 'GET':
-            if (id?.includes('asistance_id=')) {
+            if (id?.includes('asistance_id=') && id?.includes('student_id=')) {
+                return getAsistanceRegisterByIdAsistanceAndStudent(req, res)
+            } else if (id?.includes('asistance_id=')) {
                 return getAsistanceRegisterByIdAsistance(req, res);
             }
         case 'PUT':
             return updateAsistanceRegister(req, res);
         case 'DELETE':
-            if(id?.includes('asistance_id=')){
-                return deleteRegistersByIdAsistance(req,res)
-            }else if(id?.includes('register_id=')){
-                return deleteRegisterByI(req,res)
+            if (id?.includes('asistance_id=')) {
+                return deleteRegistersByIdAsistance(req, res)
+            } else if (id?.includes('register_id=')) {
+                return deleteRegisterByI(req, res)
             }
         default:
             break;
@@ -32,11 +34,34 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getAsistanceRegisterByIdAsistance = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const asistance_id=id?.toString().substring('asistance_id='.length);
+        const asistance_id = id?.toString().substring('asistance_id='.length);
 
         const asistance_registers = await prisma.asistance_register.findMany({
             where: {
-                asistance_id:Number(asistance_id)
+                asistance_id: Number(asistance_id)
+            }
+        })
+        if (!asistance_registers) {
+            return res.status(200).json({ message: 'No hay entrega con ese ID:' + id });
+        }
+        return res.status(200).json(asistance_registers)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+const getAsistanceRegisterByIdAsistanceAndStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const qp = (id ?? '').toString().split('&')
+        const [q1, q2] = qp
+        const asistance_id = q1.substring(q1.indexOf('=' )+ 1)
+        const student_id = q2.substring(q2.indexOf('=' )+ 1)
+        const asistance_registers = await prisma.asistance_register.findFirst({
+            where: {
+                asistance_id: Number(asistance_id),
+                student_id:Number(student_id)
             }
         })
         if (!asistance_registers) {
@@ -52,18 +77,18 @@ const getAsistanceRegisterByIdAsistance = async (req: NextApiRequest, res: NextA
 const updateAsistanceRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const {status}=req.body;
-        const register_id=id?.toString().substring('register_id='.length);
-        const asistance_register=await prisma.asistance_register.update({
-            where:{
-                id:Number(register_id)
+        const { status } = req.body;
+        const register_id = id?.toString().substring('register_id='.length);
+        const asistance_register = await prisma.asistance_register.update({
+            where: {
+                id: Number(register_id)
             },
-            data:{
+            data: {
                 status
             }
         })
-        if(!asistance_register){
-            return res.status(200).json({message:'No existe ningun registro para actualizar'})
+        if (!asistance_register) {
+            return res.status(200).json({ message: 'No existe ningun registro para actualizar' })
         }
         return res.status(200).json(asistance_register);
     } catch (error) {
@@ -73,37 +98,37 @@ const updateAsistanceRegister = async (req: NextApiRequest, res: NextApiResponse
 
 const deleteRegistersByIdAsistance = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const {id}=req.query
-        const asistance_id=id?.toString().substring('asistance_id='.length)
+        const { id } = req.query
+        const asistance_id = id?.toString().substring('asistance_id='.length)
 
-        const registers=await prisma.asistance_register.deleteMany({
-            where:{
-                asistance_id:Number(asistance_id)
+        const registers = await prisma.asistance_register.deleteMany({
+            where: {
+                asistance_id: Number(asistance_id)
             }
         })
 
-        if(registers.count==0){
-            return res.status(200).json({message:'No hay registros por eliminar'})
+        if (registers.count == 0) {
+            return res.status(200).json({ message: 'No hay registros por eliminar' })
         }
-        return res.status(200).json({message:'Registros eliminados',count:registers.count})
+        return res.status(200).json({ message: 'Registros eliminados', count: registers.count })
 
     } catch (error) {
-        return res.status(400).json({message:'Error al eliminar los registros'})
+        return res.status(400).json({ message: 'Error al eliminar los registros' })
     }
 }
 
 const deleteRegisterByI = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const {id}=req.query
-        const register_id=id?.toString().substring('register_id='.length)
+        const { id } = req.query
+        const register_id = id?.toString().substring('register_id='.length)
 
-        const register=await prisma.asistance_register.delete({
-            where:{
-                id:Number(register_id)
+        const register = await prisma.asistance_register.delete({
+            where: {
+                id: Number(register_id)
             }
         })
         return res.status(200).json(register)
     } catch (error) {
-        return res.status(400).json({message:'Error al eliminar los registros'})
+        return res.status(400).json({ message: 'Error al eliminar los registros' })
     }
 }

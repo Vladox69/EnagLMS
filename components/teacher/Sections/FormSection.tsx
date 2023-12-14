@@ -2,13 +2,14 @@ import { enagApi } from '@/apis';
 import { SectionModel } from '@/models';
 import { newSection } from '@/utils/section/newSection';
 import { updateSection } from '@/utils/section/updateSection';
-import { Container, Button, TextField } from '@mui/material';
+import { Container, Button, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Swal from 'sweetalert2';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     module_id?: number;
@@ -88,9 +89,20 @@ export const FormSection: FC<Props> = ({ module_id, section_id }) => {
         }
     })
 
+    const goBack=()=>{
+        router.back()
+    }
+
     return (
-        <Container>
-            <form action="" onSubmit={formik.handleSubmit} >
+        <Container >
+
+            <form action="" onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5' >
+                <Typography className='' variant='h4'>
+                    Formulario de {(section_id == null) ? 'creación ' : 'edición'} de sección
+                </Typography>
+                {/* <Typography className='' component='p'>
+                    
+                </Typography> */}
                 <TextField
                     type='title'
                     variant='outlined'
@@ -103,15 +115,26 @@ export const FormSection: FC<Props> = ({ module_id, section_id }) => {
                     error={formik.touched.title && Boolean(formik.errors.title)}
                     helperText={formik.touched.title && formik.errors.title}
                 />
-                <ReactQuill
-                    theme="snow"
-                    id="content"
-                    value={content}
-                    onChange={setContent}
-                />
-                <Button color='primary' variant='contained' type='submit'>
+                <div>
+                    <Typography className='m-0 ' component='p'>
+                        Contenido de la sección
+                    </Typography>
+                    <ReactQuill
+                        theme="snow"
+                        id="content"
+                        value={content}
+                        onChange={setContent}
+                    />
+                </div>
+                <div >
+                <Button className='w-25 text-end me-1' color='error' variant='contained' type='submit'>
                     Guardar
                 </Button>
+                <Button className={styles.black_button +' w-25 text-end'}  variant='contained' onClick={goBack} >
+                    Cancelar
+                </Button>
+
+                </div>
             </form>
         </Container>
     )

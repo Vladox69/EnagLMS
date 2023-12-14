@@ -16,7 +16,7 @@ export const GridTActivity:FC<Props> = ({activities:acts}) => {
   }
 
   return (
-    <Grid container>
+    <Grid container className='gap-2'>
         {
             activities.map((activity)=>(
                 <ItemTActivity 

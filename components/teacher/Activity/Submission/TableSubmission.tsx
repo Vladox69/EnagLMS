@@ -17,7 +17,7 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
     }
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} className='border'>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
@@ -52,7 +52,7 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
                                         )))
                                 }
                             </TableCell>
-                            <TableCell > <Button variant='contained' color='primary' onClick={() => goToQualify(submission.id_submission)} > Calificar </Button> </TableCell>
+                            <TableCell > <Button variant='contained' color='error' onClick={() => goToQualify(submission.id_submission)} > Calificar </Button> </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

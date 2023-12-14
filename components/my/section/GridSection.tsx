@@ -11,7 +11,7 @@ export const GridSection:FC<Props> = ({sections}) => {
 
 
   return (
-    <Container className='container bg-danger ' >
+    <Container className='container border m-0 p-0' >
         {
             sections.map((section)=>(
                 <ItemSection  key={section.id} section={section} />

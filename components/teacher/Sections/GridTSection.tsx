@@ -9,7 +9,7 @@ interface Props {
 
 export const GridTSection: FC<Props> = ({ sections }) => {
   return (
-    <Grid container>
+    <Grid container className='gap-2'>
         {
           sections.map((section)=>( 
             <ItemTSection key={section.id} section={section} />

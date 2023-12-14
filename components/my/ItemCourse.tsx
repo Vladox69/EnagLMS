@@ -18,23 +18,21 @@ export const ItemCourse: FC<Props> = ({ module }) => {
     }
 
     return (
-        <Grid item xs={6} md={3} >
+        <Grid item xs={6} md={3} sm={4} >
             <Card sx={{ maxWidth: 300, maxHeight: 300 }}>
                 <CardActionArea onClick={goToModuleById} >
                     <CardMedia
                         component="img"
-                        height="140"
                         image="/assets/fondo.jpg"
                         alt="green iguana"
                     />
-                    <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
+                    <CardContent sx={{backgroundColor:'gray'}}>
+                        <Typography gutterBottom variant="h5" color='white' component="div">
                             {module.title}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Lizards are a widespread group of squamate reptiles, with over 6,000
-                            species, ranging across all continents except Antarctica
-                        </Typography>
+                        <Typography component='p' color='white' dangerouslySetInnerHTML={{
+                            __html:module.content
+                        }} />
                     </CardContent>
                 </CardActionArea>
             </Card>

@@ -80,7 +80,7 @@ export const Layout:FC<Props>= ({title='OpenJira',children}) => {
     return (
         <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open}>
+        <AppBar position="fixed" open={open}  sx={{ backgroundColor: 'black' }}>
           <Toolbar>
             <IconButton
               color="inherit"
@@ -92,7 +92,7 @@ export const Layout:FC<Props>= ({title='OpenJira',children}) => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              Persistent drawer
+              ENAG
             </Typography>
           </Toolbar>
         </AppBar>

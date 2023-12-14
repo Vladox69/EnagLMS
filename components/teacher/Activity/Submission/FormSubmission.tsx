@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import Swal from 'sweetalert2';
 import { TextField, Button } from '@mui/material';
 import { updateSubmission } from '@/utils/submission/updateSubmission';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     submission: SubmissionModel
@@ -31,6 +32,9 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
         }
     }, [submission])
     
+    const goBack=()=>{
+        router.back()
+    }
 
     const getDataSubmission=async ()=>{
         if(!!submission){
@@ -90,7 +94,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
 
     return (
         <Container>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5'>
                 <TextField
                     type='number'
                     variant='outlined'
@@ -114,7 +118,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                     variant='outlined'
                     label='Comentarios'
                     multiline
-                    rows={5}
+                    rows={4}
                     id="comment"
                     name="comment"
                     value={formik.values.comment}
@@ -125,7 +129,10 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 />
 
                 {/* <ReactQuill theme='snow' id='content' value={content} onChange={setContent} /> */}
-                <Button color='primary' variant='contained' type='submit' >Guardar </Button>
+                <div>
+                <Button color='error' variant='contained' type='submit' className='w-25 me-2'>Guardar </Button>
+                <Button color='error' variant='contained' className={styles.black_button+' w-25'} onClick={goBack} >Cancelar </Button>
+                </div>
             </form>
         </Container>
     )

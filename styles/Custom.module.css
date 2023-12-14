@@ -1,0 +1,17 @@
+/* custom.css */
+.hover_effect:hover {
+    background-color: rgba(0, 0, 0, 0.1) !important; /* Slight dark overlay on hover */
+    cursor: pointer; /* Change cursor to pointer */
+  }
+  
+  .hover_effect:hover img {
+    transform: scale(1.05); /* Make the image slightly larger on hover */
+  }
+  
+  .black_button {
+    background-color: #000;
+  }
+  
+  .black_button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }

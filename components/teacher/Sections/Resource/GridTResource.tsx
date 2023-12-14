@@ -16,7 +16,7 @@ export const GridTResource: FC<Props> = ({ section_resources }) => {
     }
 
     return (
-        <Grid container>
+        <Grid container className='gap-2'>
             {
                 resources.map((section_resource) => (
                     <ItemTResource

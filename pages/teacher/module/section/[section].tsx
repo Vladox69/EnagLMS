@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layouts';
 import React, { useState } from 'react'
-import { Container, Typography, Button, Dialog, DialogTitle, DialogContent } from '@mui/material';
+import { Container, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ActivityModel, SectionModel, SectionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
@@ -57,29 +57,28 @@ export const TeacherSectionById: NextPage<Props> = ({ section, activities, resou
 
     return (
         <Layout title='Teacher section'>
-            <Container className='container bg-primary'>
-                <Container className='container bg-danger'>
-                    <Typography component='p' > Título de la sección </Typography>
-                    <Typography component='p' >{section.title} </Typography>
-                    <Typography component='p' > Contenido de la sección </Typography>
-                    <Container component='div' dangerouslySetInnerHTML={{
+            <Container className='container'>
+                <Container className='container '>
+                    <Typography variant='h3' > {section.title} </Typography>
+                    <Typography component='p' dangerouslySetInnerHTML={{
                         __html: section.content
                     }} />
 
-                    <Typography component='p' > Recursos </Typography>
+                    <Typography variant='h5' > Recursos </Typography>
                     {/* <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button> */}
                     <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
-                        <DialogTitle id="form-dialog-title">Nuevo recurso</DialogTitle>
+                        <DialogTitle id="form-dialog-title" className='text-center' >Formulario de nuevo recurso</DialogTitle>
                         <DialogContent>
-                            <FormTResource section_id={section.id}  onSubmitResource={handleFormSubmit} />
+                            <FormTResource section_id={section.id} onSubmitResource={handleFormSubmit} onCancel={handleClose}/>
                         </DialogContent>
                     </Dialog>
-                    <Button variant='contained' onClick={handleOpen} >Nuevo recurso</Button>
                     <GridTResource section_resources={resources} />
+                    <Button variant='contained' color='error' className='my-2' onClick={handleOpen} >Nuevo recurso</Button>
 
-                    <Typography component='p' > Actividades </Typography>
-                    <Button variant='contained' onClick={goToNewActivity} >Nueva actividad</Button>
+                    <Typography variant='h5' > Actividades </Typography>
                     <GridTActivity activities={activities} />
+                    <Button variant='contained' color='error' className='my-2' onClick={goToNewActivity} >Nueva actividad</Button>
+
                 </Container>
             </Container>
         </Layout>

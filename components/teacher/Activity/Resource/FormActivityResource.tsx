@@ -59,7 +59,7 @@ export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }
 
     return (
         <Container>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} >
                 <TextField
                     type='file'
                     variant='outlined'
