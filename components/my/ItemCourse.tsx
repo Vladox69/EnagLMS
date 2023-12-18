@@ -26,11 +26,11 @@ export const ItemCourse: FC<Props> = ({ module }) => {
                         image="/assets/fondo.jpg"
                         alt="green iguana"
                     />
-                    <CardContent sx={{backgroundColor:'gray'}}>
-                        <Typography gutterBottom variant="h5" color='white' component="div">
+                    <CardContent sx={{backgroundColor:'rgba(255,0,0,0.8)'}} >
+                        <Typography gutterBottom variant="h5" color='white' >
                             {module.title}
                         </Typography>
-                        <Typography component='p' color='white' dangerouslySetInnerHTML={{
+                        <Typography component='p'  dangerouslySetInnerHTML={{
                             __html:module.content
                         }} />
                     </CardContent>

@@ -15,8 +15,8 @@ export const MySubmissionById: NextPage<Props> = ({ submission,resources }) => {
 
     return (
         <Layout title='My submision' >
-            <Container className='container bg-primary' >
-                <Container className='container bg-danger'>
+            <Container className='container' >
+                <Container className='container'>
                     <Dropzone submission={submission} resources={resources} />
                 </Container>
             </Container>

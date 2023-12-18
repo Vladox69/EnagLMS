@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React, { useEffect, FC, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import Swal from 'sweetalert2';
 import { deleteStudent } from '@/utils/admin/student/deleteStudent';
 
@@ -62,9 +62,9 @@ export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
 
   return (
     <>
-      <Button variant='contained' onClick={goToNewStudent} >Nuevo estudiante</Button>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <Typography variant='h4'> Tabla de estudiantes </Typography>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" className='border rounded'>
           <TableHead>
             <TableRow>
               <TableCell>Nombres</TableCell>
@@ -90,6 +90,8 @@ export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button variant='contained' className='mt-2' color='error' onClick={goToNewStudent} >Nuevo estudiante</Button>
+
     </>
   )
 }

@@ -2,13 +2,15 @@ import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import ImageIcon from '@mui/icons-material/Image';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Button } from '@mui/material';
+import { Box, Button, IconButton, Typography } from '@mui/material';
 import { uploadFile } from '@/utils';
 import { SubmissionModel, SubmissionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
 import { handleDownload } from '@/utils/file/handleDownload';
 import { useRouter } from 'next/router';
 import { deleteSubmissionResource } from '@/utils/submission/resource/deleteSubmissionResource';
+import styles from '@/styles/Custom.module.css'
+import ClearIcon from '@mui/icons-material/Clear';
 
 interface Props {
   submission: SubmissionModel,
@@ -88,7 +90,9 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
       <li key={resource.id} >
         {icon}
         <span onClick={() => handleDownload(resource.url_resource, resource.title)}>{resource.title}</span>
-        <Button onClick={() => onRemoveResource(resource)} >Quitar</Button>
+        <IconButton  color='error' onClick={() => onRemoveResource(resource)} >
+        <ClearIcon />
+        </IconButton>
       </li>
     )
   }
@@ -123,7 +127,8 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
 
   return (
     <>
-      <form className='border border-secondary'>
+    <Typography variant='h4'> Agregar entrega  </Typography>
+      <form className='border rounded my-2'>
         <div {...getRootProps()} style={{
           height: 100
         }}>
@@ -137,16 +142,35 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
         <ul className=''>
           {files.map(renderFile)}
         </ul>
-        <ol>
-          {
-            resources.map(renderResources)
-          }
-        </ol>
+
       </form>
-      <Button variant='contained' onClick={onSave} >
+
+       {
+        (resources!=undefined)?
+        (
+          <div>
+          <Typography>Archivos </Typography>
+          <Box className='border rounded mb-2'>
+  
+            <ol>
+              {
+                resources.map(renderResources)
+              }
+            </ol>
+          </Box>
+        </div>
+        )
+        :
+        (
+          <></>
+        )
+       }   
+
+
+      <Button variant='contained' color='error' onClick={onSave} >
         Guardar Cambios
       </Button>
-      <Button variant='contained' color='error' onClick={onCancel} >
+      <Button variant='contained' className={styles.black_button + ' ms-2'} onClick={onCancel} >
         Cancelar
       </Button>
     </>

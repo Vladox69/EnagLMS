@@ -12,41 +12,40 @@ export default function Admin() {
 
     return (
         <Layout title='Mi espacio personal' >
-            <Container className='container bg-primary' >
+            <Container className='container' >
                 <Grid container spacing={2}>
                 <Grid item xs={3}>
-                        <Button sx={{ width: 150, height: 150 }} variant='contained' className='rounded-circle' >
+                        <Button sx={{ width: 150, height: 150 }} variant='contained'  color='error' className='rounded-circle' >
                             <Link href={'/admin/users'} className='' >
-                                <PersonIcon sx={{ width: 125, height: 125 }} />
+                                <PersonIcon sx={{ width: 125, height: 125 }} style={{color:'white'}} />
                             </Link>
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button sx={{ width: 150, height: 150 }} variant='contained' className='rounded-circle' >
+                        <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
                             <Link href={'/admin/teachers'} className='' >
-                                <Person4Icon sx={{ width: 125, height: 125 }} />
+                                <Person4Icon sx={{ width: 125, height: 125 }} style={{color:'white'}} />
                             </Link>
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button sx={{ width: 150, height: 150 }} variant='contained' className='rounded-circle' >
+                        <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
                             <Link href={'/admin/students'}>
-                                <Face6Icon sx={{ width: 125, height: 125 }} />
+                                <Face6Icon sx={{ width: 125, height: 125 }} style={{color:'white'}}/>
                             </Link>
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button sx={{ width: 150, height: 150 }} variant='contained' className='rounded-circle' >
+                        <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
                             <Link href={'/admin/courses'} >
-                            <ClassIcon sx={{ width: 125, height: 125 }} />
-
+                            <ClassIcon sx={{ width: 125, height: 125 }} style={{color:'white'}}/>
                             </Link>
                         </Button>
                     </Grid>
                     <Grid item xs={3}>
-                        <Button sx={{ width: 150, height: 150 }} variant='contained' className='rounded-circle' >
+                        <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
                             <Link href={'/admin/interns'} >
-                            <AssignmentIcon sx={{ width: 125, height: 125 }} />
+                            <AssignmentIcon sx={{ width: 125, height: 125 }} style={{color:'white'}} />
                             </Link>
                         </Button>
                     </Grid>

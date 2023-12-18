@@ -6,6 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { FormAModule } from './FormAModule';
 import Swal from 'sweetalert2';
 import { deleteModule } from '@/utils/admin/course/module/deleteModule';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
   module: ModuleModel,
@@ -65,16 +66,16 @@ export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule }
   }
 
   return (
-    <Box className='d-flex justify-content-between' >
-      <Typography component='p' > {module.title} </Typography>
+    <Box className={ styles.hover_effect+ ' d-flex justify-content-between border rounded py-1 mb-2' } >
+      <Typography component='p' className='ms-2'> {module.title} </Typography>
       <Box>
         <IconButton onClick={handleOpen} >
           <EditIcon />
         </IconButton>
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
-          <DialogTitle id="form-dialog-title">Nuevo recurso</DialogTitle>
+          <DialogTitle id="form-dialog-title">Datos del módulo</DialogTitle>
           <DialogContent>
-            <FormAModule module_id={module.id} onSubmitResource={handleFormSubmit} />
+            <FormAModule module_id={module.id} onSubmitResource={handleFormSubmit} onCancel={handleClose} />
           </DialogContent>
         </Dialog>
         <IconButton onClick={handleDelete} >

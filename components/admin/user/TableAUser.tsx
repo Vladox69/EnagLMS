@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import React, { FC, useState, useEffect } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import { deleteUser } from '@/utils/admin/user/deleteUser';
 import Swal from 'sweetalert2';
 
@@ -60,9 +60,9 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
 
     return (
         <>
-            <Button variant='contained' onClick={goToNewUser} > Nuevo usuario </Button>
+        <Typography variant='h4' className='mb-2' > Tabla de usuarios </Typography>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 650 }} aria-label="simple table" className='border rounded'>
                     <TableHead>
                         <TableRow>
                             <TableCell>Nombre de usuario</TableCell>
@@ -92,6 +92,7 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Button variant='contained' className='mt-2' color='error' onClick={goToNewUser} > Nuevo usuario </Button>
         </>
     )
 }

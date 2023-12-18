@@ -38,17 +38,14 @@ export const Activity: FC<Props> = ({ activity }) => {
     }
 
     return (
-        <Container className='container bg-primary'>
-            <Typography variant='h3' >
+        <Container className='container'>
+            <Typography variant='h4' >
                 {activity.title}
             </Typography>
-            <Typography variant='h3' >
-                Estado de la actividad
-            </Typography>
-            <Button variant='contained' onClick={goToSubmissionById} >
+            <Button variant='contained' color='error' className='my-3' onClick={goToSubmissionById} >
                 Agregar entrega
             </Button>
-            <TableContainer component={Paper}>
+            <TableContainer component={Paper}  className='border rounded'>
                 <Table aria-label="caption table">
                     <TableBody>
                         <TableRow>
@@ -79,7 +76,9 @@ export const Activity: FC<Props> = ({ activity }) => {
                             <TableCell width={300} >
                                 Observaciones
                             </TableCell>
-                            <TableCell className='text-start' > {submission?.comment} </TableCell>
+                            <TableCell className='text-start'  dangerouslySetInnerHTML={{
+                                __html:(submission?.comment)??'' 
+                            }} />
                         </TableRow>
                     </TableBody>
                 </Table>

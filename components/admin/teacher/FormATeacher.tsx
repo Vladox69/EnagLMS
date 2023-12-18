@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { CustomDialog } from '@/components/my/CustomDialog';
 import { updateTeacher } from '@/utils/admin/teacher/updateTeacher';
+import styles from '@/styles/Custom.module.css'
 
 
 interface Props {
@@ -23,6 +24,9 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
         getData();
     }, [teacher_id])
 
+    const goBack=()=>{
+        router.back()
+    }
 
     const [initialValues, setInitialValues] = useState({
         id: 0,
@@ -151,7 +155,10 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
 
     return (
         <Container>
-            <form action="" onSubmit={formik.handleSubmit} >
+            <form action="" onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5' >
+                <Typography className='' variant='h4'>
+                    Datos del profesor
+                </Typography>
                 <TextField
                     type='text'
                     variant='outlined'
@@ -176,45 +183,55 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                     error={formik.touched.last_names && Boolean(formik.errors.last_names)}
                     helperText={formik.touched.last_names && formik.errors.last_names}
                 />
-                <Typography component='p' > Cédula </Typography>
-                <TextField
-                    type='file'
-                    variant='outlined'
-                    id="ID_card_url"
-                    name="ID_card_url"
-                    // value={formik.values.cv_url}
-                    onChange={onIdCardInputChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
-                    helperText={formik.touched.ID_card_url && formik.errors.ID_card_url}
-                />
-                {(!!teacher_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID, setID) : <></>}
-                <Typography component='p' > Título de tercer grado </Typography>
-                <TextField
-                    type='file'
-                    variant='outlined'
-                    id="third_level_degree"
-                    name="third_level_degree"
-                    // value={formik.values.third_level_degree}
-                    onChange={onCVInputChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.third_level_degree && Boolean(formik.errors.third_level_degree)}
-                    helperText={formik.touched.third_level_degree && formik.errors.third_level_degree}
-                />
-                {(!!teacher_id) ? renderResource('Hoja de vida.pdf', formik.values.cv_url, CV, setCV) : <></>}
-                <Typography component='p' > Hoja de vida </Typography>
-                <TextField
-                    type='file'
-                    variant='outlined'
-                    id="cv_url"
-                    name="cv_url"
-                    // value={formik.values.cv_url}
-                    onChange={onThridLevelInputChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.cv_url && Boolean(formik.errors.cv_url)}
-                    helperText={formik.touched.cv_url && formik.errors.cv_url}
-                />
-                {(!!teacher_id) ? renderResource('Certificado de tercer nivel.pdf', formik.values.third_level_degree, TLD, setTLD) : <></>}
+
+                <div>
+                    <Typography component='p' > Cédula </Typography>
+                    <TextField
+                        type='file'
+                        variant='outlined'
+                        id="ID_card_url"
+                        name="ID_card_url"
+                        className='w-100'
+                        // value={formik.values.cv_url}
+                        onChange={onIdCardInputChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
+                        helperText={formik.touched.ID_card_url && formik.errors.ID_card_url}
+                    />
+                    {(!!teacher_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID, setID) : <></>}
+                </div>
+                <div>
+                    <Typography component='p' > Título de tercer grado </Typography>
+                    <TextField
+                        type='file'
+                        variant='outlined'
+                        id="third_level_degree"
+                        name="third_level_degree"
+                        // value={formik.values.third_level_degree}
+                        className='w-100'
+                        onChange={onCVInputChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.third_level_degree && Boolean(formik.errors.third_level_degree)}
+                        helperText={formik.touched.third_level_degree && formik.errors.third_level_degree}
+                    />
+                    {(!!teacher_id) ? renderResource('Hoja de vida.pdf', formik.values.cv_url, CV, setCV) : <></>}
+                </div>
+                <div >
+                    <Typography component='p' > Hoja de vida </Typography>
+                    <TextField
+                        type='file'
+                        variant='outlined'
+                        id="cv_url"
+                        name="cv_url"
+                        // value={formik.values.cv_url}
+                        className='w-100'
+                        onChange={onThridLevelInputChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.cv_url && Boolean(formik.errors.cv_url)}
+                        helperText={formik.touched.cv_url && formik.errors.cv_url}
+                    />
+                    {(!!teacher_id) ? renderResource('Certificado de tercer nivel.pdf', formik.values.third_level_degree, TLD, setTLD) : <></>}
+                </div>
                 <TextField
                     id="user_id"
                     select
@@ -233,7 +250,11 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                         </MenuItem>
                     ))}
                 </TextField>
-                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
+                <div>
+                    <Button color='error' className='me-2' variant='contained' type='submit'> Guardar </Button>
+                    <Button color='primary' variant='contained' className={ styles.black_button} onClick={goBack} >Cancelar </Button>
+                </div>
+
             </form>
         </Container>
     )

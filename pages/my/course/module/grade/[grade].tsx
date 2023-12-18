@@ -3,8 +3,8 @@ import { Layout } from '@/components/layouts'
 import { MyContext } from '@/context/my'
 import { GradesI } from '@/interface'
 import { ActivityModel, SectionModel, SubmissionModel } from '@/models';
-import { Box, CircularProgress, Container, Typography } from '@mui/material';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import { Box, CircularProgress, Container } from '@mui/material';
+import {NextPage } from 'next'
 import React, { useContext, useEffect, useState } from 'react'
 import { TableGrades } from '@/components/my/grade/TableGrades';
 import { useRouter } from 'next/router';

@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { enagApi } from '@/apis';
 import { UserModel } from '@/models';
 import { updateUser } from '@/utils/admin/user/updateUser';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     user_id?: number;
@@ -16,6 +17,10 @@ interface Props {
 
 export const FormAUser: FC<Props> = ({ user_id }) => {
     const router = useRouter()
+
+    const goBack=()=>{
+        router.back()
+    }
 
     useEffect(() => {
         if (user_id != undefined) {
@@ -118,8 +123,11 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     })
 
     return (
-        <Container>
-            <form action="" onSubmit={formik.handleSubmit}  >
+        <>
+            <form action="" onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5'  >
+                <Typography className='' variant='h4'>
+                    Formulario de {(user_id == null) ? 'creación ' : 'edición'} de usuarios
+                </Typography>
                 <TextField
                     type='text'
                     variant='outlined'
@@ -156,12 +164,15 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
+                <div >
+                    
                 <Typography component='p' > Foto de perfil </Typography>
                 <TextField
                     type='file'
                     variant='outlined'
                     id="photo_url"
                     name="photo_url"
+                    className='w-100'
                     inputProps={{
                         accept: 'application/pdf'
                     }}
@@ -170,6 +181,8 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                     error={formik.touched.photo_url && Boolean(formik.errors.photo_url)}
                     helperText={formik.touched.photo_url && formik.errors.photo_url}
                 />
+                </div>
+
                 {(!!user_id) ? renderResource('Foto de perfil.pdf', formik.values.photo_url, photo, setPhoto) : <></>}
                 <TextField
                     id="rol"
@@ -193,8 +206,11 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                         ESTUDIANTE
                     </MenuItem>
                 </TextField>
-                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
+                    <div>
+                    <Button color='error' variant='contained' type='submit'> Guardar </Button>
+                    <Button className={styles.black_button + ' ms-2'} variant='contained' onClick={goBack} > Cancelar </Button>
+                    </div>
             </form>
-        </Container>
+        </>
     )
 }

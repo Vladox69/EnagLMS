@@ -74,34 +74,36 @@ export const CourseAdminById = () => {
     return (
         <Layout>
             <Container className='container ' >
-                <Typography variant='h2' >
+                <Typography variant='h4' >
                     Bienvenidos a al {course?.topic}
                 </Typography>
                 <Typography component='p' dangerouslySetInnerHTML={{
                     __html: !!course ? course!.content : ''
                 }} />
-                <Typography variant='h2' >
+                <Typography variant='h4' >
                     Estudiantes inscritos
                 </Typography>
-                <Button variant='contained' onClick={handleOpenStudent} > Agregar estudiante </Button>
+                <hr />
                 <Dialog open={openStudent} onClose={handleCloseStudent} aria-labelledby="form-dialog-title" >
-                    <DialogTitle id="form-dialog-title">Nuevo estudiante</DialogTitle>
+                    <DialogTitle id="form-dialog-title">Inscribir estudiante</DialogTitle>
                     <DialogContent>
-                        <FormAInscription  students_ins={students}  course_id={Number(id)}  onSubmitResource={handleFormSubmitStudent} />
+                        <FormAInscription  students_ins={students}  course_id={Number(id)}  onSubmitResource={handleFormSubmitStudent} onCancel={handleCloseStudent} />
                     </DialogContent>
                 </Dialog>
                 <ListAStudent inscriptions={inscriptions}  />
-                <Typography variant='h2' >
+                <Button variant='contained' onClick={handleOpenStudent} color='error' className='mb-2' > Agregar estudiante </Button>
+                <Typography variant='h4' >
                     Módulos
                 </Typography>
-                <Button variant='contained' onClick={handleOpen} > Nuevo módulo </Button>
+                <hr />
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
-                    <DialogTitle id="form-dialog-title">Nuevo módulo</DialogTitle>
+                    <DialogTitle id="form-dialog-title">Datos del módulo</DialogTitle>
                     <DialogContent>
-                        <FormAModule  course_id={Number(id)}  onSubmitResource={handleFormSubmit} />
+                        <FormAModule  course_id={Number(id)}  onSubmitResource={handleFormSubmit}  onCancel={handleClose} />
                     </DialogContent>
                 </Dialog>
                 <ListAModule modules={modules} />
+                <Button variant='contained' color='error' onClick={handleOpen} > Nuevo módulo </Button>
             </Container>
         </Layout>
     )

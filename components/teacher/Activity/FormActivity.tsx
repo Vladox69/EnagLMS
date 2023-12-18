@@ -3,13 +3,14 @@ import { Container, TextField, Button, Typography } from '@mui/material';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
 import { useFormik } from 'formik';
-import ReactQuill from 'react-quill';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import { updateActivity } from '@/utils/activity/updateActivity';
 import { newActivity } from '@/utils/activity/newActivity';
 import styles from '@/styles/Custom.module.css'
+import dynamic from 'next/dynamic';
 
 interface Props {
     section_id?: number;

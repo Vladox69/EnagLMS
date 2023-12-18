@@ -1,31 +1,75 @@
 import { CourseModel } from '@/models'
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
-import React, { FC } from 'react'
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
+import React, { FC, useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useRouter } from 'next/router';
+import Swal from 'sweetalert2';
+import { deleteCourse } from '@/utils/admin/course/deleteCourse';
 
 interface Props {
     courses: CourseModel[]
 }
 
-export const TableACourse: FC<Props> = ({ courses }) => {
+export const TableACourse: FC<Props> = ({ courses:crs }) => {
     const router = useRouter()
+
+    const [courses, setCourses] = useState<CourseModel[]>([])
+
+    useEffect(() => {
+        setCourses(crs)
+    }, [crs])
+    
 
     const goToNewCourse = () => {
         router.push(`/admin/courses/new`)
+    }
+
+    const goToEditCourse=(id:number)=>{
+        router.push({
+            pathname: '/admin/courses/edit',
+            query: { course_id: id }
+        })
     }
 
     const goToCourse=(id:number)=>{
         router.push(`/admin/courses/${id}`)
     }
 
+    const handleDelete = async (course: any) => {
+        let res: any;
+        Swal.fire({
+          icon: 'question',
+          title: '¿Está seguro de eliminar?',
+          showConfirmButton: true,
+          showDenyButton: true,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            res = await deleteCourse(course);
+            if (res.status == 200) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Datos eliminados',
+              }).then(() => {
+                setCourses(courses => courses.filter(c => c.id !== course.id))
+              })
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'No se pudo eliminar los datos',
+              })
+            }
+          }
+        })
+      }
+
+
     return (
         <>
-            <Button variant='contained' onClick={goToNewCourse}> Nuevo curso  </Button>
+        <Typography variant='h4'> Tabla de cursos </Typography>
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 650 }} aria-label="simple table" className='border rounded'>
                     <TableHead>
                         <TableRow>
                             <TableCell>Título</TableCell>
@@ -46,10 +90,10 @@ export const TableACourse: FC<Props> = ({ courses }) => {
                                     <IconButton aria-label="delete" size="medium"  onClick={()=>goToCourse(course.id)} >
                                         <PlayArrowIcon fontSize="inherit" />
                                     </IconButton>
-                                    <IconButton aria-label="delete" size="medium"  >
+                                    <IconButton aria-label="delete" size="medium" onClick={()=>goToEditCourse(course.id)} >
                                         <EditIcon fontSize="inherit" />
                                     </IconButton>
-                                    <IconButton aria-label="delete" size="medium">
+                                    <IconButton aria-label="delete" size="medium" onClick={()=>handleDelete(course)} >
                                         <DeleteIcon fontSize="inherit" />
                                     </IconButton>
                                 </TableCell>
@@ -58,6 +102,7 @@ export const TableACourse: FC<Props> = ({ courses }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Button variant='contained' onClick={goToNewCourse} className='mt-2' color='error' > Nuevo curso  </Button>
         </>
     )
 }

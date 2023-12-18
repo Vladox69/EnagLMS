@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { CustomDialog } from '@/components/my/CustomDialog';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { updateStudent } from '@/utils/admin/student/updateStudent';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     student_id?: number;
@@ -22,6 +23,9 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
         getData();
     }, [student_id])
 
+    const goBack=()=>{
+        router.back()
+    }
 
     const [initialValues, setInitialValues] = useState({
         id: 0,
@@ -135,7 +139,8 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
 
     return (
         <Container>
-            <form action="" onSubmit={formik.handleSubmit}>
+            <form action="" onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5'>
+                <Typography variant='h4' > Datos del estudiante</Typography>
                 <TextField
                     type='text'
                     variant='outlined'
@@ -160,27 +165,32 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
                     error={formik.touched.last_names && Boolean(formik.errors.last_names)}
                     helperText={formik.touched.last_names && formik.errors.last_names}
                 />
-                <Typography component='p' > Cédula </Typography>
-                <TextField
-                    type='file'
-                    variant='outlined'
-                    id="ID_card_url"
-                    name="ID_card_url"
-                    inputProps={{
-                        accept: 'application/pdf'
-                    }}
-                    onChange={onIdCardInputChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
-                    helperText={formik.touched.ID_card_url && formik.errors.ID_card_url}
-                />
-                {(!!student_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID, setID) : <></>}
+                <div>
+                    <Typography component='p' > Cédula </Typography>
+                    <TextField
+                        type='file'
+                        variant='outlined'
+                        id="ID_card_url"
+                        name="ID_card_url"
+                        className='w-100'
+                        inputProps={{
+                            accept: 'application/pdf'
+                        }}
+                        onChange={onIdCardInputChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
+                        helperText={formik.touched.ID_card_url && formik.errors.ID_card_url}
+                    />
+                    {(!!student_id) ? renderResource('Cédula.pdf', formik.values.ID_card_url, ID, setID) : <></>}
+                </div>
+                <div>
                 <Typography component='p' > Certificado de estudios </Typography>
                 <TextField
                     type='file'
                     variant='outlined'
                     id="study_certificate_url"
                     name="study_certificate_url"
+                    className='w-100'
                     inputProps={{
                         accept: 'application/pdf'
                     }}
@@ -190,6 +200,8 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
                     helperText={formik.touched.study_certificate_url && formik.errors.study_certificate_url}
                 />
                 {(!!student_id) ? renderResource('Certificado de estudio.pdf', formik.values.study_certificate_url, CS, setCS) : <></>}
+                </div>
+
                 <TextField
                     id="user_id"
                     select
@@ -208,7 +220,10 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
                         </MenuItem>
                     ))}
                 </TextField>
-                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
+                <div>
+                <Button color='error' variant='contained' type='submit'> Guardar </Button>
+                <Button  variant='contained' className={styles.black_button + ' ms-2'} onClick={goBack} > Cancelar </Button>
+                </div>
             </form>
         </Container>
     )

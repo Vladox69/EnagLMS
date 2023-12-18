@@ -1,18 +1,29 @@
-import { Layout } from '@/components/layouts'
 import { GradesI } from '@/interface'
-import { Container, TableContainer, Paper, Table, TableHead, TableCell, TableRow, TableBody, Typography } from '@mui/material';
-import React, { FC } from 'react'
+import { TableContainer, Paper, Table, TableHead, TableCell, TableRow, TableBody, Typography } from '@mui/material';
+import React, { FC, useEffect } from 'react'
 
 interface Props {
     grades: GradesI
 }
 
 export const TableGrades: FC<Props> = ({ grades }) => {
+    let total: number = 0;
+
+    const calculateTotal = () => {
+        grades.sections.map((section) => {
+            total = total + section.total;
+        })
+        total = total / grades.sections.length;
+    }
+
+    calculateTotal();
+
     return (
-        <Layout>
+        <>
             <Typography className='mb-2' variant='h4'> Notas por módulo </Typography>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table" >
+                    <caption>Total del módulo {total} </caption>
                     <TableHead>
                         <TableRow>
                             <TableCell>Actividad</TableCell>
@@ -24,7 +35,9 @@ export const TableGrades: FC<Props> = ({ grades }) => {
                     <TableBody>
                         {grades.sections.map((section) => (
                             <>
-                                <TableRow>{section.title}</TableRow>
+                                <TableRow >
+                                    <Typography className='ms-2'>{section.title}</Typography>
+                                </TableRow>
                                 {section.activities.map((activity) => (
                                     <TableRow>
                                         <TableCell>{activity.title}</TableCell>
@@ -34,13 +47,13 @@ export const TableGrades: FC<Props> = ({ grades }) => {
                                     </TableRow>
                                 ))}
                                 <TableRow>
-                                    Total {section.total}
+                                    <Typography className='fw-bold ms-2'>Total {section.total}</Typography>
                                 </TableRow>
                             </>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </Layout>
+        </>
     )
 }

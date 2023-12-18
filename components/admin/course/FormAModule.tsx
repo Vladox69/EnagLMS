@@ -6,16 +6,20 @@ import { Button, Container, MenuItem, TextField, Typography } from '@mui/materia
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
-
+import styles from '@/styles/Custom.module.css'
 interface Props {
     module_id?: number;
     course_id?: number;
-    onSubmitResource: (formData: any) => void
+    onSubmitResource: (formData: any) => void;
+    onCancel:()=>void
+
 }
 
-export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource }) => {
+export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,onCancel }) => {
 
     const router = useRouter()
+
+
     useEffect(() => {
         getData()
     }, [module_id])
@@ -69,7 +73,7 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource 
 
     return (
         <Container>
-            <form action="" onSubmit={formik.handleSubmit} >
+            <form action="" onSubmit={formik.handleSubmit} className=' w-100 d-flex flex-column gap-3 mt-2' >
                 <TextField
                     type='text'
                     variant='outlined'
@@ -109,7 +113,10 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource 
                 /> */}
 
 
-                <Button variant='contained' type='submit' > Guardar</Button>
+                <div>
+                <Button variant='contained' type='submit' color='error' > Guardar</Button>
+                <Button variant='contained' className={styles.black_button+ ' ms-2'} onClick={onCancel} > Cancelar</Button>
+                </div>
             </form>
         </Container>
     )

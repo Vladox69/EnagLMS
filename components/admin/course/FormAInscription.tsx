@@ -4,14 +4,15 @@ import { newInscription } from '@/utils/admin/inscription/newInscription';
 import { Button, Container, MenuItem, TextField } from '@mui/material';
 import { useFormik } from 'formik';
 import React, { FC, useEffect, useState } from 'react'
-
+import styles from '@/styles/Custom.module.css'
 interface Props {
     course_id: number;
     students_ins: StudentModel[];
-    onSubmitResource: (formData: any) => void
+    onSubmitResource: (formData: any) => void;
+    onCancel: () => void
 }
 
-export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitResource }) => {
+export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitResource, onCancel }) => {
 
     useEffect(() => {
         getData()
@@ -40,7 +41,7 @@ export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitR
                 course_id: values.course_id
             }
 
-            let res:any
+            let res: any
             res = await newInscription(body)
             onSubmitResource(res)
             resetForm()
@@ -49,12 +50,12 @@ export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitR
 
     return (
         <Container>
-            <form action="" onSubmit={formik.handleSubmit} >
+            <form action="" onSubmit={formik.handleSubmit} className=' w-100 d-flex flex-column gap-3 mt-2'>
                 <TextField
                     id="student_id"
                     select
                     name='student_id'
-                    label="Profesores"
+                    label="Estudiante"
                     variant='outlined'
                     value={formik.values.student_id}
                     onChange={formik.handleChange}
@@ -68,7 +69,11 @@ export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitR
                         </MenuItem>
                     ))}
                 </TextField>
-                <Button variant='contained' type='submit' > Guardar</Button>
+                <div>
+                    <Button variant='contained' type='submit' color='error' > Guardar</Button>
+                    <Button variant='contained' className={styles.black_button + ' ms-2'} onClick={onCancel} > Cancelar</Button>
+                </div>
+
             </form>
         </Container>
     )

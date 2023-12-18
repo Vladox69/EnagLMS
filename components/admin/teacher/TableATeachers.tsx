@@ -1,5 +1,5 @@
 import { TeacherModel } from '@/models'
-import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
+import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Typography } from '@mui/material';
 import React, { FC, useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -11,82 +11,84 @@ interface Props {
   teachers: TeacherModel[]
 }
 
-export const TableATeachers: FC<Props> = ({ teachers:tchrs }) => {
+export const TableATeachers: FC<Props> = ({ teachers: tchrs }) => {
 
-  const router= useRouter()
+  const router = useRouter()
   const [teachers, setTeachers] = useState<TeacherModel[]>([])
 
   useEffect(() => {
     setTeachers(tchrs)
   }, [tchrs])
-  
-  const handleDelete=async(teacher:any)=>{
-    let res:any;
-    Swal.fire({
-        icon: 'question',
-        title: '¿Está seguro de eliminar?',
-        showConfirmButton: true,
-        showDenyButton: true,
-    }).then(async (result) => {
-        if (result.isConfirmed) {
-            res = await deleteTeacher(teacher);
-            if (res.status == 200) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Datos eliminados',
-                }).then(() => {
-                    setTeachers(teachers=>teachers.filter(t=>t.id!==teacher.id))
-                })
-            } else {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'No se pudo eliminar los datos',
-                })
-            }
-        }
-    })
-}
 
-  const goToNewTeacher=()=>{
+  const handleDelete = async (teacher: any) => {
+    let res: any;
+    Swal.fire({
+      icon: 'question',
+      title: '¿Está seguro de eliminar?',
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        res = await deleteTeacher(teacher);
+        if (res.status == 200) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Datos eliminados',
+          }).then(() => {
+            setTeachers(teachers => teachers.filter(t => t.id !== teacher.id))
+          })
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'No se pudo eliminar los datos',
+          })
+        }
+      }
+    })
+  }
+
+  const goToNewTeacher = () => {
     router.push(`/admin/teachers/new`)
   }
-  const goToEditTeacher=(id:number)=>{
+  const goToEditTeacher = (id: number) => {
     router.push({
-      pathname:'/admin/teachers/edit',
-      query:{teacher_id:id}
+      pathname: '/admin/teachers/edit',
+      query: { teacher_id: id }
     })
   }
 
   return (
     <>
-    <Button variant='contained' onClick={goToNewTeacher} > Nuevo profesor </Button>
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Nombres</TableCell>
-            <TableCell>Opciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {teachers && teachers.map((teacher) => (
-            <TableRow
-              key={teacher.id}
-            >
-              <TableCell >{teacher.names} {teacher.last_names}</TableCell>
-              <TableCell>
-                <IconButton aria-label="delete" size="medium" onClick={()=>goToEditTeacher(teacher.id)} >
-                  <EditIcon fontSize="inherit" />
-                </IconButton>
-                <IconButton aria-label="delete" size="medium" onClick={()=>handleDelete(teacher)}>
-                  <DeleteIcon fontSize="inherit" />
-                </IconButton>
-              </TableCell>
+      <Typography variant='h4' className='mb-2' > Tabla de profesores </Typography>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" className='border rounded'>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombres</TableCell>
+              <TableCell>Opciones</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {teachers && teachers.map((teacher) => (
+              <TableRow
+                key={teacher.id}
+              >
+                <TableCell >{teacher.names} {teacher.last_names}</TableCell>
+                <TableCell>
+                  <IconButton aria-label="delete" size="medium" onClick={() => goToEditTeacher(teacher.id)} >
+                    <EditIcon fontSize="inherit" />
+                  </IconButton>
+                  <IconButton aria-label="delete" size="medium" onClick={() => handleDelete(teacher)}>
+                    <DeleteIcon fontSize="inherit" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button variant='contained' color='error' className='mt-2' onClick={goToNewTeacher} > Nuevo profesor </Button>
+
     </>
   )
 }

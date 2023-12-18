@@ -5,6 +5,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import { deleteInscription } from '@/utils/admin/inscription/deleteInscription';
 import { enagApi } from '@/apis';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     inscription:InscriptionModel,
@@ -53,8 +54,8 @@ export const ItemAStudent: FC<Props> = ({  onDeleteStudent,inscription }) => {
     }
 
     return (
-        <Box className='d-flex justify-content-between' >
-            <Typography component='p' > {student?.names} </Typography>
+        <Box className={ styles.hover_effect+ ' d-flex justify-content-between border rounded py-1 mb-2' } >
+            <Typography component='p' className='ms-2' > {student?.names} </Typography>
             <Box>
                 <IconButton onClick={handleDelete} >
                     <DeleteIcon />

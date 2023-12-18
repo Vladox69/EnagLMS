@@ -13,6 +13,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             if (id?.includes('course_id=')) {
                 return getCourseById(req, res);
             }
+        case 'PUT':
+            if (id?.includes('course_id=')) {
+                return updateCourse(req,res)
+            }
+        case 'DELETE':
+            if(id?.includes('course_id=')){
+                return deleteCourseById(req,res)
+            }
         default:
             res.status(200).json({ message: 'Example' });
     }
@@ -22,7 +30,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const getCourseById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query;
-        const course_id=id?.toString().substring('course_id='.length)
+        const course_id = id?.toString().substring('course_id='.length)
         const course = await prisma.course.findFirst({
             where: {
                 id: Number(course_id)
@@ -40,4 +48,45 @@ const getCourseById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
             message: 'Error al obtener el curso'
         })
     }
-}  
+}
+
+const updateCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query
+        const { topic,content,start_at,end_at } = req.body
+        const course_id = id?.toString().substring('course_id='.length)
+        const course=await prisma.course.update({
+            where:{
+                id:Number(course_id)
+            },
+            data:{
+                topic,
+                content,
+                start_at,
+                end_at
+            }
+        })
+        if(course!=undefined){
+            return res.status(200).json({message:'No existe curso para editar'})
+        }
+        return res.status(200).json(course)
+    } catch (error) {
+        return res.status(400).json({message:'Error al actualizar registro'})
+    }
+}
+
+const deleteCourseById=async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const course_id=id?.toString().substring('course_id='.length)
+        const course = await prisma.course.delete({
+            where:{
+                id:Number(course_id)
+            }
+        })
+        return res.status(200).json(course)
+    } catch (error) {
+        console.log('Error al eliminar el curso',error);
+        return res.status(200).json({message:'Error interno del servidor'}) 
+    }
+}
