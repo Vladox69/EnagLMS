@@ -53,7 +53,7 @@ const getCourseById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 const updateCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
         const { id } = req.query
-        const { topic,content,start_at,end_at } = req.body
+        const { topic,content,start_at,end_at ,modality, objective, periods, qualification, requirements, type, visible } = req.body
         const course_id = id?.toString().substring('course_id='.length)
         const course=await prisma.course.update({
             where:{
@@ -63,7 +63,14 @@ const updateCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
                 topic,
                 content,
                 start_at,
-                end_at
+                end_at,
+                modality, 
+                objective, 
+                periods, 
+                qualification, 
+                requirements, 
+                type, 
+                visible 
             }
         })
         if(course!=undefined){

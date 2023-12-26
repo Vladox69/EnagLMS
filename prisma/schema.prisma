@@ -63,28 +63,36 @@ model inscription{
 }
 
 model course{
-  id           Int            @id @default(autoincrement())
-  topic        String
-  content      String
-  start_at     DateTime
-  end_at       DateTime
-  modules      module[]
-  inscriptions inscription[]
-
-
+  id            Int            @id @default(autoincrement())
+  topic         String
+  content       String
+  start_at      DateTime
+  end_at        DateTime
+  modality      String
+  objective     String
+  periods       Int
+  qualification String
+  requirements  String
+  type          String
+  visible       Boolean
+  img_url       String     
+  modules       module[]
+  inscriptions  inscription[]
 }
 
 model module{
-  id         Int            @id @default(autoincrement())
-  title      String
-  content    String
-  sections   section[]
-  resources  module_resource[]
+  id           Int            @id @default(autoincrement())
+  title        String
+  content      String
+  sections     section[]
+  resources    module_resource[]
   asistances   asistance[]
+  hours        Int
+  img_url      String
   teacher      teacher @relation(fields: [teacher_id],references: [id])
   teacher_id   Int
-  course     course @relation(fields: [course_id],references: [id])
-  course_id  Int
+  course       course @relation(fields: [course_id],references: [id])
+  course_id    Int
 }
 
 model module_resource{

@@ -28,15 +28,6 @@ export const MyProvider: FC<Props> = ({ children }) => {
 
     const getData = async () => {
         
-        // const dUser: UserModel = {
-        //     email: 'student',
-        //     id: 11,
-        //     password: 'student',
-        //     photo_url: '',
-        //     rol: 'STUDENT',
-        //     username: 'student'
-        // }
-
         const { data: user } = await enagApi.get<UserModel>(`/users/user_id=${1}`);
         
         const {data:student}=await enagApi.get<StudentModel>(`/students/student_id=${1}`);
@@ -54,7 +45,7 @@ export const MyProvider: FC<Props> = ({ children }) => {
     }
 
     useEffect(() => {
-        getData()
+        // getData()
     }, [])
 
 

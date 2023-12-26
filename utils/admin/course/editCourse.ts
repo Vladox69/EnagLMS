@@ -8,6 +8,13 @@ export const editCourse=async(course:any)=>{
             content:course.content,
             start_at:course.start_at,
             end_at:course.end_at,
+            modality:course.modality,
+            objective:course.objective,
+            periods:course.periods,
+            qualification:course.qualification,
+            requirements:course.requirements,
+            type:course.type,
+            visible:course.visible
         }
         const res =await enagApi.put(`/courses/course_id=${body.id}`,body)
         return res

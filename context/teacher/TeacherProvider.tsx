@@ -36,7 +36,7 @@ export const TeacherProvider: FC<Props> = ({ children }) => {
     }
 
     useEffect(() => {
-        getDataTeacher();
+        // getDataTeacher();
     }, [])
 
 

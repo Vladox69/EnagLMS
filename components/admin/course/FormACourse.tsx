@@ -1,8 +1,8 @@
 import { newCourse } from '@/utils/admin/course/newCourse';
-import { Container, TextField, Typography, Button, Box, CircularProgress } from '@mui/material';
+import { Container, TextField, Typography, Button, Box, CircularProgress, Divider, MenuItem } from '@mui/material';
 import { useFormik } from 'formik'
 import { useRouter } from 'next/router'
-import React, { useEffect, FC, useState } from 'react'
+import React, { useEffect, FC, useState, ChangeEvent } from 'react'
 import 'react-quill/dist/quill.snow.css';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Custom.module.css'
@@ -36,8 +36,24 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         content: '',
         start_at: '00:00:00T00:00:00.000z',
         end_at: '00:00:00T00:00:00.000z',
+        modality: '',
+        objective: '',
+        periods: 0,
+        qualification: '',
+        requirements: '',
+        type: '',
+        visible: true,
+        img_file: null,
+        img_url: ''
     })
     const [content, setContent] = useState('')
+    const [requirements, setRequirements] = useState('')
+
+    const onFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const target = event.target
+        if (target.files && target.files.length === 0) return
+        formik.setFieldValue('file', target.files?.[0])
+    }
 
     const getData = async () => {
         if (course_id != undefined) {
@@ -49,8 +65,18 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                 content: data.content,
                 start_at: data.start_at.toString().slice(0, data.start_at.toString().lastIndexOf('T')),
                 end_at: data.end_at.toString().slice(0, data.end_at.toString().lastIndexOf('T')),
+                modality: data.modality,
+                objective: data.objective,
+                periods: data.periods,
+                qualification: data.qualification,
+                requirements: data.requirements,
+                type: data.type,
+                visible: data.visible,
+                img_file: null,
+                img_url: data.img_url
             })
             setContent(data.content)
+            setRequirements(data.requirements)
         }
     }
 
@@ -64,7 +90,16 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                 topic: values.topic,
                 content: content,
                 start_at: `${values.start_at}T00:00:00.000z`,
-                end_at: `${values.end_at}T00:00:00.000z`
+                end_at: `${values.end_at}T00:00:00.000z`,
+                modality: values.modality,
+                objective: values.objective,
+                periods: values.periods,
+                qualification: values.qualification,
+                requirements: requirements,
+                type: values.type,
+                visible: values.visible,
+                img_file: values.img_file,
+                img_url: values.img_url
             }
 
             let res: any
@@ -143,6 +178,109 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                         onChange={setContent}
                     />
                 </div>
+                <Divider />
+                <TextField
+                    type='date'
+                    variant='outlined'
+                    id="qualification"
+                    name="qualification"
+                    label='Titulación'
+                    value={formik.values.qualification}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.qualification && Boolean(formik.errors.qualification)}
+                    helperText={formik.touched.qualification && formik.errors.qualification}
+                />
+                <TextField
+                    type='number'
+                    variant='outlined'
+                    id="periods"
+                    name="periods"
+                    label='Periodos'
+                    value={formik.values.periods}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.periods && Boolean(formik.errors.periods)}
+                    helperText={formik.touched.periods && formik.errors.periods}
+                />
+                <TextField
+                    type='text'
+                    variant='outlined'
+                    id="objective"
+                    name="objective"
+                    label='Objetivo'
+                    value={formik.values.objective}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.objective && Boolean(formik.errors.objective)}
+                    helperText={formik.touched.objective && formik.errors.objective}
+                />
+
+                <TextField
+                    id="type"
+                    select
+                    name='type'
+                    label="Tipo"
+                    variant='outlined'
+                    value={formik.values.type}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.type && Boolean(formik.errors.type)}
+                >
+                    <MenuItem value=''>No seleccionado</MenuItem>
+                    <MenuItem value='Corto'  >
+                        Corto
+                    </MenuItem>
+                    <MenuItem value='Largo'  >
+                        Largo
+                    </MenuItem>
+                </TextField>
+
+                <TextField
+                    id="visible"
+                    select
+                    name='visible'
+                    label="Visible"
+                    variant='outlined'
+                    value={formik.values.visible}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.visible && Boolean(formik.errors.visible)}
+                >
+                    <MenuItem value='false'>No seleccionado</MenuItem>
+                    <MenuItem value='true'  >
+                        Visible
+                    </MenuItem>
+                    <MenuItem value='false'  >
+                        No visible
+                    </MenuItem>
+                </TextField>
+
+                <div>
+                    <Typography component='p'>Imagen</Typography>
+                    <TextField
+                        type='img_file'
+                        variant='outlined'
+                        id="img_file"
+                        name="img_file"
+                        // value={formik.values.img_file}
+                        onChange={onFileInputChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.touched.img_file && Boolean(formik.errors.img_file)}
+                        helperText={formik.touched.img_file && formik.errors.img_file}
+                    />
+                </div>
+
+                <div>
+                    <Typography component='p'>Requerimientos</Typography>
+                    <ReactQuill
+                        theme="snow"
+                        id="requirements"
+                        value={requirements}
+                        onChange={setRequirements}
+                    />
+                </div>
+
                 <div>
                     <Button variant='contained' type='submit' color='error'> Guardar</Button>
                     <Button variant='contained' onClick={goBack} className={styles.black_button + ' ms-2'}> Cancelar</Button>

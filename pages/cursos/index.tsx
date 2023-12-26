@@ -22,9 +22,9 @@ export default function Cursos() {
     ]
 
     const cursosLargos = [
-        { id: 1, title: 'Tecnificación gastronómica', content: 'Domina el arte de la panadería en ENAG y convierte los granos en oro horneado con nuestro curso intensivo de panadería artesanal.', image: '/assets/chef-artesano.jpg' },
-        { id: 2, title: 'Panaderia', content: 'Domina el arte de la panadería en ENAG y convierte los granos en oro horneado con nuestro curso intensivo de panadería artesanal.', image: '/assets/chef-profesional.jpg' },
-        { id: 3, title: 'Panaderia', content: 'Domina el arte de la panadería en ENAG y convierte los granos en oro horneado con nuestro curso intensivo de panadería artesanal.', image: '/assets/sushi-mc.jpg' },
+        { id: 1, title: 'Tecnificación gastronómica', content: 'Impulsa tu habilidad culinaria con nuestro curso de Tecnificación Gastronómica, integrando las últimas tecnologías y métodos innovadores para revolucionar tu cocina.', image: '/assets/chef-artesano.jpg' },
+        { id: 2, title: 'Chef artesano', content: 'Perfecciona el arte de la cocina con nuestro curso de Chef Artesano, donde la tradición se une a la técnica para crear platos con sabor y presentación inigualables.', image: '/assets/chef-profesional.jpg' },
+        { id: 3, title: 'Cocina oriental', content: 'Descubre los secretos de la cocina oriental en nuestro curso intensivo: técnicas auténticas, ingredientes exóticos y recetas tradicionales para enriquecer tu repertorio culinario.', image: '/assets/sushi-mc.jpg' },
     ]
 
     const getData = async () => {
@@ -140,16 +140,15 @@ export default function Cursos() {
                                 <CardMedia
                                     component="img"
                                     alt="curso.png"
-                                    image="/assets/logosf.png"
+                                    image="/assets/cortes-mc.jpg"
                                     height={200}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        Lizard
+                                        Cortes
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Lizards are a widespread group of squamate reptiles, with over 6,000
-                                        species, ranging across all continents except Antarctica
+                                    Aprende la destreza de los cortes en gastronomía, esenciales para la presentación y cocción perfecta, en nuestro curso práctico y detallado.
                                     </Typography>
                                 </CardContent>
                                 <CardActions style={{ justifyContent: 'center' }}>

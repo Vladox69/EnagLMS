@@ -4,4 +4,5 @@ export interface ModuleModel{
     content:string;
     course_id:number;
     teacher_id:number;
+    hours:number;
   }

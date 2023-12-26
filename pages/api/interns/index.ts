@@ -47,7 +47,7 @@ const createInternCV = async (req: NextApiRequest, res: NextApiResponse<Data>) =
         return res.status(200).json(intern_cv)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'No se pudo crear la hoja de vida' })
+        return res.status(400).json({ message: 'Failed to create resource. The provided data is invalid or incomplete.' })
     }
 
 

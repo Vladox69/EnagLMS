@@ -3,7 +3,7 @@ import React from 'react'
 import { Container } from '@mui/material';
 import Image from 'next/image';
 
-import { ListCourse } from '../../components/my/ListCourse';
+import { ListCourse } from '@/components/my/ListCourse';
 
 export default function My() {
 
