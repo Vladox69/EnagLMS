@@ -12,6 +12,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         case 'GET':
             if(id?.includes('teacher_id=')){
                 return getTeacherById(req, res);
+            }else if(id?.includes('user_id=')){
+                return getTeacherByIdUser(req,res)
             }    
         case 'PUT':
             if(id?.includes('teacher_id=')){
@@ -38,6 +40,25 @@ const getTeacherById = async (req: NextApiRequest, res: NextApiResponse<Data>) =
             }
         })
         if (!teacher) {
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'});
+        }
+        return res.status(200).json(teacher)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
+    }
+}
+
+const getTeacherByIdUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const user_id= id?.toString().substring('user_id='.length)
+        const teacher = await prisma.teacher.findFirst({
+            where: {
+                user_id: Number(user_id)
+            }
+        })
+        if (teacher==null) {
             return res.status(200).json({ message: 'No hay entrega con ese ID:' + id });
         }
         return res.status(200).json(teacher)

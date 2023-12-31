@@ -11,11 +11,11 @@ interface Props {
     module_id?: number;
     course_id?: number;
     onSubmitResource: (formData: any) => void;
-    onCancel:()=>void
+    onCancel: () => void
 
 }
 
-export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,onCancel }) => {
+export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource, onCancel }) => {
 
     const router = useRouter()
 
@@ -29,7 +29,10 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
         title: '',
         content: '',
         course_id: (course_id != undefined) ? course_id : 0,
-        teacher_id: 0
+        teacher_id: 0,
+        hours: 0,
+        img_file: null,
+        img_url: ''
     })
     const [teachers, setTeachers] = useState<TeacherModel[]>([])
 
@@ -44,6 +47,9 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
                 content: m.content,
                 course_id: m.course_id,
                 teacher_id: m.teacher_id,
+                hours: m.hours,
+                img_file: null,
+                img_url: m.img_url,
             })
         }
     }
@@ -57,7 +63,10 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
                 title: values.title,
                 content: values.content,
                 course_id: values.course_id,
-                teacher_id: values.teacher_id
+                teacher_id: values.teacher_id,
+                hours: values.hours,
+                img_file: values.img_file,
+                img_url: values.img_url
             }
             let res: any;
             if (module_id != undefined) {
@@ -114,8 +123,8 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
 
 
                 <div>
-                <Button variant='contained' type='submit' color='error' > Guardar</Button>
-                <Button variant='contained' className={styles.black_button+ ' ms-2'} onClick={onCancel} > Cancelar</Button>
+                    <Button variant='contained' type='submit' color='error' > Guardar</Button>
+                    <Button variant='contained' className={styles.black_button + ' ms-2'} onClick={onCancel} > Cancelar</Button>
                 </div>
             </form>
         </Container>

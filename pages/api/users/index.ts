@@ -26,8 +26,8 @@ const getUsers=async(res:NextApiResponse<Data>)=>{
         const users=await prisma.user.findMany();
         res.status(200).json(users);
     } catch (error) {
-        console.log('Error al obtener los usuarios',error);
-        res.status(500).json({message:'Error interno del servidor'});
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.',error);
+        res.status(500).json({message:'Failed to retrieve resource. The requested data is missing or inaccessible.'});
     }
 }
 
@@ -46,7 +46,7 @@ const createUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
         })
         return res.status(200).json(user)
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({message:'Error al crear usuario'})
+        console.log("Failed to create resource. The provided data is invalid or incomplete.",error);
+        return res.status(400).json({message:"Failed to create resource. The provided data is invalid or incomplete."})
     }
 }

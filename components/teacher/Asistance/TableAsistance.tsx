@@ -1,8 +1,8 @@
 import { AsistanceModel } from '@/models'
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Container } from '@mui/material';
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -13,12 +13,17 @@ interface Props {
     asistances: AsistanceModel[]
 }
 
-export const TableAsistance: FC<Props> = (props) => {
+export const TableAsistance: FC<Props> = ({asistances:ast}) => {
 
-    const { asistances: asistance_init } = props;
+
     const router = useRouter();
 
-    const [asistances, setAsistances] = useState(asistance_init)
+    const [asistances, setAsistances] = useState<AsistanceModel[]>([])
+
+    useEffect(() => {
+        setAsistances(ast)
+    }, [ast])
+    
 
     const goToRegisterAsistance = (asistance_id: number, module_id: number) => {
         router.push(`/teacher/module/asistance/register/asistance_id=${asistance_id}&module_id=${module_id}`)
@@ -74,7 +79,7 @@ export const TableAsistance: FC<Props> = (props) => {
                                         <PlayArrowIcon />
                                     </IconButton>
                                     <IconButton onClick={()=>goToEditRegister(asistance.id)} >
-                                        <SettingsIcon />
+                                        <EditIcon />
                                     </IconButton>
                                     <IconButton onClick={() => onDeleteAsistance(asistance)} >
                                         <DeleteIcon />

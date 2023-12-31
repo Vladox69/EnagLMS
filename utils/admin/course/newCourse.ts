@@ -1,7 +1,11 @@
 import { enagApi } from "@/apis"
+import { uploadFile } from "@/utils"
 
 export const newCourse = async (course: any) => {
     try {
+
+        const res_img = await uploadFile(course.img_file)
+        
         const body = {
             topic:course.topic,
             content:course.content,
@@ -13,7 +17,8 @@ export const newCourse = async (course: any) => {
             qualification:course.qualification,
             requirements:course.requirements,
             type:course.type,
-            visible:course.visible
+            visible:course.visible,
+            img_url:res_img.url
         }
         const res = await enagApi.post(`/courses`,body)
         return res

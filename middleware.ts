@@ -7,7 +7,33 @@ export async function middleware(req: NextRequest,) {
     }
     try {
         const { value } = jwt
-        await jwtVerify(value, new TextEncoder().encode('secret'))
+        const { payload } = await jwtVerify(value, new TextEncoder().encode('secret'))
+        const path = req.nextUrl.pathname;
+        const rolePaths = {
+            admin: ['/admin'],
+            user: ['/my'],
+            teacher: ['/teacher']
+        };
+        switch (payload.rol) {
+            case 'ADMIN':
+                if (!path.startsWith('/admin')) {
+                    return NextResponse.redirect(new URL('/404', req.url));
+                }
+                break;
+            case 'STUDENT':
+                if (!path.startsWith('/my')) {
+                    return NextResponse.redirect(new URL('/404', req.url));
+                }
+                break;
+            case 'TEACHER':
+                if (!path.startsWith('/teacher')) {
+                    return NextResponse.redirect(new URL('/404', req.url));
+                }
+                break;
+            default:
+                break;
+        }
+
         return NextResponse.next()
     } catch (error) {
         console.log(error);

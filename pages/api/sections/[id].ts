@@ -34,12 +34,12 @@ const getSectionsByIdModule = async (req: NextApiRequest, res: NextApiResponse<D
             }
         })
         if (!section) {
-            return res.status(200).json({ message: 'No hay secciones con ese ID de modulo:' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(section)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener secciones' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -53,12 +53,12 @@ const getSectionById = async (req: NextApiRequest, res: NextApiResponse<Data>) =
             }
         })
         if (!section) {
-            return res.status(200).json({ message: 'No hay secciones con ese ID de modulo:' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(section)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener secciones' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 

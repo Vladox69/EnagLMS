@@ -27,6 +27,7 @@ export const ItemTModule: FC<Props> = ({ module }) => {
           src={bgImage}
           width={100}
           height={100}
+          className='p-2'
           alt="Picture of the author"
           style={{
             transition: 'transform 0.3s',

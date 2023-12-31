@@ -23,12 +23,12 @@ const getInterns = async (res: NextApiResponse<Data>) => {
     try {
         const interns_cv = await prisma.intern_cv.findMany()
         if (!interns_cv) {
-            return res.status(200).json({ message: 'No hay hojas de vida'});
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'});
         }
         return res.status(200).json(interns_cv)
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.',error);
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 

@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Typography } from '@mui/material';
 import { TableAsistance } from '../../../../components/teacher/Asistance/TableAsistance';
 import { AsistanceModel } from '@/models';
@@ -8,22 +8,35 @@ import { enagApi } from '@/apis';
 import { useRouter } from 'next/router';
 import styles from '@/styles/Custom.module.css'
 
-interface Props{
-  asistances:AsistanceModel[]
+interface Props {
+  asistances: AsistanceModel[]
 }
 
-export const MyAsistanceModuleById:NextPage<Props> = ({asistances}) => {
+export const MyAsistanceModuleById: NextPage<Props> = ({ }) => {
 
   const router = useRouter();
-  const goToNewRegister=()=>{
-    const {asistance}=router.query
+  const [asistances, setAsistances] = useState<AsistanceModel[]>([])
+  useEffect(() => {
+    if (router.isReady) {
+      getData()
+    }
+  }, [router.isReady])
+
+  const getData = async () => {
+    const { asistance } = router.query
+    const { data: ast } = await enagApi.get<AsistanceModel[]>(`/asistances/module_id=${asistance}`);
+    setAsistances(ast)
+  }
+
+  const goToNewRegister = () => {
+    const { asistance } = router.query
     router.push({
-      pathname:'/teacher/module/asistance/new',
-      query:{module_id:asistance}
+      pathname: '/teacher/module/asistance/new',
+      query: { module_id: asistance }
     });
   }
 
-  const goBack=()=>{
+  const goBack = () => {
     router.back()
   }
 
@@ -32,37 +45,10 @@ export const MyAsistanceModuleById:NextPage<Props> = ({asistances}) => {
       <Typography variant='h4' className='mb-2'> Tabla de asistencias por materia </Typography>
       <TableAsistance asistances={asistances} />
       <Button variant='contained' onClick={goToNewRegister} color='error' className='mt-2'> Nuevo registro </Button>
-      <Button variant='contained' onClick={goBack} className={styles.black_button+' mt-2 ms-2'}> Cancelar </Button>
+      <Button variant='contained' onClick={goBack} className={styles.black_button + ' mt-2 ms-2'}> Cancelar </Button>
     </Layout>
   )
 }
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-
-  const data: any[] = [
-
-  ]
-
-  return {
-      paths: data.map(m => ({
-          params: {
-              asistance: m.asistance
-          }
-      })),
-      fallback: 'blocking'
-  }
-}
-
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { asistance:module_id } = params as { asistance: string };
-  const {data:asistances}= await enagApi.get<AsistanceModel[]>(`/asistances/module_id=${module_id}`);
-  return {
-      props: {
-        asistances
-      }
-  }
-
-}
 
 export default MyAsistanceModuleById;

@@ -1,33 +1,44 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Paper, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, FormControl, RadioGroup, Radio, FormControlLabel, Grid, Button, Typography } from '@mui/material';
 import { AsistanceStudentI } from '@/interface';
 import { saveAsistanceRegisters } from '@/utils/asistance/saveAsistanceRegisters';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
 import styles from '@/styles/Custom.module.css'
+import { AsistanceModel } from '@/models';
 
 interface Props {
-    asistance_students: AsistanceStudentI[]
+    asistance_students: AsistanceStudentI[],
+    asistance: AsistanceModel
 }
 
-export const TableRegister: FC<Props> = ({ asistance_students }) => {
+export const TableRegister: FC<Props> = ({ asistance_students: as, asistance }) => {
 
     const router = useRouter()
 
-    const [asistances, setAsistances] = useState(asistance_students)
+    useEffect(() => {
+        setAsistances(as)
+    }, [as])
+
+    const [asistances, setAsistances] = useState<AsistanceStudentI[]>([])
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
 
-        const nuevoArray = asistances.map((estudiante) => {
-            if (estudiante.id === id) {
+        const nuevoArray = asistances.map((reg: AsistanceStudentI) => {
+            if (reg.id === id) {
                 return {
-                    ...estudiante,
-                    estado: event.target.value,
+                    id: reg.id,
+                    student: reg.student,
+                    asistance: {
+                        ...reg.asistance,
+                        status: event.target.value
+                    }
                 };
             }
-            return estudiante;
+            return reg;
         });
         setAsistances(nuevoArray)
+        console.log(nuevoArray);
     }
 
     const onSaveRegisters = async () => {
@@ -49,7 +60,7 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
         }
     }
 
-    const goBack=()=>{
+    const goBack = () => {
         router.back()
     }
 
@@ -78,15 +89,15 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {asistances.map((student) => (
+                        {asistances.map((regis) => (
                             <TableRow
-                                key={student.id}
+                                key={regis.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {student.student}
+                                    {regis.student.names} {regis.student.last_names}
                                 </TableCell>
-                                <TableCell >{student.tipo_sesion}</TableCell>
+                                <TableCell >{asistance.description}</TableCell>
                                 <TableCell >
                                     <RadioGroup
                                         row
@@ -94,8 +105,8 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
                                         className='d-flex'
                                         name="estado"
                                         id='estado'
-                                        value={student.estado}
-                                        onChange={(event) => handleChange(event, student.id)}
+                                        value={regis.asistance.status}
+                                        onChange={(event) => handleChange(event, regis.id)}
                                     >
                                         <FormControlLabel value="PRESENTE" className='col-md-2' control={<Radio color='error' />} label="" />
                                         <FormControlLabel value="ATRASO" className='col-md-2' control={<Radio color='error' />} label="" />
@@ -110,7 +121,7 @@ export const TableRegister: FC<Props> = ({ asistance_students }) => {
             <Button variant='contained' color='error' onClick={onSaveRegisters} className='mt-2 me-2'  >
                 Guardar
             </Button>
-            <Button variant='contained' className={styles.black_button+' mt-2' } onClick={goBack}>
+            <Button variant='contained' className={styles.black_button + ' mt-2'} onClick={goBack}>
                 Cancelar
             </Button>
         </>

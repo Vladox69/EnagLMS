@@ -44,8 +44,8 @@ const createStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
         })
         return res.status(200).json(student)
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({ message: 'Error al crear estudiante' })
+        console.log("Failed to create resource. The provided data is invalid or incomplete.",error);
+        return res.status(400).json({ message: "Failed to create resource. The provided data is invalid or incomplete." })
     }
 
 }

@@ -52,7 +52,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
     const onFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const target = event.target
         if (target.files && target.files.length === 0) return
-        formik.setFieldValue('file', target.files?.[0])
+        formik.setFieldValue('img_file', target.files?.[0])
     }
 
     const getData = async () => {
@@ -101,7 +101,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                 img_file: values.img_file,
                 img_url: values.img_url
             }
-
+            console.log(body);
             let res: any
             if (course_id != undefined) {
                 res = await editCourse(body)
@@ -180,7 +180,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                 </div>
                 <Divider />
                 <TextField
-                    type='date'
+                    type='text'
                     variant='outlined'
                     id="qualification"
                     name="qualification"
@@ -208,6 +208,8 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                     variant='outlined'
                     id="objective"
                     name="objective"
+                    multiline
+                    rows={4}
                     label='Objetivo'
                     value={formik.values.objective}
                     onChange={formik.handleChange}
@@ -259,10 +261,11 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                 <div>
                     <Typography component='p'>Imagen</Typography>
                     <TextField
-                        type='img_file'
+                        type='file'
                         variant='outlined'
                         id="img_file"
                         name="img_file"
+                        className='w-100'
                         // value={formik.values.img_file}
                         onChange={onFileInputChange}
                         onBlur={formik.handleBlur}

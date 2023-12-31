@@ -6,10 +6,11 @@ import { Container, Button, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import React, { FC, useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 import 'react-quill/dist/quill.snow.css';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Custom.module.css'
+import dynamic from 'next/dynamic';
 
 interface Props {
     module_id?: number;

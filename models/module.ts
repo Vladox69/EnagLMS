@@ -5,4 +5,5 @@ export interface ModuleModel{
     course_id:number;
     teacher_id:number;
     hours:number;
+    img_url:string;
   }

@@ -5,7 +5,7 @@ export const saveAsistanceRegisters = async (asistance_registers: AsistanceStude
     try {
         const registersPromises = asistance_registers.map(async (regis) => {
             const body = {
-                status: regis.estado
+                status: regis.asistance.status
             }
             const register = await enagApi.put(`/asistances/registers/register_id=${regis.id}`, body)
             return register

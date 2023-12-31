@@ -3,7 +3,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { Container, Typography, IconButton } from '@mui/material';
 import { SectionModel } from '@/models';
 import { useRouter } from 'next/router';
-import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '@/styles/Custom.module.css';
 
@@ -36,7 +36,7 @@ export const ItemTSection: FC<Props> = ({ section }) => {
             </div>
             <div className='d-flex align-items-center'>
                 <IconButton onClick={() => goToEditSection(section.id)}>
-                    <SettingsIcon />
+                    <EditIcon />
                 </IconButton>
                 <IconButton>
                     <DeleteIcon />

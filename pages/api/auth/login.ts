@@ -20,7 +20,8 @@ export default async function loginHandler(req: NextApiRequest, res: NextApiResp
             const token = jwt.sign({
                 exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
                 username: user?.username,
-                rol:user?.rol
+                rol:user?.rol,
+                user_id:user?.id
             }, 'secret')
             const serealized = serialize('enag_session', token, {
                 httpOnly: true,

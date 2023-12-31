@@ -25,8 +25,8 @@ const getCourses = async (res: NextApiResponse<Data>) => {
         const courses = await prisma.course.findMany();
         return res.status(200).json(courses);
     } catch (error) {
-        console.log(`Error al obtener cursos`, error);
-        return res.status(400).json({ message: 'Error interno del servidor' })
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' })
     }
 }
 
@@ -34,7 +34,7 @@ const getCourses = async (res: NextApiResponse<Data>) => {
 const createCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
 
-        const { topic, content, start_at, end_at, modality, objective, periods, qualification, requirements, type, visible } = req.body
+        const { topic, content, start_at, end_at, modality, objective, periods, qualification, requirements, type, visible ,img_url} = req.body
         const course = await prisma.course.create({
             data: {
                 topic,
@@ -47,12 +47,13 @@ const createCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
                 qualification,
                 requirements,
                 type,
-                visible
+                visible,
+                img_url
             }
         })
         return res.status(200).json(course)
     } catch (error) {
-        console.log(error);
-        return res.status(400).json({ message: 'No se pudo crear el curso' })
+        console.log('Failed to create resource. The provided data is invalid or incomplete.',error);
+        return res.status(400).json({ message: 'Failed to create resource. The provided data is invalid or incomplete.' })
     }
 }

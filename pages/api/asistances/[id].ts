@@ -46,8 +46,8 @@ const getAsistancesById = async (req: NextApiRequest, res: NextApiResponse<Data>
         }
         return res.status(200).json(asistance)
     } catch (error) {
-        console.log('Error al obtener asistencias', error);
-        return res.status(500).json({ message: 'Error interno del servidor' });
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(500).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -66,8 +66,8 @@ const getAsistancesByIdCourseStudent = async (req: NextApiRequest, res: NextApiR
         });
         return res.status(200).json(asistances);
     } catch (error) {
-        console.log('Error al obtener asistencias', error);
-        return res.status(500).json({ message: 'Error interno del servidor' });
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(500).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -82,8 +82,8 @@ const getAsistancesByIdModule = async (req: NextApiRequest, res: NextApiResponse
         })
         return res.status(200).json(asistances);
     } catch (error) {
-        console.log('Error al obtener asistencias', error);
-        return res.status(500).json({ message: 'Error interno del servidor' });
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(500).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -124,7 +124,7 @@ const deleteAsistanceById = async (req: NextApiRequest, res: NextApiResponse<Dat
         })
         return res.status(200).json(asistance_del);
     } catch (error) {
-        console.log('Error al obtener asistencias', error);
-        return res.status(500).json({ message: 'Error interno del servidor' });
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(500).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }

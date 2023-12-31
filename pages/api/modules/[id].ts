@@ -63,12 +63,12 @@ const getModulesByIdTeacher = async (req: NextApiRequest, res: NextApiResponse<D
             }
         })
         if (!modules) {
-            return res.status(200).json({ message: 'No hay modulos en ese curso' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(modules)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener los modulos' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -82,12 +82,12 @@ const getModuleById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
             }
         })
         if (!module) {
-            return res.status(200).json({ message: 'No hay modulo con ese' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(module)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener los modulos' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -95,7 +95,7 @@ const updateModule = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
 try {
     const {id}=req.query;
     const module_id=id?.toString().substring("module_id=".length)
-    const {title,content,course_id,teacher_id}=req.body
+    const {title,content,course_id,teacher_id,hours,img_url}=req.body
     const module=await prisma.module.update({
         where:{
             id:Number(module_id)
@@ -104,7 +104,9 @@ try {
             title,
             content,
             course_id,
-            teacher_id
+            teacher_id,
+            hours,
+            img_url
         }
     })
     return res.status(200).json(module)
