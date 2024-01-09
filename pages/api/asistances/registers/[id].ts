@@ -42,12 +42,12 @@ const getAsistanceRegisterByIdAsistance = async (req: NextApiRequest, res: NextA
             }
         })
         if (!asistance_registers) {
-            return res.status(200).json({ message: 'No hay entrega con ese ID:' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(asistance_registers)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -65,12 +65,12 @@ const getAsistanceRegisterByIdAsistanceAndStudent = async (req: NextApiRequest, 
             }
         })
         if (!asistance_registers) {
-            return res.status(200).json({ message: 'No hay entrega con ese ID:' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(asistance_registers)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 

@@ -5,6 +5,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 type Data =
     | { message: string }
     | CourseModel
+    | CourseModel[]
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
     const { id } = req.query
@@ -38,14 +39,14 @@ const getCourseById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
         })
         if (!course) {
             return res.status(200).json({
-                message: 'No existe ese curso con ID:' + id
+                message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'
             })
         }
         return res.status(200).json(course);
     } catch (error) {
         console.log(error);
         return res.status(400).json({
-            message: 'Error al obtener el curso'
+            message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'
         })
     }
 }

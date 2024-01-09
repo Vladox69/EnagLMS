@@ -23,12 +23,12 @@ const getTeachers = async ( res: NextApiResponse<Data>) => {
     try {
         const teachers = await prisma.teacher.findMany()
         if (!teachers) {
-            return res.status(200).json({ message: 'No hay profesrores' });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(teachers)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
@@ -48,6 +48,6 @@ const createTeacher = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
         return res.status(200).json(teacher)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({message:'Error al crear profesor'})
+        return res.status(400).json({message:"Failed to create resource. The provided data is invalid or incomplete."})
     }
 }

@@ -5,7 +5,7 @@ import { GridSection } from '@/components/my/section/';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { enagApi } from '@/apis';
-import { ModuleModel, ModuleResourceModel, SectionModel, TeacherModel } from '@/models';
+import { ModuleModel, ModuleResourceModel, SectionModel, StudentModel, TeacherModel } from '@/models';
 import { useContext, useEffect, useState } from 'react';
 import { MyContext } from '@/context/my';
 import ViewListIcon from '@mui/icons-material/ViewList';
@@ -23,7 +23,6 @@ interface Props {
 export const MyModuleByName: NextPage<Props> = ({ }) => {
     const router = useRouter();
 
-    const { user } = useContext(MyContext)
     const [openPlanificacion, setPlanificacion] = useState(false)
     const [openDocente, setDocente] = useState(false)
 
@@ -31,6 +30,7 @@ export const MyModuleByName: NextPage<Props> = ({ }) => {
     const [sections, setSections] = useState<SectionModel[]>([])
     const [resources, setResources] = useState<ModuleResourceModel[]>([])
     const [teacher, setTeacher] = useState<TeacherModel>()
+    const [student, setStudent] = useState<StudentModel>()
 
     useEffect(() => {
         if (router.isReady) {
@@ -41,6 +41,8 @@ export const MyModuleByName: NextPage<Props> = ({ }) => {
 
     const getData = async () => {
         const { module: id } = router.query
+        const { data: p } = await enagApi.get(`/auth/profile`)
+        const { data: s } = await enagApi.get<StudentModel>(`/students/user_id=${p.user_id}`)
         const { data: secs } = await enagApi.get<SectionModel[]>(`/sections/module_id=${id}`)
         const { data: md } = await enagApi.get<ModuleModel>(`/modules/module_id=${id}`)
         const { data: rscs } = await enagApi.get<ModuleResourceModel[]>(`/modules/resources/module_id=${id}`)
@@ -49,6 +51,7 @@ export const MyModuleByName: NextPage<Props> = ({ }) => {
         setResources(rscs)
         setTeacher(tch)
         setModule(md)
+        setStudent(s)
     }
 
     const handleOpenPlanificacion = () => {
@@ -68,11 +71,11 @@ export const MyModuleByName: NextPage<Props> = ({ }) => {
     }
 
     const goToAsistance = () => {
-        router.push(`/my/course/asistance/student_id=${user?.id}&module_id=${module?.id}`);
+        router.push(`/my/course/asistance/student_id=${student?.id}&module_id=${module?.id}`);
     }
 
     const goToGrades = () => {
-        router.push(`/my/course/module/grade/student_id=${user?.id}&module_id=${module?.id}`)
+        router.push(`/my/course/module/grade/student_id=${student?.id}&module_id=${module?.id}`)
     }
     const css = ' container d-flex border rounded align-items-center mb-2'
     return (

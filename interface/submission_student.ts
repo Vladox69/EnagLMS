@@ -1,9 +1,8 @@
-import { SubmissionModel, SubmissionResourceModel } from "@/models";
+import { StudentModel, SubmissionModel, SubmissionResourceModel } from "@/models";
 
 export interface SubmissionStudentI{
     id_submission:number;
-    id_student:number;
-    student:string;
-    submission:SubmissionModel;
-    resources:SubmissionResourceModel[];
+    student:StudentModel|any;
+    submission:SubmissionModel|any;
+    resources:SubmissionResourceModel[]|any;
 }

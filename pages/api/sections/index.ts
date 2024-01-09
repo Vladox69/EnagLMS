@@ -25,7 +25,7 @@ const getSections = async ( res: NextApiResponse<Data>) => {
         return res.status(200).json(sections)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener secciones' });
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 
@@ -43,6 +43,6 @@ const createSection = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
         return res.status(200).json(section);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al crear seccion' }); 
+        return res.status(400).json({ message: "Failed to create resource. The necessary data is missing or inaccessible." }); 
     }
 }

@@ -39,12 +39,12 @@ const getResourceByIdActivity = async (req: NextApiRequest, res: NextApiResponse
             }
         })
         if(!activity_resources){
-            return res.status(200).json({message:'No hay recursos para esta actividad'})
+            return res.status(200).json({message:"Failed to fetch resource. The requested data is missing or inaccessible."})
         }
         return res.status(200).json(activity_resources);
             } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 

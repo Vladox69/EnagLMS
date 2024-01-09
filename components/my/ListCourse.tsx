@@ -1,17 +1,16 @@
 import { MyContext, MyState } from '@/context/my'
 import { Container } from '@mui/material';
-import React, { useContext, useMemo } from 'react'
+import React, {  FC, useEffect, useState } from 'react'
 import { ItemLineCourse } from './ItemLineCourse';
+import { enagApi } from '@/apis';
+import { CourseModel, StudentModel } from '@/models';
 
 interface Props{
-    status:MyState;
+    courses:CourseModel[];
 }
 
 
-export const ListCourse = () => {
-  
-  const {courses} = useContext(MyContext);
-
+export const ListCourse:FC<Props> = ({courses}) => {
   
     return (
     <Container className='container'>

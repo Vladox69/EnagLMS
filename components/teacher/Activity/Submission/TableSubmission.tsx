@@ -34,7 +34,7 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                {submission.student}
+                                {submission.student.names} {submission.student.last_names}
                             </TableCell>
                             <TableCell >{  submission.submission.state_gra=='Sin calificar' ? submission.submission.state_gra : submission.submission.grade }</TableCell>
                             <TableCell >
@@ -42,7 +42,7 @@ export const TableSubmission: FC<Props> = ({ submissions }) => {
                                     submission.resources.length == 0 ?
                                         (<span>No entregado</span>)
                                         :
-                                        (submission.resources.map((resource) => (
+                                        (submission.resources.map((resource:any) => (
                                             <li key={resource.id} onClick={() => handleDownload(resource.url_resource, resource.title)} >
                                                 <span  >
                                                     {resource.title}

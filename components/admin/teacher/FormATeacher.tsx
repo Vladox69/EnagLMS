@@ -44,6 +44,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
     const [ID, setID] = useState(false)
     const [CV, setCV] = useState(false)
     const [TLD, setTLD] = useState(false)
+    const [users, setUsers] = useState<UserModel[]>([])
 
     const onIdCardInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const target = event.target
@@ -62,8 +63,6 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
         if (target.files && target.files.length === 0) return
         formik.setFieldValue('third_level_degree_file', target.files?.[0])
     }
-
-    const [users, setUsers] = useState<UserModel[]>([])
 
     const getData = async () => {
         const { data } = await enagApi.get(`/users/user_rol=TEACHER`)

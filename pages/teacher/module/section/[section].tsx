@@ -1,6 +1,6 @@
 import { Layout } from '@/components/layouts';
-import React, { useState } from 'react'
-import { Container, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import React, { useEffect, useState } from 'react'
+import { Container, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Box } from '@mui/material';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { ActivityModel, SectionModel, SectionResourceModel } from '@/models';
 import { enagApi } from '@/apis';
@@ -15,9 +15,31 @@ interface Props {
     resources: SectionResourceModel[]
 }
 
-export const TeacherSectionById: NextPage<Props> = ({ section, activities, resources }) => {
+export const TeacherSectionById: NextPage<Props> = ({ }) => {
 
     const router = useRouter()
+
+    const [section, setSection] = useState<SectionModel>()
+    const [activities, setActivities] = useState<ActivityModel[]>([])
+    const [resources, setResources] = useState<SectionResourceModel[]>([])
+
+    useEffect(() => {
+        if (router.isReady) {
+            getData()
+        }
+    }, [router.isReady])
+
+
+    const getData = async () => {
+        const { section: id } = router.query
+        const { data: sect } = await enagApi.get<SectionModel>(`/sections/section_id=${id}`);
+        const { data: acts } = await enagApi.get<ActivityModel[]>(`/activities/section_id=${id}`);
+        const { data: rescs } = await enagApi.get<SectionResourceModel[]>(`/sections/resources/section_id=${id}`);
+        setSection(sect)
+        setActivities(acts)
+        setResources(rescs)
+    }
+
 
     const [open, setOpen] = useState(false)
 
@@ -47,39 +69,44 @@ export const TeacherSectionById: NextPage<Props> = ({ section, activities, resou
         });
     }
 
-    // const goToNewResource=()=>{
-    //     const {section:id}=router.query;
-    //     router.push({
-    //         pathname:'/teacher/module/section/resource/new',
-    //         query:{section_id:id}
-    //     });
-    // }
-
     return (
         <Layout title='Teacher section'>
             <Container className='container'>
-                <Container className='container '>
-                    <Typography variant='h3' > {section.title} </Typography>
-                    <Typography component='p' dangerouslySetInnerHTML={{
-                        __html: section.content
-                    }} />
+                {
+                    (section == undefined || activities == undefined || resources == undefined) ?
+                        (<Box
+                            display="flex"
+                            justifyContent="center"
+                            alignItems="center"
+                            minHeight="80vh" // Ajusta esta altura según tus necesidades
+                        >
+                            <CircularProgress size={100} color='error' />
+                        </Box>) : (
+                            <Container className='container '>
+                                <Typography variant='h3' > {section.title} </Typography>
+                                <Typography component='p' dangerouslySetInnerHTML={{
+                                    __html: section.content
+                                }} />
 
-                    <Typography variant='h5' > Recursos </Typography>
-                    {/* <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button> */}
-                    <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
-                        <DialogTitle id="form-dialog-title" className='text-center' >Formulario de nuevo recurso</DialogTitle>
-                        <DialogContent>
-                            <FormTResource section_id={section.id} onSubmitResource={handleFormSubmit} onCancel={handleClose}/>
-                        </DialogContent>
-                    </Dialog>
-                    <GridTResource section_resources={resources} />
-                    <Button variant='contained' color='error' className='my-2' onClick={handleOpen} >Nuevo recurso</Button>
+                                <Typography variant='h5' > Recursos </Typography>
+                                {/* <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button> */}
+                                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
+                                    <DialogTitle id="form-dialog-title" className='text-center' >Formulario de nuevo recurso</DialogTitle>
+                                    <DialogContent>
+                                        <FormTResource section_id={section.id} onSubmitResource={handleFormSubmit} onCancel={handleClose} />
+                                    </DialogContent>
+                                </Dialog>
+                                <GridTResource section_resources={resources} />
+                                <Button variant='contained' color='error' className='my-2' onClick={handleOpen} >Nuevo recurso</Button>
 
-                    <Typography variant='h5' > Actividades </Typography>
-                    <GridTActivity activities={activities} />
-                    <Button variant='contained' color='error' className='my-2' onClick={goToNewActivity} >Nueva actividad</Button>
+                                <Typography variant='h5' > Actividades </Typography>
+                                <GridTActivity activities={activities} />
+                                <Button variant='contained' color='error' className='my-2' onClick={goToNewActivity} >Nueva actividad</Button>
 
-                </Container>
+                            </Container>
+                        )
+                }
+
             </Container>
         </Layout>
     )

@@ -45,7 +45,7 @@ const createSubmissionResource = async (req: NextApiRequest, res: NextApiRespons
         return res.status(200).json(submissios_resource);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al crear el recurso' });
+        return res.status(400).json({ message: "Failed to update resource. The target data is missing or cannot be accessed."});
     }
 }
 

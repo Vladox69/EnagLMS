@@ -26,7 +26,7 @@ const getStudents = async (res: NextApiResponse<Data>) => {
         return res.status(200).json(students)
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: 'Error al recuperar estudiantes' });
+        return res.status(500).json({ message:  'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 

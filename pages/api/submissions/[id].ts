@@ -49,13 +49,13 @@ const getSubmissionByIdActivityAndStudent = async (req: NextApiRequest, res: Nex
             }
         })
         if (!submission) {
-            return res.status(200).json({ message: 'No hay entrega con ese ID:' + `student:${student_id} y activity:${activity_id}` });
+            return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
         }
         return res.status(200).json(submission)
     } catch (error) {
 
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 
@@ -71,13 +71,13 @@ const getSubmissionsByIdActivity = async (req: NextApiRequest, res: NextApiRespo
             }
         })
         if (!submissions) {
-            return res.status(200).json({ message: `No hay entregas con ese id : ${activity_id}` });
+            return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
         }
         return res.status(200).json(submissions)
     } catch (error) {
 
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 
@@ -121,13 +121,13 @@ const updateSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>)
             }
         })
         if (!submission) {
-            return res.status(200).json({ message: 'No existe entrega con ese ID para actualizar' + submission_id })
+            return res.status(200).json({ message: "Failed to update resource. The target data is missing or cannot be accessed." })
         }
         return res.status(200).json(submission);
 
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al actualizar la entrega' })
+        return res.status(400).json({ message: "Failed to update resource. The target data is missing or cannot be accessed." })
     }
 
 }

@@ -20,10 +20,14 @@ interface Props {
 
 export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
 
-
   const [files, setFiles] = useState<any[]>([])
-  const [resources, setResources] = useState(resc)
+  const [resources, setResources] = useState<SubmissionResourceModel[]>([])
   const [resourceRemoved, setResourceRemoved] = useState<SubmissionResourceModel[]>([])
+
+  useEffect(() => {
+    setResources(resc)
+  }, [resc])
+  
 
   const router = useRouter()
 
@@ -85,13 +89,13 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
   };
 
   const renderResources = (resource: SubmissionResourceModel) => {
-    const icon = resource.title.includes('.docx') || resource.title.includes('.pdf') ? <ImageIcon /> : <PictureAsPdfIcon />;
+    const icon = resource.title.includes('.docx') || resource.title.includes('.pdf') ? <PictureAsPdfIcon /> : <PictureAsPdfIcon />;
     return (
       <li key={resource.id} >
         {icon}
         <span onClick={() => handleDownload(resource.url_resource, resource.title)}>{resource.title}</span>
-        <IconButton  color='error' onClick={() => onRemoveResource(resource)} >
-        <ClearIcon />
+        <IconButton color='error' onClick={() => onRemoveResource(resource)} >
+          <ClearIcon />
         </IconButton>
       </li>
     )
@@ -127,7 +131,7 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
 
   return (
     <>
-    <Typography variant='h4'> Agregar entrega  </Typography>
+      <Typography variant='h4'> Agregar entrega  </Typography>
       <form className='border rounded my-2'>
         <div {...getRootProps()} style={{
           height: 100
@@ -135,8 +139,8 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
           <input {...getInputProps()} />
           {
             isDragActive
-              ? (<p>Arraste aquí los archivos</p>)
-              : (<p>Arrastre y suelte algunos archivos aquí, o click para seleccionar archivos</p>)
+              ? (<p className='mx-2'>Arraste aquí los archivos</p>)
+              : (<p className='mx-2'>Arrastre y suelte algunos archivos aquí, o click para seleccionar archivos</p>)
           }
         </div>
         <ul className=''>
@@ -145,26 +149,26 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc }) => {
 
       </form>
 
-       {
-        (resources!=undefined)?
-        (
-          <div>
-          <Typography>Archivos </Typography>
-          <Box className='border rounded mb-2'>
-  
-            <ol>
-              {
-                resources.map(renderResources)
-              }
-            </ol>
-          </Box>
-        </div>
-        )
-        :
-        (
-          <></>
-        )
-       }   
+      {
+        (resources.length > 0) ?
+          (
+            <div>
+              <Typography>Archivos entregados </Typography>
+              <Box className='border rounded mb-2'>
+
+                <ol>
+                  {
+                    resources.map(renderResources)
+                  }
+                </ol>
+              </Box>
+            </div>
+          )
+          :
+          (
+            <></>
+          )
+      }
 
 
       <Button variant='contained' color='error' onClick={onSave} >

@@ -23,7 +23,7 @@ export const TableGrades: FC<Props> = ({ grades }) => {
             <Typography className='mb-2' variant='h4'> Notas por módulo </Typography>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table" >
-                    <caption>Total del módulo {total} </caption>
+                    <caption>Total del módulo {isNaN(total)?"-":total} </caption>
                     <TableHead>
                         <TableRow>
                             <TableCell>Actividad</TableCell>
@@ -43,11 +43,13 @@ export const TableGrades: FC<Props> = ({ grades }) => {
                                         <TableCell>{activity.title}</TableCell>
                                         <TableCell align="right">{40}</TableCell>
                                         <TableCell align="right">{activity.submission.grade}</TableCell>
-                                        <TableCell align="right">{activity.submission.comment}</TableCell>
+                                        <TableCell align="right" dangerouslySetInnerHTML={{
+                                            __html:activity.submission.comment
+                                        }} />
                                     </TableRow>
                                 ))}
                                 <TableRow>
-                                    <Typography className='fw-bold ms-2'>Total {section.total}</Typography>
+                                    <Typography className='fw-bold ms-2'>Total {isNaN(section.total)? "-":section.total}</Typography>
                                 </TableRow>
                             </>
                         ))}

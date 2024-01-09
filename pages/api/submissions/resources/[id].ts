@@ -46,7 +46,7 @@ const getResourceBySubmissionId = async (req: NextApiRequest, res: NextApiRespon
         return res.status(200).json(submission_resource)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 
@@ -81,12 +81,12 @@ const deleteSubmissionByIdSubmission=async (req: NextApiRequest, res: NextApiRes
         })
 
         if(submission_resource.count == 0){
-            return res.status(200).json({message:'No hay recursos para eliminar'})    
+            return res.status(200).json({message:"Failed to delete resource. The specified data does not exist or is protected."})    
         }
         return res.status(200).json({message:'Recursos eliminados',count:submission_resource.count})
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al eliminar recurso' });
+        return res.status(400).json({ message: "Failed to delete resource. The specified data does not exist or is protected." });
     }
 }
 

@@ -43,12 +43,12 @@ const getModulesByIdCourse = async (req: NextApiRequest, res: NextApiResponse<Da
             }
         })
         if (!modules) {
-            return res.status(200).json({ message: 'No hay modulos en ese curso' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(modules)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener los modulos' });
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 

@@ -3,7 +3,7 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { Box, CircularProgress, Container, Typography, } from '@mui/material';
 
 
-import { GridCourse } from '../../../components/my/GridCourse';
+import { GridCourse } from '@/components/my/GridCourse';
 import enagApi from '../../../apis/enagApi';
 import { CourseModel, ModuleModel } from '@/models';
 import { useEffect, useState } from 'react';

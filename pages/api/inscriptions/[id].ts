@@ -36,13 +36,13 @@ const getInscription = async (req: NextApiRequest, res: NextApiResponse<Data>) =
         const inscriptions = await prisma.inscription.findMany()
         if (!inscriptions) {
             return res.status(200).json({
-                message: 'No hay esa inscripricion con ese ID:' + id
+                message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'
             });
         }
         return res.status(200).json(inscriptions);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener inscripcion' })
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' })
     }
 }
 
@@ -58,13 +58,13 @@ const getIsncriptionByIdCourse = async (req: NextApiRequest, res: NextApiRespons
 
         if (!inscriptions) {
             return res.status(200).json({
-                message: 'No hay esa inscripricion con ese ID de curso:' + course_id
+                message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'
             });
         }
         return res.status(200).json(inscriptions);
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener inscripcion' })
+        return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' })
     }
 }
 

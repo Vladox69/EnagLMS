@@ -2,7 +2,7 @@ import { enagApi } from '@/apis';
 import { Layout } from '@/components/layouts'
 import { AsistanceModel, AsistanceRegisterModel } from '@/models';
 import { Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import {  NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
 
@@ -47,14 +47,14 @@ export const MyAsistanceById: NextPage<Props> = ({ }) => {
                 <TableContainer component={Paper} className='border rounded' >
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <caption>
-                            <ol>
-                                <li>
+                            <ul>
+                                <li className='list-group-item'>
                                     Porcentaje de asistencia el curso
                                 </li>
-                                <li>
-                                    sss
+                                <li className='list-group-item'>
+                                    100%
                                 </li>
-                            </ol>
+                            </ul>
                         </caption>
                         <TableHead>
                             <TableRow>
@@ -87,49 +87,5 @@ export const MyAsistanceById: NextPage<Props> = ({ }) => {
     )
 }
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-
-    const data: any[] = []
-
-    return {
-        paths: data.map(a => ({
-            params: { asistance: a.asistance }
-        })),
-        fallback: 'blocking'
-    }
-}
-
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const { asistance } = params as { asistance: string };
-
-    const regex = /^student_id=([0-9]+)&module_id=([0-9]+)$/;
-    const isValid = regex.test(asistance);
-    if (isValid) {
-        const { data: asistances } = await enagApi.get<AsistanceModel[]>(`/asistances/${asistance}`);
-
-        if (!asistances) {
-            return {
-                redirect: {
-                    destination: `/my`,
-                    permanent: false
-                }
-            }
-        }
-        return {
-            props: {
-                asistances
-            }
-        }
-    } else {
-        return {
-            redirect: {
-                destination: `/my`,
-                permanent: false
-            }
-        }
-    }
-
-}
 
 export default MyAsistanceById;

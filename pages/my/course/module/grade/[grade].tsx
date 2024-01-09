@@ -16,10 +16,7 @@ interface Props {
 export const MyGradeById: NextPage<Props> = ({ }) => {
 
     const [grades, setGrades] = useState<GradesI>()
-    const { user } = useContext(MyContext)
-
     const router = useRouter()
-
     useEffect(() => {
         if (router.isReady) {
             getData()
@@ -32,23 +29,18 @@ export const MyGradeById: NextPage<Props> = ({ }) => {
         const [q1, q2] = qp
         const student_id = q1.substring(`student_id=`.length)
         const module_id = q2.substring(`module_id=`.length)
-
         const { data: sect } = await enagApi.get<SectionModel[]>(`/sections/module_id=${module_id}`)
         const activitiesPromises = sect.map(async (section) => {
             const { data: activities } = await enagApi.get<ActivityModel[]>(`/activities/section_id=${section.id}`)
             return activities;
         })
         const activitiesRes = await Promise.all(activitiesPromises);
-
         const acts = activitiesRes.flat();
-
         const submissionsPromises = acts.map(async (activity) => {
             const { data: submission } = await enagApi.get<SubmissionModel>(`/submissions/student_id=${student_id}&activity_id=${activity.id}`)
             return submission
         })
-
         const submissions = await Promise.all(submissionsPromises)
-
         const sections = sect.map((section) => {
             const activities_no_sub = acts.filter((activity) => activity.section_id == section.id)
             let total = 0
@@ -61,7 +53,6 @@ export const MyGradeById: NextPage<Props> = ({ }) => {
                     submission
                 }
             })
-
             const sections = {
                 ...section,
                 activities

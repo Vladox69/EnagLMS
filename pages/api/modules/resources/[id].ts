@@ -33,12 +33,12 @@ const getResourcesByIdModule = async (req: NextApiRequest, res: NextApiResponse<
             }
         })
         if (!module_resource) {
-            return res.status(200).json({ message: 'No hay entregas con ese ID de modulo:' + id });
+            return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
         return res.status(200).json(module_resource)
     } catch (error) {
         console.log(error);
-        return res.status(400).json({ message: 'Error al obtener entrega' });
+        return res.status(400).json({ message:'Failed to retrieve resource. The requested data is missing or inaccessible.' });
     }
 }
 
