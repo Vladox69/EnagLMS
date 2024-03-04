@@ -13,7 +13,7 @@ export const TeacherResourceById: NextPage<Props> = ({ resource }) => {
         <Layout>
             <Container className='container bg-primary'>
                 <Container className='container bg-danger'>
-                    <Typography component='p'> {resource.title} </Typography>
+                    <Typography component='p'> {resource?.title} </Typography>
                     
                     {
                         // TODO: Poner el documento 
