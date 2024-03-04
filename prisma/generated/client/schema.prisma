@@ -1,0 +1,198 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model user{
+  id Int            @id @default(autoincrement())
+  username String   @unique
+  password  String 
+  email     String
+  rol       Role     @default(USER)
+  photo_url String
+  students  student[] 
+  teacher   teacher[]
+}
+
+enum Role{
+  ADMIN
+  USER
+  TEACHER
+  STUDENT
+}
+
+model student{
+  id                    Int            @id @default(autoincrement())
+  names                 String
+  last_names            String
+  ID_card_url           String
+  study_certificate_url String
+  activities            submission[]
+  inscriptions          inscription[]
+  // asistances            asistance[]
+  asistances_register   asistance_register[]
+  user                  user @relation(fields: [user_id],references: [id])
+  user_id               Int 
+}
+
+model teacher{
+  id                 Int            @id @default(autoincrement())
+  names                 String
+  last_names            String
+  ID_card_url        String
+  cv_url             String
+  third_level_degree String
+  modules            module[]  
+  user               user @relation(fields: [user_id],references: [id])
+  user_id            Int 
+}
+
+model inscription{
+  id         Int            @id @default(autoincrement())
+  student    student @relation(fields: [student_id],references: [id])
+  student_id Int
+  course     course @relation(fields: [course_id],references: [id])     
+  course_id  Int
+}
+
+model course{
+  id            Int            @id @default(autoincrement())
+  topic         String
+  content       String
+  start_at      DateTime
+  end_at        DateTime
+  modality      String
+  objective     String
+  periods       Int
+  qualification String
+  requirements  String
+  type          String
+  visible       Boolean
+  img_url       String     
+  modules       module[]
+  inscriptions  inscription[]
+}
+
+model module{
+  id           Int            @id @default(autoincrement())
+  title        String
+  content      String
+  sections     section[]
+  resources    module_resource[]
+  asistances   asistance[]
+  hours        Int
+  img_url      String
+  teacher      teacher @relation(fields: [teacher_id],references: [id])
+  teacher_id   Int
+  course       course @relation(fields: [course_id],references: [id])
+  course_id    Int
+}
+
+model module_resource{
+    id           Int            @id @default(autoincrement())
+    url_resource String
+    module       module @relation(fields: [module_id],references: [id])
+    module_id    Int
+    title        String
+}
+
+model section{
+  id         Int            @id @default(autoincrement())
+  title      String
+  content    String
+  activities activity[]
+  resources  section_resource[]
+  module     module @relation(fields: [module_id],references: [id])
+  module_id  Int
+}
+
+model section_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  section       section @relation(fields: [section_id],references: [id])
+  section_id    Int
+  title         String
+}
+
+model activity{
+  id         Int            @id @default(autoincrement())
+  title      String
+  content    String
+  time_due   DateTime
+  submission submission[]
+  resources  activity_resource[]
+  section    section @relation(fields: [section_id],references: [id])
+  section_id Int
+}
+
+model activity_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  activity      activity @relation(fields: [activity_id],references: [id])
+  activity_id   Int
+  title         String
+}
+
+model submission{
+  id          Int            @id @default(autoincrement())
+  grade       Float
+  comment     String
+  state_sub   String
+  state_gra   String
+  resources   submission_resource[] 
+  student     student @relation(fields: [student_id],references: [id])
+  student_id  Int
+  activity    activity @relation(fields: [activity_id],references: [id])
+  activity_id Int
+}
+
+model submission_resource{
+  id            Int            @id @default(autoincrement())
+  url_resource  String
+  submission    submission @relation(fields: [submission_id],references: [id])
+  submission_id   Int
+  title           String
+}
+
+model asistance{
+  id         Int              @id @default(autoincrement())
+  // status      StatusAsistance  @default(PRESENTE)
+  description String
+  date        DateTime   
+  registers   asistance_register[] 
+  // student    student @relation(fields: [student_id],references: [id])
+  // student_id Int
+  module     module @relation(fields: [module_id],references: [id])     
+  module_id  Int    
+}
+
+model asistance_register{
+  id            Int              @id @default(autoincrement())
+  status        StatusAsistance  @default(PRESENTE)
+  student       student @relation(fields: [student_id],references: [id])
+  student_id    Int
+  asistance     asistance @relation(fields: [asistance_id],references: [id])
+  asistance_id  Int  
+}
+
+model intern_cv{
+  id     Int @id @default(autoincrement())
+  name   String
+  phone  String
+  email  String
+  cv_url String
+}
+
+enum StatusAsistance{
+  PRESENTE
+  ATRASO
+  FALTA
+}
