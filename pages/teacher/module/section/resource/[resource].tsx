@@ -25,3 +25,5 @@ export const TeacherResourceById: NextPage<Props> = ({ resource }) => {
         </Layout>
     )
 }
+
+export default TeacherResourceById;
