@@ -27,7 +27,7 @@ export const GridSectionResource: FC<Props> = ({ section }) => {
         <>
             {
                 sectionResources.map((section_resource) => (
-                    <ItemSectionResource section_resource={section_resource} />
+                    <ItemSectionResource key={section_resource.id} section_resource={section_resource} />
                 ))
             }
         </>

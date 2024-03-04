@@ -10,7 +10,8 @@ export const NewActivityResource = () => {
 
     return (
         <Layout>
-            <FormActivityResource activity_id={Number(activity_id)} />
+            <></>
+            {/* <FormActivityResource activity_id={Number(activity_id)}  /> */}
         </Layout>
     )
 }

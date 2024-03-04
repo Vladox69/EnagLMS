@@ -188,7 +188,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                     id="rol"
                     select
                     name='rol'
-                    label="Usuarios"
+                    label="Rol"
                     variant='outlined'
                     value={formik.values.rol}
                     onChange={formik.handleChange}

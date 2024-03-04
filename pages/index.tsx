@@ -198,11 +198,11 @@ export default function Home() {
         <Container className='d-flex flex-column flex-sm-row align-items-center' >
           <Image alt='xx' src={'/assets/va.jpeg'} width={300} height={200} />
           <Typography component='p' color='white' >
-            "Mi experiencia en la escuela de gastronomía ha sido increíblemente enriquecedora.
+            Mi experiencia en la escuela de gastronomía ha sido increíblemente enriquecedora.
             Desde el primer día, me sentí inspirado y motivado por los talentosos chefs y la pasión que transmiten.
             He aprendido técnicas culinarias innovadoras y descubierto ingredientes sorprendentes.
             La combinación de teoría y práctica me ha dado una base sólida para seguir mi carrera en la gastronomía.
-            Estoy agradecido por esta oportunidad única y emocionado por lo que el futuro me depara como chef profesional."
+            Estoy agradecido por esta oportunidad única y emocionado por lo que el futuro me depara como chef profesional.
           </Typography>
           <Typography component='blockquote' >
             Harry

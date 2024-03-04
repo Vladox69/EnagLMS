@@ -23,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 const createModule=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
         const {title,content,course_id,teacher_id,hours,img_url}=req.body
-        const module = await prisma.module.create({
+        const mod = await prisma.module.create({
             data:{
                 title,
                 content,
@@ -33,7 +33,7 @@ const createModule=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
                 img_url
             }
         })       
-        return res.status(200).json(module) 
+        return res.status(200).json(mod) 
     } catch (error) {
         console.log(error);
         return res.status(400).json({message:'Error al crear el módulo'})

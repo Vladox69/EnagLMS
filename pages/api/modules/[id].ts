@@ -76,15 +76,15 @@ const getModuleById = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     try {
         const { id } = req.query;
         const module_id = id?.toString().substring("module_id=".length);
-        const module = await prisma.module.findFirst({
+        const mod = await prisma.module.findFirst({
             where: {
                 id: Number(module_id)
             }
         })
-        if (!module) {
+        if (!mod) {
             return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
         }
-        return res.status(200).json(module)
+        return res.status(200).json(mod)
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
@@ -96,7 +96,7 @@ try {
     const {id}=req.query;
     const module_id=id?.toString().substring("module_id=".length)
     const {title,content,course_id,teacher_id,hours,img_url}=req.body
-    const module=await prisma.module.update({
+    const mod=await prisma.module.update({
         where:{
             id:Number(module_id)
         },
@@ -109,7 +109,7 @@ try {
             img_url
         }
     })
-    return res.status(200).json(module)
+    return res.status(200).json(mod)
 } catch (error) {
     console.log(error);
     return res.status(400).json({message:'Error al actualizar modulo'})
@@ -120,12 +120,12 @@ const deleteModuleById= async (req: NextApiRequest, res: NextApiResponse<Data>) 
     try {
         const {id}=req.query
         const module_id=id?.toString().substring("module_id=".length)
-        const module=await prisma.module.delete({
+        const mod=await prisma.module.delete({
             where:{
                 id:Number(module_id)
             }
         })
-        return res.status(200).json(module)
+        return res.status(200).json(mod)
     } catch (error) {
         console.log(error);
         return res.status(200).json({message:'No se pudo eliminar el módulo'})

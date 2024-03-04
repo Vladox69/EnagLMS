@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import { newActivityResource } from '@/utils/activity/resource/newActivityResource';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/router';
+import styles from '@/styles/Custom.module.css'
 
 interface Props {
     activity_id: number,
@@ -71,7 +72,8 @@ export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }
                     error={formik.touched.file && Boolean(formik.errors.file)}
                     helperText={formik.touched.file && formik.errors.file}
                 />
-                <Button color='primary' variant='contained' type='submit'> Guardar </Button>
+                <Button color='error' variant='contained' type='submit' className='mt-2'> Guardar </Button>
+                <Button className={styles.black_button + ' ms-2 mt-2'} variant='contained' type='submit'> Cancelar </Button>
             </form>
         </Container>
     )

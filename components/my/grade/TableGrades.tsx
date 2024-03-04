@@ -39,7 +39,7 @@ export const TableGrades: FC<Props> = ({ grades }) => {
                                     <Typography className='ms-2'>{section.title}</Typography>
                                 </TableRow>
                                 {section.activities.map((activity) => (
-                                    <TableRow>
+                                    <TableRow key={activity.id}>
                                         <TableCell>{activity.title}</TableCell>
                                         <TableCell align="right">{40}</TableCell>
                                         <TableCell align="right">{activity.submission.grade}</TableCell>

@@ -84,10 +84,10 @@ export const CursoByName: NextPage<Props> = () => {
                     </thead>
                     <tbody>
                         {
-                            modules.map((module) => (
-                                <tr>
-                                    <td> {module.title} </td>
-                                    <td className='text-end'>{module.teacher_id}</td>
+                            modules.map((mod) => (
+                                <tr key={mod.id} >
+                                    <td> {mod.title} </td>
+                                    <td className='text-end'>{mod.teacher_id}</td>
                                 </tr>
                             ))
                         }

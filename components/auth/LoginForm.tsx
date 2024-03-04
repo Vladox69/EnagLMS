@@ -61,7 +61,7 @@ export const LoginForm = () => {
                     helperText={formik.touched.username && formik.errors.username}
                 />
                 <TextField
-                    type='text'
+                    type='password'
                     variant='outlined'
                     label='Contraseña'
                     id="password"
