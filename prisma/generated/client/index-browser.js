@@ -246,6 +246,11 @@ exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
 };
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   USER: 'USER',
