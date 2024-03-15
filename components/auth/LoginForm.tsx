@@ -21,7 +21,6 @@ export const LoginForm = () => {
                 username: values.username,
                 password: values.password
             }
-
             await enagApi.post(`/auth/login`, body)
             const { data: user } = await enagApi.get(`/auth/profile`)
             switch (user.rol) {
