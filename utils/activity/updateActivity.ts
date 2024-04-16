@@ -9,7 +9,8 @@ export const updateActivity=async(activity:ActivityModel)=>{
             title:activity.title,
             content:activity.content,
             time_due:activity.time_due,
-            section_id:activity.section_id
+            section_id:activity.section_id,
+            ponderation:activity.ponderation
         }
         const res =await enagApi.put(`/activities/activity_id=${activity.id}`,body)
         return res;

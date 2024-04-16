@@ -72,7 +72,7 @@ const updateActivity = async (req: NextApiRequest, res: NextApiResponse<Data>) =
     try {
         const { id } = req.query
 
-        const { title, content, time_due } = req.body
+        const { title, content, time_due, ponderation } = req.body
 
         const activity_id = id?.toString().substring("activity_id=".length)
         const activity = await prisma.activity.update({
@@ -82,7 +82,8 @@ const updateActivity = async (req: NextApiRequest, res: NextApiResponse<Data>) =
             data: {
                 time_due,
                 title,
-                content
+                content,
+                ponderation
             }
         })
 

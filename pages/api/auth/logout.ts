@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { verify } from 'jsonwebtoken'
 import { serialize } from "cookie";
 
-export default async function loginHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function logoutHandler(req: NextApiRequest, res: NextApiResponse) {
     const { enag_session } = req.cookies
     if (!enag_session) {
         return res.status(401).json({ error: 'Token not found' })

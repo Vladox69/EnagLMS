@@ -75,18 +75,6 @@ export const FormTResource: FC<Props> = ({ section_id, onSubmitResource, onCance
         <Container>
             <form onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3' >
                 <TextField
-                    type='text'
-                    variant='outlined'
-                    label='Título'
-                    id="title"
-                    name="title"
-                    value={formik.values.title}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.title && Boolean(formik.errors.title)}
-                    helperText={formik.touched.title && formik.errors.title}
-                />
-                <TextField
                     type='file'
                     variant='outlined'
                     id="file"

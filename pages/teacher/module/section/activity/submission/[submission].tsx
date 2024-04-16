@@ -2,11 +2,10 @@ import { Layout } from '@/components/layouts'
 import React, { useEffect, useState } from 'react'
 import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import { StudentModel, SubmissionModel, SubmissionResourceModel } from '@/models';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import { enagApi } from '@/apis';
 import { FormSubmission } from '@/components/teacher/Activity/Submission/FormSubmission';
 import { useRouter } from 'next/router';
-import { CustomDialog } from '@/components/my/CustomDialog';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { handleDownload } from '@/utils/file/handleDownload';
 

@@ -31,14 +31,15 @@ const getActivity = async (res: NextApiResponse<Data>) => {
 
 const createActivity = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const { title, content, time_due, section_id } = req.body
+        const { title, content, time_due, section_id, ponderation } = req.body
         const activity = await prisma.activity.create(
             {
                 data: {
                     title,
                     content,
                     time_due,
-                    section_id
+                    section_id,
+                    ponderation
                 }
             }
         )

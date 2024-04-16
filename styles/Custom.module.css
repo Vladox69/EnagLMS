@@ -15,3 +15,26 @@
   .black_button:hover {
     background-color: rgba(0, 0, 0, 0.8);
   }
+
+  .divCursoNombre{
+    position: 'absolute'; 
+    bottom: '-20px'; 
+    left: '20px'; 
+    background: 'rgba(0, 0, 0, 1)';
+    padding: '20px'; 
+    color: 'white'; 
+    font-size: '24px';
+    font-weight: 'bold';
+}
+@media (min-width: 992px) {
+    .divCursoNombre {
+      left: calc((100% -1200px) / 2);
+    }
+  }
+  
+  /* Media queries para pantallas pequeñas */
+  @media (max-width: 991px) {
+    .divCursoNombre {
+      left: 20px;
+    }
+  }

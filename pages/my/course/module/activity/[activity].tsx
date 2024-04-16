@@ -1,52 +1,55 @@
 import { Layout } from '@/components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Activity } from '../../../../../components/my/activity';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
 import { SubmissionStudentI } from '@/interface/submission_student';
+import { useRouter } from 'next/router';
+import { Box, CircularProgress } from '@mui/material';
 
 interface Props {
-    activity: ActivityModel;
-    submission:SubmissionStudentI
+
 }
 
+export const MyActivityById: NextPage<Props> = ({  }) => {
 
-export const MyActivityById: NextPage<Props> = ({ activity }) => {
+    const [activity, setActivity] = useState<ActivityModel>();
+    const router=useRouter();
+
+    useEffect(() => {
+        if(router.isReady){
+            getData();
+        }
+    }, [router.isReady])
+    
+
+    const getData=async()=>{
+        const {activity:activity_id}=router.query
+        const {data:act}= await enagApi.get<ActivityModel>(`/activities/activity_id=${activity_id}`)
+        setActivity(act);
+    }
+
     return (
         <Layout title='Activity' >
-            <Activity activity={activity} />
+            {
+                (activity==undefined)?
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="80vh" // Ajusta esta altura según tus necesidades
+                >
+                    <CircularProgress size={100} color='error' />
+                </Box>
+                :
+                <Activity activity={activity!} />
+            }
+            
         </Layout>
     )
 }
 
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-
-    const data: any[] = [
-    ]
-
-    return {
-        paths: data.map(m => ({
-            params: {
-                activity: m.activity
-            }
-        })),
-        fallback: 'blocking'
-    }
-}
-
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const { activity:id } = params as { activity: string };
-    const {data:activity}= await enagApi.get<ActivityModel>(`/activities/activity_id=${id}`)
-    
-    return {
-        props: {
-            activity
-        }
-    }
-
-}
 
 export default MyActivityById;

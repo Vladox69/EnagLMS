@@ -6,10 +6,11 @@ import { Box, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItem
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useRouter } from 'next/router';
+import { enagApi } from '@/apis';
 
 const drawerWidth = 240;
 
@@ -70,8 +71,7 @@ interface Props{
 export const Layout:FC<Props>= ({title='OpenJira',children}) => {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-
-    const listMenu=[{text:'Perfil',icon:<PersonIcon/>}, {text:'Cerrar sesión',icon:<LogoutIcon/>}];
+    const router=useRouter();
 
     const handleDrawerOpen = () => {
       setOpen(true);
@@ -80,6 +80,16 @@ export const Layout:FC<Props>= ({title='OpenJira',children}) => {
     const handleDrawerClose = () => {
       setOpen(false);
     };
+
+    const goHome=()=>{
+      const home=router.pathname.split('/')[1];
+      router.push(`/${home}`)
+    }
+
+    const onLogout=async()=>{
+      await enagApi.get(`/auth/logout`);
+      router.push('/');
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -120,16 +130,30 @@ export const Layout:FC<Props>= ({title='OpenJira',children}) => {
           </DrawerHeader>
           <Divider />
           <List >
-            {listMenu.map(({text,icon}, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
+              <ListItem  disablePadding>
+                <ListItemButton onClick={goHome} >
                   <ListItemIcon>
-                    {icon}
+                    <HomeIcon />
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={'Home'} />
                 </ListItemButton>
               </ListItem>
-            ))}
+              <ListItem  disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <PersonIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={'Perfíl'} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem  disablePadding>
+                <ListItemButton onClick={onLogout} >
+                  <ListItemIcon>
+                    <LogoutIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={'Cerrar sesión'} />
+                </ListItemButton>
+              </ListItem>
           </List>
         </Drawer>
         <Main open={open}>

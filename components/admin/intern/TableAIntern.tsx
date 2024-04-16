@@ -1,6 +1,5 @@
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import React, { FC, useEffect, useState } from 'react'
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { InternModel } from '@/models/intern';
 import { CustomDialog } from '@/components/my/CustomDialog';

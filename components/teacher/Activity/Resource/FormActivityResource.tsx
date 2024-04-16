@@ -8,10 +8,11 @@ import styles from '@/styles/Custom.module.css'
 
 interface Props {
     activity_id: number,
-    onSubmitResource: (formData: any) => void
+    onSubmitResource: (formData: any) => void,
+    onCancel:()=>void
 }
 
-export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }) => {
+export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource,onCancel }) => {
 
     const router = useRouter()
 
@@ -58,6 +59,10 @@ export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }
         formik.setFieldValue('file', target.files?.[0])
     }
 
+    const handleClose=()=>{
+        onCancel()
+    }
+
     return (
         <Container>
             <form onSubmit={formik.handleSubmit} >
@@ -72,8 +77,10 @@ export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource }
                     error={formik.touched.file && Boolean(formik.errors.file)}
                     helperText={formik.touched.file && formik.errors.file}
                 />
+                <div>
                 <Button color='error' variant='contained' type='submit' className='mt-2'> Guardar </Button>
-                <Button className={styles.black_button + ' ms-2 mt-2'} variant='contained' type='submit'> Cancelar </Button>
+                <Button className={styles.black_button + ' ms-2 mt-2'} variant='contained' onClick={onCancel}> Cancelar </Button>
+                </div>
             </form>
         </Container>
     )

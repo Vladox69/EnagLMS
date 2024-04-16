@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { verify } from 'jsonwebtoken'
 
-export default async function loginHandler(req: NextApiRequest, res: NextApiResponse) {
+export default async function profileHandler(req: NextApiRequest, res: NextApiResponse) {
     const { enag_session } = req.cookies
     if(!enag_session){
         return res.status(401).json({error:'Token not found'})

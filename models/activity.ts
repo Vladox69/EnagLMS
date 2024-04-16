@@ -4,5 +4,6 @@ export interface ActivityModel{
     content:string;
     time_due:Date|string;
     section_id:number;
+    ponderation:number;
   }
   

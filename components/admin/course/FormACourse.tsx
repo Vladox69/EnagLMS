@@ -230,11 +230,14 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
                     error={formik.touched.type && Boolean(formik.errors.type)}
                 >
                     <MenuItem value=''>No seleccionado</MenuItem>
-                    <MenuItem value='Corto'  >
+                    <MenuItem value='short'  >
                         Corto
                     </MenuItem>
-                    <MenuItem value='Largo'  >
+                    <MenuItem value='large'  >
                         Largo
+                    </MenuItem>
+                    <MenuItem value='master class'  >
+                        Master Class
                     </MenuItem>
                 </TextField>
 

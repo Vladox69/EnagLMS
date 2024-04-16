@@ -7,8 +7,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url = "postgresql://postgres:password@localhost:5432/enag"
+  //url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  //directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model user{
@@ -127,6 +128,7 @@ model activity{
   title      String
   content    String
   time_due   DateTime
+  ponderation Int
   submission submission[]
   resources  activity_resource[]
   section    section @relation(fields: [section_id],references: [id])

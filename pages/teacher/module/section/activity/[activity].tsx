@@ -109,7 +109,7 @@ export const TeacherActivityById: NextPage<Props> = ({ }) => {
               <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
                 <DialogTitle id="form-dialog-title" className='text-center' >Nuevo recurso</DialogTitle>
                 <DialogContent>
-                  <FormActivityResource activity_id={activity.id} onSubmitResource={handleFormSubmit} />
+                  <FormActivityResource activity_id={activity.id} onSubmitResource={handleFormSubmit} onCancel={handleClose}/>
                 </DialogContent>
 
               </Dialog>

@@ -9,7 +9,8 @@ export const newActivity=async(activity:ActivityModel)=>{
             title:activity.title,
             content:activity.content,
             time_due:activity.time_due,
-            section_id:activity.section_id
+            section_id:activity.section_id,
+            ponderation:activity.ponderation
         }
 
         const {data:section}=await enagApi.get<SectionModel>(`/sections/section_id=${activity.section_id}`)
