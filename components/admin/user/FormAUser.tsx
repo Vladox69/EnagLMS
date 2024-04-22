@@ -174,7 +174,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                     name="photo_url"
                     className='w-100'
                     inputProps={{
-                        accept: 'application/pdf'
+                        accept: 'image/jpeg, image/png, image/gif'
                     }}
                     onChange={onPhotoInputChange}
                     onBlur={formik.handleBlur}

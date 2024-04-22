@@ -17,12 +17,12 @@ const ResourceDialog = ({ resource }: { resource: ActivityResourceModel }) => {
         <>
             <p onClick={handleOpen}>
                 <PictureAsPdfIcon />
-                <span>{`${resource.title}.pdf`}</span>
+                <span>{`${resource.title}`}</span>
             </p>
             <CustomDialog
                 open={open}
                 handleClose={handleClose}
-                title={`${resource.title}.pdf`}
+                title={`${resource.title}`}
                 url={resource.url_resource}
             />
         </>

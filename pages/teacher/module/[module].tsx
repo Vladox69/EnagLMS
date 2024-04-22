@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Layout } from '@/components/layouts';
-import { Button, Container, Divider, Typography } from '@mui/material';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import { Box, Button, CircularProgress, Container, Typography } from '@mui/material';
+import { NextPage } from 'next';
 import { enagApi } from '@/apis';
 import { ModuleModel, SectionModel, TeacherModel } from '@/models';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from 'next/router';
 import { GridTSection } from '../../../components/teacher/Sections/GridTSection';
 import styles from '@/styles/Custom.module.css'
+import { CustomDialog } from '@/components/my/CustomDialog';
 
 interface Props {
     sections: SectionModel[]
@@ -24,6 +25,8 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
     }, [router.isReady])
 
 
+    const [openPlanificacion, setPlanificacion] = useState(false)
+    const [openDocente, setDocente] = useState(false)
     const [sections, setSections] = useState<SectionModel[]>([])
     const [module, setModule] = useState<ModuleModel>()
     const [teacher, setTeacher] = useState<TeacherModel>()
@@ -36,6 +39,22 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
         setTeacher(t)
         setSections(s)
         setModule(m)
+    }
+
+    const handleOpenPlanificacion = () => {
+        setPlanificacion(true)
+    }
+
+    const handleClosePlanificacion = () => {
+        setPlanificacion(false)
+    }
+
+    const handleOpenDocente = () => {
+        setDocente(true)
+    }
+
+    const handleCloseDocente = () => {
+        setDocente(false)
     }
 
     const goToAsistance = () => {
@@ -53,25 +72,38 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
 
     return (
         <Layout title='My teacher module'>
-            <Container className='container '>
+            {
+                (teacher==undefined||module==undefined||sections==undefined)?
+                (<Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="80vh" 
+                >
+                    <CircularProgress size={100} color='error' />
+                </Box>)
+                :
+                (            <Container className='container '>
                 <Typography variant='h4' className='my-2'  > {module?.title} </Typography>
-                <Container className={styles.hover_effect + ' container border rounded d-flex mb-2 align-items-center'} component='div'  >
+                
+                <Container className={styles.hover_effect + ' container border rounded d-flex mb-2 align-items-center'} component='div' onClick={handleOpenDocente} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
                     }} />
                     <Typography component='p' className=''> Hoja de vida del Docente </Typography>
-
                 </Container>
-                <Container className={styles.hover_effect + ' container border rounded d-flex mb-2 align-items-center'} component='div'  >
+                <CustomDialog open={openDocente} handleClose={handleCloseDocente} title='Hoja de vida del docente' url={teacher.cv_url} />
+
+                <Container className={styles.hover_effect + ' container border rounded d-flex mb-2 align-items-center'} component='div' onClick={handleOpenPlanificacion} >
                     <ArticleIcon sx={{
                         width: 50,
                         height: 50
                     }} />
                     <Typography component='p' >Planificación académica de la materia </Typography>
-
                 </Container>
-
+                <CustomDialog open={openPlanificacion} handleClose={handleClosePlanificacion} title='Planificación de la materia' url={module.img_url} />
+                
                 <Typography variant='h2' >
                     Asistencia
                 </Typography>
@@ -89,7 +121,9 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
                     Crear nueva sección
                 </Button>
                 <GridTSection sections={sections} />
-            </Container>
+            </Container>)
+            }
+
         </Layout>
     )
 }

@@ -119,7 +119,7 @@ export const MyModuleByName: NextPage<Props> = ({ }) => {
                                 <Typography component='p' >Planificación académica de la materia </Typography>
 
                             </Container>
-                            <CustomDialog open={openPlanificacion} handleClose={handleClosePlanificacion} title='Planificación de la materia' url='' />
+                            <CustomDialog open={openPlanificacion} handleClose={handleClosePlanificacion} title='Planificación de la materia' url={module.img_url} />
                             <Divider />
 
                             <Typography variant='h3' >

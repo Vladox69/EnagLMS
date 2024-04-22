@@ -192,6 +192,9 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                         name="ID_card_url"
                         className='w-100'
                         // value={formik.values.cv_url}
+                        inputProps={{
+                            accept: 'application/pdf'
+                        }}
                         onChange={onIdCardInputChange}
                         onBlur={formik.handleBlur}
                         error={formik.touched.ID_card_url && Boolean(formik.errors.ID_card_url)}
@@ -206,6 +209,9 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                         variant='outlined'
                         id="third_level_degree"
                         name="third_level_degree"
+                        inputProps={{
+                            accept: 'application/pdf'
+                        }}
                         // value={formik.values.third_level_degree}
                         className='w-100'
                         onChange={onCVInputChange}
@@ -222,6 +228,9 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
                         variant='outlined'
                         id="cv_url"
                         name="cv_url"
+                        inputProps={{
+                            accept: 'application/pdf'
+                        }}
                         // value={formik.values.cv_url}
                         className='w-100'
                         onChange={onThridLevelInputChange}
