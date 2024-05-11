@@ -20,6 +20,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             } else if (id?.includes('submission_id=')) {
                 return getSubmissionById(req, res)
             }
+        case 'POST':
+            if(id?.includes('activity')){
+                return postSubmissionsByIdActivity(req,res)
+            }else if(id?.includes('activity_ids&student_id')){
+                return postSubmissionsByIdStudentActivity(req,res)
+            }
         case 'PUT':
             return updateSubmission(req, res)
         case 'DELETE':
@@ -100,6 +106,48 @@ const getSubmissionById = async (req: NextApiRequest, res: NextApiResponse<Data>
 
         console.log(error);
         return res.status(400).json({ message: 'Error al obtener entrega' });
+    }
+}
+
+const postSubmissionsByIdActivity = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const activity_ids=req.body;
+        const submissions = await prisma.submission.findMany({
+            where: {
+                activity_id:{
+                    in:activity_ids
+                }
+            }
+        })
+        if (!submissions) {
+            return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
+        }
+        return res.status(200).json(submissions)
+    } catch (error) {
+
+        console.log(error);
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
+    }
+}
+
+const postSubmissionsByIdStudentActivity= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {activity_ids,student_id}=req.body;
+        const submissionsNF = await prisma.submission.findMany({
+            where:{
+                activity_id:{
+                    in:activity_ids
+                }
+            }
+        }) 
+        const submissions = submissionsNF.filter((submission)=> submission.student_id === Number(student_id)) 
+        if (!submissions) {
+            return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
+        }
+        return res.status(200).json(submissions)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 

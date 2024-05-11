@@ -70,6 +70,11 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
         })
     }
 
+    const goToStudents=()=>{
+        const { module } = router.query
+        router.push(`/teacher/module/students/${module}`)
+    }
+
     return (
         <Layout title='My teacher module'>
             {
@@ -114,6 +119,19 @@ export const TeacherModuleById: NextPage<Props> = ({ }) => {
                         height: 50
                     }} />
                     <Typography component='p' >Asistencia</Typography>
+
+                </Container>
+
+                <Typography variant='h2' >
+                    Calificaciones
+                </Typography>
+
+                <Container className={styles.hover_effect + ' container border rounded d-flex mb-2 align-items-center'} component='div' onClick={goToStudents} >
+                    <ArticleIcon sx={{
+                        width: 50,
+                        height: 50
+                    }} />
+                    <Typography component='p' >Calificaciones</Typography>
 
                 </Container>
 

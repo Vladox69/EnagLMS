@@ -112,34 +112,4 @@ export const TeacherSectionById: NextPage<Props> = ({ }) => {
     )
 }
 
-export const getStaticPaths: GetStaticPaths = async (ctx) => {
-
-    const data: any[] = [
-    ]
-
-    return {
-        paths: data.map(m => ({
-            params: {
-                section: m.section
-            }
-        })),
-        fallback: 'blocking'
-    }
-}
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const { section: id } = params as { section: string };
-    const { data: section } = await enagApi.get<SectionModel>(`/sections/section_id=${id}`);
-    const { data: activities } = await enagApi.get<ActivityModel[]>(`/activities/section_id=${id}`);
-    const { data: resources } = await enagApi.get<SectionResourceModel[]>(`/sections/resources/section_id=${id}`);
-    return {
-        props: {
-            section,
-            activities,
-            resources
-        }
-    }
-
-}
-
 export default TeacherSectionById;

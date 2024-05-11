@@ -1,8 +1,6 @@
-import { MyContext, MyState } from '@/context/my'
 import { Container } from '@mui/material';
-import React, {  FC, useEffect, useState } from 'react'
+import React, {  FC, } from 'react'
 import { ItemLineCourse } from './ItemLineCourse';
-import { enagApi } from '@/apis';
 import { CourseModel, StudentModel } from '@/models';
 
 interface Props{

@@ -1,9 +1,10 @@
 import { Container, Divider, Typography } from '@mui/material'
-import React, { FC, useContext } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import bgImage from '@/assets/fondo.jpg';
 import Image from 'next/image';
-import { ModuleModel } from '@/models';
+import { CourseModel, ModuleModel } from '@/models';
 import { useRouter } from 'next/router';
+import { enagApi } from '@/apis';
 
 interface Props {
   module: ModuleModel
@@ -11,6 +12,18 @@ interface Props {
 
 export const ItemTModule: FC<Props> = ({ module }) => {
   const router = useRouter();
+
+  const [course, setCourse] = useState<CourseModel>()
+  useEffect(() => {
+    if(module.id){
+      getData()
+    }
+  }, [router.isReady])
+  
+  const getData=async()=>{
+    const {data}=await enagApi.get<CourseModel>(`/courses/course_id=${module.course_id}`)
+    setCourse(data)
+  }
 
   const onClickModule = () => {
     router.push(`/teacher/module/${module.id}`)
@@ -38,7 +51,7 @@ export const ItemTModule: FC<Props> = ({ module }) => {
             {module.title}
           </Typography>
           <Typography component='h6' >
-            {module.course_id}
+            {course?.topic}
           </Typography>
         </Container>
       </Container>

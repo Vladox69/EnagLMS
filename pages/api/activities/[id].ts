@@ -16,6 +16,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                 return getActivityById(req, res);
             } else if (id?.includes('section_id=')) {
                 return getActivitiesByIdSection(req, res);
+            }else if(id?.includes('module_id=')){
+                return getActivitiesByIdModule(req,res);
             }
         case 'DELETE':
             if(id?.includes('section_id=')){
@@ -27,6 +29,33 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             return updateActivity(req, res);
         default:
             break;
+    }
+}
+
+const getActivitiesByIdModule=async(req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const module_id = id?.toString().substring("module_id=".length)
+        const sections = await prisma.section.findMany({
+            where:{
+                module_id:Number(module_id)
+            }
+        })
+        const section_ids=sections.map((section)=>section.id)
+        const activities = await prisma.activity.findMany({
+            where:{
+                section_id:{
+                    in:section_ids
+                }
+            }
+        })
+        if (!activities) {
+            return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
+        }
+        return res.status(200).json(activities)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
     }
 }
 

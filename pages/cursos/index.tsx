@@ -85,124 +85,142 @@ export default function Cursos() {
         </Container>
 
         <Container>
-          <Typography variant="h4" className="text-center">
+          <Typography variant="h4" className="text-center mb-2">
             Cursos cortos
           </Typography>
-          <Grid container spacing={2}>
-            {shortCourses.map((cc) => (
-              <Grid key={cc.id} item xs={12} md={4}>
-                <Card variant="outlined">
-                  <CardMedia
-                    component="img"
-                    alt="curso.png"
-                    image={cc.img_url}
-                    height={200}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {cc.topic}
-                    </Typography>
-                    <Typography
-                      component="p"
-                      color="text.secondary"
-                      sx={{
-                        textAlign: "justify",
-                      }}
-                      dangerouslySetInnerHTML={{
-                        __html: cc.content,
-                      }}
+          {shortCourses.length == 0 ? (
+            <Typography variant="h4" className="text-center mb-2">
+              Aún no existen cursos para esta sección
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {shortCourses.map((cc) => (
+                <Grid key={cc.id} item xs={12} md={4}>
+                  <Card variant="outlined">
+                    <CardMedia
+                      component="img"
+                      alt="curso.png"
+                      image={cc.img_url}
+                      height={200}
                     />
-                  </CardContent>
-                  <CardActions style={{ justifyContent: "center" }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="error"
-                      onClick={() => goToCourse(cc.id)}
-                    >
-                      Más información
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {cc.topic}
+                      </Typography>
+                      <Typography
+                        component="p"
+                        color="text.secondary"
+                        sx={{
+                          textAlign: "justify",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: cc.content,
+                        }}
+                      />
+                    </CardContent>
+                    <CardActions style={{ justifyContent: "center" }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="error"
+                        onClick={() => goToCourse(cc.id)}
+                      >
+                        Más información
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Container>
 
         <Container>
-          <Typography variant="h4" className="text-center">
+          <Typography variant="h4" className="text-center mb-2">
             Cursos largos
           </Typography>
-          <Grid container spacing={2}>
-            {largeCourses.map((cl) => (
-              <Grid key={cl.id} item xs={12} md={4}>
-                <Card variant="outlined">
-                  <CardMedia
-                    component="img"
-                    alt="curso.png"
-                    image={cl.img_url}
-                    height={200}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {cl.topic}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {cl.content}
-                    </Typography>
-                  </CardContent>
-                  <CardActions style={{ justifyContent: "center" }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="error"
-                      onClick={() => goToCourse(cl.id)}
-                    >
-                      Más información
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          {largeCourses.length == 0 ? (
+            <Typography variant="h4" className="text-center mb-2">
+              Aún no existen cursos para esta sección
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {largeCourses.map((cl) => (
+                <Grid key={cl.id} item xs={12} md={4}>
+                  <Card variant="outlined">
+                    <CardMedia
+                      component="img"
+                      alt="curso.png"
+                      image={cl.img_url}
+                      height={200}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {cl.topic}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {cl.content}
+                      </Typography>
+                    </CardContent>
+                    <CardActions style={{ justifyContent: "center" }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="error"
+                        onClick={() => goToCourse(cl.id)}
+                      >
+                        Más información
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Container>
 
         <Container>
-          <Typography variant="h4" className="text-center">
+          <Typography variant="h4" className="text-center mb-2">
             Master clases
           </Typography>
-          <Grid container spacing={2}>
-            {masterClass.map((mc) => (
-              <Grid key={mc.id} item xs={12} md={4}>
-                <Card variant="outlined">
-                  <CardMedia
-                    component="img"
-                    alt="curso.png"
-                    image={mc.img_url}
-                    height={200}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {mc.topic}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {mc.content}
-                    </Typography>
-                  </CardContent>
-                  <CardActions style={{ justifyContent: "center" }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="error"
-                      onClick={() => goToCourse(mc.id)}
-                    >
-                      Más información
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          {masterClass.length == 0 ? (
+            <Typography variant="h4" className="text-center mb-2">
+              Aún no existen cursos para esta sección
+            </Typography>
+          ) : (
+            <Grid container spacing={2}>
+              {masterClass.map((mc) => (
+                <Grid key={mc.id} item xs={12} md={4}>
+                  <Card variant="outlined">
+                    <CardMedia
+                      component="img"
+                      alt="curso.png"
+                      image={mc.img_url}
+                      height={200}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {mc.topic}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {mc.content}
+                      </Typography>
+                    </CardContent>
+                    <CardActions style={{ justifyContent: "center" }}>
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="error"
+                        onClick={() => goToCourse(mc.id)}
+                      >
+                        Más información
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </Container>
 
         <Container>

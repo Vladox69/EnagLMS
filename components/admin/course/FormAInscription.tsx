@@ -13,7 +13,6 @@ interface Props {
 }
 
 export const FormAInscription: FC<Props> = ({ students_ins, course_id, onSubmitResource, onCancel }) => {
-
     useEffect(() => {
         getData()
     }, [])
