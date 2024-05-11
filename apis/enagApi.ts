@@ -6,7 +6,7 @@ import axios from 'axios';
   */
 
 const enagApi=axios.create({
-    baseURL:'http://localhost:3000/api',
+    baseURL:'https://enag.vercel.app/api',
 })
 
 export default enagApi;
