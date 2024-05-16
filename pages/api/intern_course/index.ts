@@ -21,9 +21,13 @@ export default function handler(
 const getInternCourse = async (res: NextApiResponse<Data>) => {
   try {
     const intern_inscription = await prisma.intern_course.findMany();
+    if(!intern_inscription){
+      return res.status(200).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.'});
+    }
     return res.status(200).json(intern_inscription);
   } catch (error) {
-    return res.status(400).json({ message: "Error interno del servidor" });
+    console.log('Failed to retrieve resource. The requested data is missing or inaccessible.',error);
+    return res.status(400).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
   }
 };
 

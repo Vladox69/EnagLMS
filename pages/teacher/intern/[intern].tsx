@@ -58,6 +58,9 @@ export const TeacherInternById = () => {
             {" "}
             {intern?.title}{" "}
           </Typography>
+          <Typography component='p'  dangerouslySetInnerHTML={{
+                            __html:intern.content
+                        }} />
           <GridInternActivity activities={activities} />
           <Button
             variant="contained"

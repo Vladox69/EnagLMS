@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 export const TeacherInternActivityById = () => {
   const router = useRouter();
   const [activity, setActivity] = useState<ActivityInternModel>();
-  const [submission, setSubmission] = useState<SubmissionInternModel[]>([])
+  const [submission, setSubmission] = useState<SubmissionInternModel[]>([]);
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -22,8 +22,10 @@ export const TeacherInternActivityById = () => {
       `/intern_activity/activity_id=${id}`
     );
     setActivity(data);
-    const {data:sbms}=await enagApi.get(`/intern_submission/activity_id=${id}`)
-    setSubmission(sbms)
+    const { data: sbms } = await enagApi.get(
+      `/intern_submission/activity_id=${id}`
+    );
+    setSubmission(sbms);
   };
   return (
     <Layout>
@@ -49,7 +51,7 @@ export const TeacherInternActivityById = () => {
                 __html: activity.content,
               }}
             />
-              <TableInternSubmission submissions={submission}/>
+            <TableInternSubmission submissions={submission} />
           </>
         )}
       </Container>

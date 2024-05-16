@@ -1,15 +1,24 @@
-import React from "react";
+import React, { use, useEffect, useState } from "react";
 import { Navbar, Footer } from "@/components/ui";
 import { Carousel } from "react-bootstrap";
-import {
-  Container,
-  Typography,
-} from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import Image from "next/image";
 
 import bgImage from "@/assets/fondo.jpg";
+import { UserModel } from "@/models";
+import { enagApi } from "@/apis";
 
 export default function SobreNosotros() {
+  const [user, setUser] = useState<UserModel>()
+
+  useEffect(() => {
+    getData()
+  }, [])
+  const getData=async ()=>{
+    const {data} = await enagApi.get(`/auth/profile`)
+    setUser(data)
+  }
+  
   return (
     <>
       <Navbar />
@@ -61,6 +70,26 @@ export default function SobreNosotros() {
             </Carousel.Caption>
           </Carousel.Item>
         </Carousel>
+
+        <Typography variant="h2" fontSize={25}> Esta semana en ENAG </Typography>
+        <div>
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/5AKWzn04BuU?si=24iOTnD9W2faQtY_"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <div>
+        <Image src={bgImage} alt="ss" width={500} height={500} />
+          {
+            (user!=undefined&&user.rol=='ADMIN')&&( <button className="btn btn-danger">Eliminar</button> )
+          }
+        </div>
 
         <Typography variant="h2" fontSize={25}>
           {" "}

@@ -23,6 +23,7 @@ export const LoginForm = () => {
             }
             await enagApi.post(`/auth/login`, body)
             const { data: user } = await enagApi.get(`/auth/profile`)
+            
             switch (user.rol) {
                 case 'ADMIN':
                     router.push('/admin')

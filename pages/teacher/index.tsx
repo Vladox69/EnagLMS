@@ -9,7 +9,7 @@ import { GridInternCourse } from "@/components/teacher/Intern/GridInternCourse";
 
 export default function Teacher() {
   const [modules, setModules] = useState<ModuleModel[]>([]);
-  const [interns, setInterns] = useState<InternCourseModel[]>([])
+  const [interns, setInterns] = useState<InternCourseModel[]>([]);
   useEffect(() => {
     getData();
   }, []);
@@ -23,8 +23,10 @@ export default function Teacher() {
       `/modules/teacher_id=${t.id}`
     );
     setModules(data);
-    const {data:intrs}=await enagApi.get<InternCourseModel[]>(`/intern_course/teacher_id=${t.id}`)
-    setInterns(intrs)
+    const { data: intrs } = await enagApi.get<InternCourseModel[]>(
+      `/intern_course/teacher_id=${t.id}`
+    );
+    setInterns(intrs);
   };
 
   return (
