@@ -47,7 +47,7 @@ export const LoginForm = () => {
     return (
         <Container>
             <form onSubmit={formik.handleSubmit} className='container w-75 d-flex flex-column gap-3 mt-5 mb-5'>
-                <Typography variant='h4' >Inicio de sesiòn</Typography>
+                <Typography variant='h4' >Inicio de sesión</Typography>
                 <TextField
                     type='text'
                     variant='outlined'
