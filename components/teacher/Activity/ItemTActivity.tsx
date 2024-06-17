@@ -3,7 +3,7 @@ import { Container, IconButton, Typography } from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article';
 import React, { FC } from 'react'
 import { useRouter } from 'next/router';
-import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import { deleteActivity } from '@/utils/activity/deleteActivity';
@@ -68,7 +68,7 @@ export const ItemTActivity: FC<Props> = ({ activity, onDeleteActivity }) => {
       </div>
       <div className='d-flex align-items-center'>
         <IconButton onClick={() => goToEditActivity(activity.id)} >
-          <SettingsIcon />
+          <EditIcon />
         </IconButton>
         <IconButton onClick={handleDelete} >
           <DeleteIcon />

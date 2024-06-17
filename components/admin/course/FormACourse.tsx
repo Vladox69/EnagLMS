@@ -53,6 +53,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
     visible: true,
     img_file: null,
     img_url: "",
+    is_start:false
   });
   const [content, setContent] = useState("");
   const [requirements, setRequirements] = useState("");
@@ -87,6 +88,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         visible: data.visible,
         img_file: null,
         img_url: data.img_url,
+        is_start:data.is_start
       });
       setContent(data.content);
       setRequirements(data.requirements);
@@ -112,8 +114,8 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         visible: Boolean(values.visible),
         img_file: values.img_file,
         img_url: values.img_url,
+        is_start:values.is_start
       };
-      console.log(body);
       let res: any;
       if (course_id != undefined) {
         res = await editCourse(body);

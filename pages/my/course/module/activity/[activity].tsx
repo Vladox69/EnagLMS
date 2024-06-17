@@ -1,10 +1,9 @@
 import { Layout } from '@/components/layouts';
-import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+import {  NextPage } from 'next';
 import React, { useEffect, useState } from 'react'
 import { Activity } from '../../../../../components/my/activity';
 import { enagApi } from '@/apis';
 import { ActivityModel } from '@/models';
-import { SubmissionStudentI } from '@/interface/submission_student';
 import { useRouter } from 'next/router';
 import { Box, CircularProgress } from '@mui/material';
 

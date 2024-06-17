@@ -22,7 +22,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { GridRActivity } from "./GridRActivity";
 
 interface Props {
@@ -36,6 +36,16 @@ export const Activity: FC<Props> = ({ activity }) => {
     router.push(`/my/course/module/activity/submission/${submission?.id}`);
   };
 
+  const comparteDate=()=>{
+    const dateToCompare = new Date(activity.time_due);
+    const currentDate = new Date();
+    if (dateToCompare >= currentDate) {
+      setIsFutureDate(true);
+    } else {
+      setIsFutureDate(false);
+    }
+  }
+
   useEffect(() => {
     if (router.isReady) {
       getDataSubmission();
@@ -45,7 +55,7 @@ export const Activity: FC<Props> = ({ activity }) => {
   const [submission, setSubmission] = useState<SubmissionModel>();
   const [resources, setResources] = useState<SubmissionResourceModel[]>();
   const [act_res, setAct_res] = useState<ActivityResourceModel[]>()
-
+  const [isFutureDate, setIsFutureDate] = useState(false)
   const getDataSubmission = async () => {
     const { data: p } = await enagApi.get(`/auth/profile`);
     const { data: s } = await enagApi.get<StudentModel>(
@@ -63,6 +73,7 @@ export const Activity: FC<Props> = ({ activity }) => {
     setAct_res(res_act);
     setSubmission(sub);
     setResources(reso);
+    comparteDate()
   };
 
   return (
@@ -89,8 +100,8 @@ export const Activity: FC<Props> = ({ activity }) => {
           <Button
             variant="contained"
             color="error"
-            className="my-3"
             onClick={goToSubmissionById}
+            className={isFutureDate?'visible my-3':'invisible'}
           >
             Agregar entrega
           </Button>

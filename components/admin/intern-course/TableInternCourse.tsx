@@ -73,7 +73,7 @@ export const TableInternCourse: FC<Props> = ({ intern_courses: int_crs }) => {
 
   return (
     <>
-      <Typography variant="h4"> Tabla de cursos </Typography>
+      <Typography variant="h4"> Tabla de cursos de pasantías </Typography>
       <TableContainer component={Paper}>
         <Table
           sx={{ minWidth: 650 }}

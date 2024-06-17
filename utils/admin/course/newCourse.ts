@@ -18,7 +18,8 @@ export const newCourse = async (course: any) => {
             requirements:course.requirements,
             type:course.type,
             visible:course.visible,
-            img_url:res_img.url
+            img_url:res_img.url,
+            is_start:course.is_start
         }
         const res = await enagApi.post(`/courses`,body)
         return res

@@ -80,6 +80,7 @@ model course{
   requirements  String
   type          String
   visible       Boolean
+  is_start      Boolean
   img_url       String     
   modules       module[]
   inscriptions  inscription[]
@@ -202,6 +203,7 @@ model intern_course{
   content       String
   start_at      DateTime
   end_at        DateTime
+  is_start      Boolean
   img_url       String
   teacher       teacher @relation(fields: [teacher_id],references: [id])
   teacher_id    Int

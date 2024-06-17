@@ -1,6 +1,6 @@
 import { Container, Divider, IconButton, Typography } from "@mui/material";
 import React, { FC } from "react";
-import SettingsIcon from '@mui/icons-material/Settings';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useRouter } from "next/router";
@@ -66,7 +66,7 @@ export const ItemInternActivity: FC<Props> = ({ activity,onDeleteActivity }) => 
       </div>
       <div className='d-flex align-items-center'>
         <IconButton onClick={() => goToEditInternActivity(activity.id)} >
-          <SettingsIcon />
+          <EditIcon />
         </IconButton>
         <IconButton onClick={handleDelete} >
           <DeleteIcon />

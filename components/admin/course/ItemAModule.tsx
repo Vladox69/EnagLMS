@@ -11,10 +11,11 @@ import styles from '@/styles/Custom.module.css'
 interface Props {
   module: ModuleModel,
   onDelteModule: (module: ModuleModel) => void,
-  onUpdateModule: (module: ModuleModel) => void
+  onUpdateModule: (module: ModuleModel) => void,
+  is_start:boolean
 }
 
-export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule }) => {
+export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule,is_start }) => {
   const [open, setOpen] = useState(false)
 
   const handleOpen = () => {
@@ -69,7 +70,7 @@ export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule }
     <Box className={ styles.hover_effect+ ' d-flex justify-content-between border rounded py-1 mb-2' } >
       <Typography component='p' className='ms-2'> {module.title} </Typography>
       <Box>
-        <IconButton onClick={handleOpen} >
+        <IconButton onClick={handleOpen} className={!is_start?'visible':'invisible'} >
           <EditIcon />
         </IconButton>
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
@@ -78,7 +79,7 @@ export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule }
             <FormAModule module_id={module.id} onSubmitResource={handleFormSubmit} onCancel={handleClose} />
           </DialogContent>
         </Dialog>
-        <IconButton onClick={handleDelete} >
+        <IconButton onClick={handleDelete} className={!is_start?'visible':'invisible'} >
           <DeleteIcon />
         </IconButton>
       </Box>

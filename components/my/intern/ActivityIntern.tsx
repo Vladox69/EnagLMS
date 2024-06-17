@@ -322,9 +322,9 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
       >
         Agregar actvidad
       </Button>
-      <PDFViewer width="100%" height="600">
+      {/* <PDFViewer width="100%" height="600">
         <PDFDocument />
-      </PDFViewer>
+      </PDFViewer> */}
     </Container>
   );
 };

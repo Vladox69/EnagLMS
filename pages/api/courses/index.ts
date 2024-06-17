@@ -34,7 +34,7 @@ const getCourses = async (res: NextApiResponse<Data>) => {
 const createCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
 
-        const { topic, content, start_at, end_at, modality, objective, periods, qualification, requirements, type, visible ,img_url} = req.body
+        const { topic, content, start_at, end_at, modality, objective, periods, qualification, requirements, type, visible ,img_url,is_start} = req.body
         const course = await prisma.course.create({
             data: {
                 topic,
@@ -48,7 +48,8 @@ const createCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
                 requirements,
                 type,
                 visible,
-                img_url
+                img_url,
+                is_start
             }
         })
         return res.status(200).json(course)

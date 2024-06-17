@@ -12,4 +12,5 @@ export interface CourseModel{
     type:string;
     visible:boolean;
     img_url:string;
+    is_start:boolean;
   }

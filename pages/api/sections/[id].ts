@@ -18,6 +18,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             }
         case 'PUT':
             return updateSection(req,res);
+        case 'DELETE':
+            return deleteSectionById(req,res)
         default:
             break;
     }
@@ -84,5 +86,21 @@ const updateSection = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
     } catch (error) {
         console.log(error);
         return res.status(400).json({message:'No se pudo actualizar'})
+    }
+}
+
+const deleteSectionById= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const section_id=id?.toString().substring("section_id=".length)
+        const section=await prisma.section.delete({
+            where:{
+                id:Number(section_id)
+            }
+        })
+        return res.status(200).json(section)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({message:'No se pudo eliminar el módulo'})
     }
 }

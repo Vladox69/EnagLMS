@@ -4,9 +4,10 @@ import { ItemAModule } from './ItemAModule'
 
 interface Props {
   modules: ModuleModel[],
+  is_start:boolean,
 }
 
-export const ListAModule: FC<Props> = ({ modules: ms }) => {
+export const ListAModule: FC<Props> = ({ modules: ms ,is_start}) => {
 
   const [modules, setModules] = useState<ModuleModel[]>([])
 
@@ -27,6 +28,7 @@ export const ListAModule: FC<Props> = ({ modules: ms }) => {
       {
         modules.map((module) => (
           <ItemAModule
+            is_start={is_start}
             key={module.id}
             module={module}
             onUpdateModule={onUpdateModule}

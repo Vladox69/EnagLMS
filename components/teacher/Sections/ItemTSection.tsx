@@ -6,13 +6,44 @@ import { useRouter } from 'next/router';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styles from '@/styles/Custom.module.css';
+import Swal from 'sweetalert2';
+import { deleteSection } from '@/utils/section/deleteSection';
 
 interface Props {
-    section: SectionModel
+    section: SectionModel,
+    onDeleteSection:(section:SectionModel)=>void
 }
 
-export const ItemTSection: FC<Props> = ({ section }) => {
+export const ItemTSection: FC<Props> = ({ section,onDeleteSection }) => {
     const router = useRouter();
+
+    const handleDelete = () => {
+        let res: any;
+        Swal.fire({
+            icon: 'question',
+            title: '¿Está seguro de eliminar?',
+            showConfirmButton: true,
+            showDenyButton: true,
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                res = await deleteSection(section);
+                if (res.status == 200) {
+                  Swal.fire({
+                    icon: 'success',
+                    title: 'Datos eliminados',
+                  }).then(() => {
+                    onDeleteSection(section)
+                  })
+                } else {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'No se pudo eliminar los datos',
+                  })
+                }
+              }
+        })
+
+    }
 
     const goToEditSection = (section_id: number) => {
         router.push({
@@ -38,7 +69,7 @@ export const ItemTSection: FC<Props> = ({ section }) => {
                 <IconButton onClick={() => goToEditSection(section.id)}>
                     <EditIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={()=>handleDelete()} >
                     <DeleteIcon />
                 </IconButton>
             </div>

@@ -3,10 +3,11 @@ import React, { FC, useEffect, useState } from 'react'
 import { ItemAStudent } from './ItemAStudent'
 
 interface Props {
-    inscriptions:InscriptionModel[]
+    inscriptions:InscriptionModel[],
+    is_start:boolean,
 }
 
-export const ListAStudent: FC<Props> = ({ inscriptions:ins }) => {
+export const ListAStudent: FC<Props> = ({ inscriptions:ins,is_start}) => {
     const [inscriptions, setInscriptions] = useState<InscriptionModel[]>([])
     useEffect(() => {
         setInscriptions(ins)
@@ -23,6 +24,7 @@ export const ListAStudent: FC<Props> = ({ inscriptions:ins }) => {
             {
                 inscriptions.map((inscription) => (
                     <ItemAStudent 
+                    is_start={is_start}
                     key={inscription.id} 
                     inscription={inscription}  
                     onDeleteStudent={onDeleteStudent} />
