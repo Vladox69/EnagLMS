@@ -5,18 +5,28 @@ import { Container, Typography } from "@mui/material";
 import Image from "next/image";
 
 import bgImage from "@/assets/fondo.jpg";
-import { UserModel } from "@/models";
 import { enagApi } from "@/apis";
+import { ResourceModel } from "@/models/resources";
 
 export default function SobreNosotros() {
-  const [user, setUser] = useState<UserModel>()
+
+  const [video, setVideo] = useState<ResourceModel>({
+    description:'',
+    id:0,
+    title:'',
+    type:'',
+    url_resource:''
+  })
+  const [resources, setResources] = useState<ResourceModel[]>([])
 
   useEffect(() => {
     getData()
   }, [])
   const getData=async ()=>{
-    const {data} = await enagApi.get(`/auth/profile`)
-    setUser(data)
+   const {data:imgs}=await enagApi.get<ResourceModel[]>(`/resources/type=image`)
+   const {data:vid}=await enagApi.get<ResourceModel>(`/resources/type=video`)
+   setResources(imgs)
+   setVideo(vid)
   }
   
   return (
@@ -45,37 +55,26 @@ export default function SobreNosotros() {
           tu pasión por la cocina en una carrera de excelencia.
         </p>
 
-        <Carousel className="w-75 ">
-          <Carousel.Item>
-            <Image src={bgImage} alt="ss" />
-            <Carousel.Caption>
-              <h3>First slide label</h3>
-              <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Image src={bgImage} alt="ss" />
-            <Carousel.Caption>
-              <h3>Second slide label</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Image src={bgImage} alt="ss" />
-            <Carousel.Caption>
-              <h3>Third slide label</h3>
-              <p>
-                Praesent commodo cursus magna, vel scelerisque nisl consectetur.
-              </p>
-            </Carousel.Caption>
-          </Carousel.Item>
+        <Carousel className="w-75">
+          {
+            resources.map((resource)=>(
+              <Carousel.Item key={resource.id}>
+              <Image src={resource.url_resource} width={750} height={500} alt={""} />
+              <Carousel.Caption>
+                <h3 className="text-dark" >{resource.title} </h3>
+                <p className="text-dark">  {resource.description} </p>
+              </Carousel.Caption>
+            </Carousel.Item>
+            ))
+          }
+
         </Carousel>
 
-        <Typography variant="h2" fontSize={25}> Esta semana en ENAG </Typography>
+        <Typography variant="h2"  className="mt-4" fontSize={25}> Esta semana en ENAG </Typography>
         <div>
           <iframe
-            width="560"
-            height="315"
+            width="1000"
+            height="500"
             src="https://www.youtube.com/embed/5AKWzn04BuU?si=24iOTnD9W2faQtY_"
             title="YouTube video player"
             frameBorder="0"
@@ -83,12 +82,6 @@ export default function SobreNosotros() {
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen
           ></iframe>
-        </div>
-        <div>
-        <Image src={bgImage} alt="ss" width={500} height={500} />
-          {
-            (user!=undefined&&user.rol=='ADMIN')&&( <button className="btn btn-danger">Eliminar</button> )
-          }
         </div>
 
         <Typography variant="h2" fontSize={25}>

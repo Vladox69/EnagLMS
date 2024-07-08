@@ -59,10 +59,6 @@ export const FormActivityResource: FC<Props> = ({ activity_id,onSubmitResource,o
         formik.setFieldValue('file', target.files?.[0])
     }
 
-    const handleClose=()=>{
-        onCancel()
-    }
-
     return (
         <Container>
             <form onSubmit={formik.handleSubmit} >

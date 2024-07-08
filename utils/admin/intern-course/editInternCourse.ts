@@ -16,6 +16,7 @@ export const editInternCourse = async (intern_course: any) => {
       end_at: intern_course.end_at,
       img_url: res_img,
       teacher_id: intern_course.teacher_id,
+      is_start:intern_course.is_start
     };
     const res = await enagApi.put(`/intern_course/course_id=${body.id}`, body);
     return res

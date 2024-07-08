@@ -32,6 +32,8 @@ export default async function loginHandler(req: NextApiRequest, res: NextApiResp
             })
             res.setHeader('Set-Cookie', serealized)
             return res.status(200).json('Login route')
+        }else{
+            return res.status(401).json('Usuario no econtrado')
         }
     } catch (error) {
         return res.status(400).json({ message: 'Error al obtener usuario' })

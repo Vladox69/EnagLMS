@@ -7,6 +7,7 @@ import {
   InternInscriptionModel,
   StudentModel,
 } from "@/models";
+import { editInternCourse } from "@/utils/admin/intern-course/editInternCourse";
 import {
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export const InternCourseById = () => {
   const router = useRouter();
@@ -55,11 +57,10 @@ export const InternCourseById = () => {
         `/students/student_ids`,
         body
       );
-      
+
       setStudents(sts);
     } catch (error) {
       console.log(error);
-      
     }
   };
 
@@ -78,59 +79,100 @@ export const InternCourseById = () => {
     setOpenStudent(false);
   };
 
+  const startCourse = async () => {
+    let res: any;
+    Swal.fire({
+      icon: "question",
+      title:
+        "Después de iniciar el curso no se podrá agregar estudiantes. ¿Está seguro?",
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const courseStart = {
+          ...course,
+          is_start: true,
+        };
+        res = await editInternCourse(courseStart);
+        if (res.status == 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Curso iniciado",
+          }).then(() => {
+            setCourse(res.data);
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo iniciar el curso",
+          });
+        }
+      }
+    });
+  };
+  
   return (
     <Layout>
-      {(course == undefined ||students == undefined ||inscriptions == undefined)?
-       (
+      {course == undefined ||
+      students == undefined ||
+      inscriptions == undefined ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight="80vh" // Ajusta esta altura según tus necesidades
+          minHeight="80vh" 
         >
           <CircularProgress size={100} color="error" />
         </Box>
-       ):(
+      ) : (
         <Container className="container">
-        <Typography variant="h4"> {course?.title} </Typography>
-        <Typography
-          component="p"
-          dangerouslySetInnerHTML={{
-            __html: !!course ? course!.content : "",
-          }}
-        />
-        <Typography variant="h4">Estudiantes inscritos</Typography>
-        <hr />
-        <Dialog
-          open={openStudent}
-          onClose={handleCloseStudent}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Inscribir estudiante</DialogTitle>
-          <DialogContent>
-            <FormInternInscription
-              students_ins={students}
-              course_id={Number(id)}
-              onSubmitResource={handleFormSubmitStudent}
-              onCancel={handleCloseStudent}
-            />
-          </DialogContent>
-        </Dialog>
+          <Typography variant="h4"> {course?.title} </Typography>
+          <Typography
+            component="p"
+            dangerouslySetInnerHTML={{
+              __html: !!course ? course!.content : "",
+            }}
+          />
+        {!course?.is_start && (
+          <Button variant="contained" color="error" onClick={startCourse}>
+            {" "}
+            Iniciar curso{" "}
+          </Button>
+        )}
+          <Typography variant="h4">Estudiantes inscritos</Typography>
+          <hr />
+          <Dialog
+            open={openStudent}
+            onClose={handleCloseStudent}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle id="form-dialog-title">
+              Inscribir estudiante
+            </DialogTitle>
+            <DialogContent>
+              <FormInternInscription
+                students_ins={students}
+                course_id={Number(id)}
+                onSubmitResource={handleFormSubmitStudent}
+                onCancel={handleCloseStudent}
+              />
+            </DialogContent>
+          </Dialog>
 
-        <Button
-          variant="contained"
-          onClick={handleOpenStudent}
-          color="error"
-          className="mb-2"
-        >
-          {" "}
-          Agregar estudiante{" "}
-        </Button>
-        <ListInternStudent inscriptions={inscriptions} />
-      </Container>
-       )  
-    }
-
+          {!course?.is_start && (
+          <Button
+            variant="contained"
+            onClick={handleOpenStudent}
+            color="error"
+            className="mb-2"
+          >
+            {" "}
+            Agregar estudiante{" "}
+          </Button>
+        )}
+          <ListInternStudent inscriptions={inscriptions} />
+        </Container>
+      )}
     </Layout>
   );
 };

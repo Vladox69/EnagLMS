@@ -46,7 +46,7 @@ export const MyAsistanceById: NextPage<Props> = ({ }) => {
                 <Typography variant='h4'  > Tabla de asistencias </Typography>
                 <TableContainer component={Paper} className='border rounded' >
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <caption>
+                        {/* <caption>
                             <ul>
                                 <li className='list-group-item'>
                                     Porcentaje de asistencia el curso
@@ -55,7 +55,7 @@ export const MyAsistanceById: NextPage<Props> = ({ }) => {
                                     100%
                                 </li>
                             </ul>
-                        </caption>
+                        </caption> */}
                         <TableHead>
                             <TableRow>
                                 <TableCell>Fecha</TableCell>

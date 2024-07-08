@@ -2,12 +2,7 @@ import { prisma } from "@/apis";
 import { CourseModel } from "@/models";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: "dhuqvvw4v",
-  api_key: "132911996518186",
-  api_secret: "uUqIbyLaHZywSLe7WKnC37FxSu4",
-});
+import { deleteFile } from "@/utils/deleteFiles";
 
 type Data = { message: string } | CourseModel | CourseModel[];
 
@@ -92,15 +87,7 @@ const updateCourse = async (
     });
 
     if (course_temp?.img_url != img_url) {
-      const size_img = course_temp?.img_url.split("/") || [];
-      const public_id = size_img[size_img?.length - 1].split(".")[0];
-      console.log(public_id);
-      await cloudinary.api
-        .delete_resources([`enag/${public_id}`], {
-          type: "upload",
-          resource_type: "image",
-        })
-        .then(console.log);
+      await deleteFile(course_temp?.img_url||'')
     }
 
     const course = await prisma.course.update({
@@ -145,16 +132,7 @@ const deleteCourseById = async (
       },
     });
 
-    const size_img = course_temp?.img_url.split("/") || [];
-    const public_id = size_img[size_img?.length - 1].split(".")[0];
-    console.log(public_id);
-    await cloudinary.api
-      .delete_resources([`enag/${public_id}`], {
-        type: "upload",
-        resource_type: "image",
-      })
-      .then(console.log);
-
+    await deleteFile(course_temp?.img_url||'')
     const course = await prisma.course.delete({
       where: {
         id: Number(course_id),

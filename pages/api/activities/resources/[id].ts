@@ -1,5 +1,6 @@
 import { prisma } from '@/apis';
 import { ActivityResourceModel } from '@/models';
+import { deleteFile } from '@/utils/deleteFiles';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
@@ -71,6 +72,14 @@ const deleteResourceByIdActivty = async (req: NextApiRequest, res: NextApiRespon
     try {
         const {id}=req.query
         const activity_id=id?.toString().substring('activity_id='.length)
+        const activities_temp=await prisma.activity_resource.findMany({
+            where:{
+                activity_id:Number(activity_id)
+            }
+        })
+        activities_temp.map(async (resource)=>{
+            await deleteFile(resource.url_resource)
+        })
         const activity_resources = await prisma.activity_resource.deleteMany({
             where: {
                 activity_id: Number(activity_id)

@@ -1,6 +1,13 @@
 import { enagApi } from "@/apis";
 import { ActivityInternModel } from "@/models";
-import { Button, Container, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
@@ -11,6 +18,7 @@ import dynamic from "next/dynamic";
 import { updateInternActivity } from "@/utils/intern-activity/updateInternActivity";
 import { newInternActivity } from "@/utils/intern-activity/newInternActivity";
 import Swal from "sweetalert2";
+import * as yup from "yup";
 
 interface Props {
   course_id?: number;
@@ -26,6 +34,7 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
     }
   }, [activity_id]);
 
+  const [isLoading, setIsLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({
     id: 0,
     title: "",
@@ -33,6 +42,10 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
     course_id: course_id,
   });
   const [content, setContent] = useState("");
+  const validateMessage = "Campo obligatorio";
+  const validationSchema = yup.object({
+    title: yup.string().required(validateMessage),
+  });
 
   const goBack = () => {
     router.back();
@@ -55,6 +68,7 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
 
   const formik = useFormik({
     initialValues: initialValues,
+    validationSchema: validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
       const body = {
@@ -64,12 +78,14 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
         course_id: course_id,
       };
       let res: any;
+      setIsLoading(true);
       if (activity_id != undefined) {
         res = await updateInternActivity(body);
       } else {
         res = await newInternActivity(body);
       }
       if (res.status == 200) {
+        setIsLoading(false);
         Swal.fire({
           icon: "success",
           title: "Los datos se guardaron",
@@ -77,6 +93,7 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
           router.back();
         });
       } else {
+        setIsLoading(false);
         Swal.fire({
           icon: "error",
           title: "No se pudo guardar los datos",
@@ -90,54 +107,70 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
   });
 
   return (
-    <Container>
-      <form
-        action=""
-        onSubmit={formik.handleSubmit}
-        className="container w-75 d-flex flex-column gap-3"
-      >
-        <Typography variant="h5" className="">
-          Formulario de {activity_id != undefined ? " edición " : " creación "}{" "}
-          de actividad{" "}
-        </Typography>
-        <TextField
-          type="text"
-          variant="outlined"
-          label="Title"
-          id="title"
-          name="title"
-          value={formik.values.title}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.title && Boolean(formik.errors.title)}
-          helperText={formik.touched.title && formik.errors.title}
-        />
-        <div>
-          <Typography className="fw-bold">
-            Contenido de la actividad{" "}
+    <>
+      {isLoading && (
+        <Box
+          position="absolute"
+          display="flex"
+          width="100%"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
+          zIndex={999}
+          bgcolor="rgba(255, 255, 255, 0.8)"
+        >
+          <CircularProgress size={100} color="error" />
+        </Box>
+      )}
+      <Container>
+        <form
+          action=""
+          onSubmit={formik.handleSubmit}
+          className="container w-75 d-flex flex-column gap-3"
+        >
+          <Typography variant="h5" className="">
+            Formulario de{" "}
+            {activity_id != undefined ? " edición " : " creación "} de actividad{" "}
           </Typography>
-          <ReactQuill
-            theme="snow"
-            id="content"
-            value={content}
-            onChange={setContent}
+          <TextField
+            type="text"
+            variant="outlined"
+            label="Title"
+            id="title"
+            name="title"
+            value={formik.values.title}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.title && Boolean(formik.errors.title)}
+            helperText={formik.touched.title && formik.errors.title}
           />
-        </div>
-        <div>
-          <Button color="error" variant="contained" type="submit">
-            {" "}
-            Guardar{" "}
-          </Button>
-          <Button
-            className={styles.black_button + " ms-2"}
-            variant="contained"
-            onClick={goBack}
-          >
-            {" "}
-            Cancelar{" "}
-          </Button>
-        </div>
-      </form>
-    </Container>
+          <div>
+            <Typography className="fw-bold">
+              Contenido de la actividad{" "}
+            </Typography>
+            <ReactQuill
+              theme="snow"
+              id="content"
+              value={content}
+              onChange={setContent}
+            />
+          </div>
+          <div>
+            <Button color="error" variant="contained" type="submit">
+              {" "}
+              Guardar{" "}
+            </Button>
+            <Button
+              className={styles.black_button + " ms-2"}
+              variant="contained"
+              onClick={goBack}
+            >
+              {" "}
+              Cancelar{" "}
+            </Button>
+          </div>
+        </form>
+      </Container>
+    </>
   );
 };

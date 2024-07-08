@@ -15,6 +15,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                 return getUserByRol(req, res)
             } else if (id?.includes('user_id=')) {
                 return getUserById(req, res);
+            }else if(id?.includes('username=')){
+                return getUserByUserName(req,res)
             }
         case 'PUT':
             if(id?.includes('user_id=')){
@@ -39,7 +41,7 @@ const getUserByRol = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             }
         })
         if (!users) {
-            return res.status(200).json({ message: 'No hay usuario con ese ID:' + id })
+            return res.status(204).json({ message: 'No hay usuario con ese ID:' + id })
         }
         return res.status(200).json(users)
     } catch (error) {
@@ -58,6 +60,25 @@ const getUserById = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         })
         if (!user) {
             return res.status(200).json({ message: 'No hay usuario con ese ID:' + id })
+        }
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al obtener usuario' })
+    }
+}
+
+const getUserByUserName = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const username = id?.toString().substring('username='.length)
+        const user = await prisma.user.findFirst({
+            where: {
+                username
+            }
+        })
+        if (!user) {
+            return res.status(204).json({ message: 'No hay usuario con ese nombre:' + username })
         }
         return res.status(200).json(user)
     } catch (error) {

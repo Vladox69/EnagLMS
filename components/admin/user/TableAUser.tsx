@@ -79,14 +79,18 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
                                 <TableCell >{user.username}</TableCell>
                                 <TableCell >{user.email}</TableCell>
                                 <TableCell >{user.rol}</TableCell>
-                                <TableCell>
-                                    <IconButton aria-label="delete" size="medium" onClick={() => goToEditUser(user.id)} >
-                                        <EditIcon fontSize="inherit" />
-                                    </IconButton>
-                                    <IconButton aria-label="delete" size="medium" onClick={()=>handleDelete(user)} >
-                                        <DeleteIcon fontSize="inherit" />
-                                    </IconButton>
-                                </TableCell>
+                                {
+                                    user.rol=='ADMIN'?(<TableCell>
+                                    </TableCell>):(<TableCell>
+                                        <IconButton aria-label="delete" size="medium" onClick={() => goToEditUser(user.id)} >
+                                            <EditIcon fontSize="inherit" />
+                                        </IconButton>
+                                        <IconButton aria-label="delete" size="medium" onClick={()=>handleDelete(user)} >
+                                            <DeleteIcon fontSize="inherit" />
+                                        </IconButton>
+                                    </TableCell>)
+                                }
+                                
                             </TableRow>
                         ))}
                     </TableBody>

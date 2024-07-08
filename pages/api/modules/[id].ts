@@ -1,5 +1,6 @@
 import { prisma } from '@/apis';
 import { ModuleModel } from '@/models';
+import { deleteFile } from '@/utils/deleteFiles';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
@@ -96,6 +97,15 @@ try {
     const {id}=req.query;
     const module_id=id?.toString().substring("module_id=".length)
     const {title,content,course_id,teacher_id,hours,img_url}=req.body
+    const module_temp=await prisma.module.findFirst({
+        where:{
+            id:Number(module_id)
+        }
+    })
+    if(module_temp?.img_url!=img_url){
+        await deleteFile(module_temp?.img_url||'')
+    }
+    
     const mod=await prisma.module.update({
         where:{
             id:Number(module_id)

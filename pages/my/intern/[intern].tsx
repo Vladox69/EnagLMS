@@ -11,19 +11,23 @@ export const MyInternCourseById = () => {
   const [activities, setActivities] = useState<ActivityInternModel[]>([]);
   const [course, setCourse] = useState<InternCourseModel>();
   useEffect(() => {
-    getData();
-  }, []);
+    if (router.isReady) {
+      getData();
+    }
+  }, [router.isReady]);
 
   const getData = async () => {
-    const { intern: id } = router.query;
-    const { data: cs } = await enagApi.get<InternCourseModel>(
-      `/intern_course/course_id=${id}`
-    );
-    setCourse(cs);
-    const { data: acts } = await enagApi.get<ActivityInternModel[]>(
-      `/intern_activity/course_id=${id}`
-    );
-    setActivities(acts);
+    if (router.isReady) {
+      const { intern: id } = router.query;
+      const { data: cs } = await enagApi.get<InternCourseModel>(
+        `/intern_course/course_id=${id}`
+      );
+      setCourse(cs);
+      const { data: acts } = await enagApi.get<ActivityInternModel[]>(
+        `/intern_activity/course_id=${id}`
+      );
+      setActivities(acts);
+    }
   };
 
   return (
@@ -33,7 +37,7 @@ export const MyInternCourseById = () => {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight="80vh" // Ajusta esta altura según tus necesidades
+          minHeight="80vh" 
         >
           <CircularProgress size={100} color="error" />
         </Box>

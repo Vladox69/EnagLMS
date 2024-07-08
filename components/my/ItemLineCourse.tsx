@@ -23,7 +23,7 @@ export const ItemLineCourse: FC<Props> = ({ course }) => {
         <>
             <Container className={styles.hover_effect+' d-flex border rounded mb-2'} component='div' onClick={goToCourseById} >
                 <Image
-                    src={bgImage}
+                    src={course.img_url}
                     width={100}
                     height={100}
                     alt="Picture of the author"

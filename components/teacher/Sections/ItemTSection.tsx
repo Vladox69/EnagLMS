@@ -27,6 +27,7 @@ export const ItemTSection: FC<Props> = ({ section,onDeleteSection }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 res = await deleteSection(section);
+                console.log(res);
                 if (res.status == 200) {
                   Swal.fire({
                     icon: 'success',

@@ -20,6 +20,8 @@ import { CourseModel } from "@/models";
 import { editCourse } from "@/utils/admin/course/editCourse";
 import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import * as yup from "yup";
+import Image from "next/image";
 
 interface Props {
   course_id?: number;
@@ -31,32 +33,91 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
   useEffect(() => {
     if (course_id != undefined) {
       getData();
+      setvalidationSchema(someValidationSchema)
+    }else{
+      setvalidationSchema(allValidationSchema)
     }
   }, [course_id]);
 
   const goBack = () => {
     router.back();
   };
-
+  const [validationSchema, setvalidationSchema] = useState<any>()
+  const [isLoading, setIsLoading] = useState(false)
   const [initialValues, setInitialValues] = useState({
     id: 0,
     topic: "",
     content: "",
-    start_at: "00:00:00T00:00:00.000z",
-    end_at: "00:00:00T00:00:00.000z",
+    start_at: "00:00:00T00:00:00.000Z",
+    end_at: "00:00:00T00:00:00.000Z",
     modality: "",
     objective: "",
     periods: 0,
     qualification: "",
     requirements: "",
-    type: "",
+    type: "no",
     visible: true,
     img_file: null,
     img_url: "",
-    is_start:false
+    is_start: false,
   });
   const [content, setContent] = useState("");
   const [requirements, setRequirements] = useState("");
+  const validateMessage = "Campo obligatorio";
+  const allValidationSchema = yup.object({
+    topic: yup.string().required(validateMessage),
+    objective:yup.string().required(validateMessage),
+    qualification:yup.string().required(validateMessage),
+    type:yup.string().required(validateMessage).notOneOf(["no"],validateMessage),
+    start_at:yup.string().required(validateMessage).notOneOf(['00:00:00T00:00:00.000Z'],validateMessage),
+    end_at: yup.string()
+    .required(validateMessage)
+    .notOneOf(['00:00:00T00:00:00.000Z'], validateMessage)
+    .test(
+      'is-greater',
+      'La fecha de fin debe ser mayor o igual a la fecha de inicio',
+      function (value) {
+        const { start_at } = this.parent;
+        return value >= start_at;
+      }
+    ),
+    periods:yup.number().required(validateMessage).notOneOf([0],validateMessage),
+    img_file: yup
+    .mixed()
+    .required("Se requiere un archivo")
+    .test(
+      "fileFormat",
+      "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
+      (value: any) => {
+        return value && ["image/jpeg", "image/png", "image/gif"].includes(value.type);
+      }
+    ),
+  });
+  const someValidationSchema = yup.object({
+    topic: yup.string().required(validateMessage),
+    objective:yup.string().required(validateMessage),
+    qualification:yup.string().required(validateMessage),
+    type:yup.string().required(validateMessage).notOneOf(["no"],validateMessage),
+    start_at:yup.string().required(validateMessage).notOneOf(['00:00:00T00:00:00.000Z'],validateMessage),
+    end_at: yup.string()
+    .required(validateMessage)
+    .notOneOf(['00:00:00T00:00:00.000Z'], validateMessage)
+    .test(
+      'is-greater',
+      'La fecha de fin debe ser mayor o igual a la fecha de inicio',
+      function (value) {
+        const { start_at } = this.parent;
+        return value >= start_at;
+      }
+    ),
+    periods:yup.number().required(validateMessage).notOneOf([0],validateMessage),
+  });
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  const minDate = `${year}-${month}-${day}`;
 
   const onFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
@@ -88,7 +149,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         visible: data.visible,
         img_file: null,
         img_url: data.img_url,
-        is_start:data.is_start
+        is_start: data.is_start,
       });
       setContent(data.content);
       setRequirements(data.requirements);
@@ -97,14 +158,19 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
 
   const formik = useFormik({
     initialValues: initialValues,
+    validationSchema:validationSchema,
     enableReinitialize: true,
     onSubmit: async (values, { resetForm }) => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
       const body = {
         id: values.id,
         topic: values.topic,
         content: content,
-        start_at: `${values.start_at}T00:00:00.000z`,
-        end_at: `${values.end_at}T00:00:00.000z`,
+        start_at: `${values.start_at}T00:00:00.000Z`,
+        end_at: `${values.end_at}T00:00:00.000Z`,
         modality: values.modality,
         objective: values.objective,
         periods: values.periods,
@@ -114,9 +180,10 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         visible: Boolean(values.visible),
         img_file: values.img_file,
         img_url: values.img_url,
-        is_start:values.is_start
+        is_start: values.is_start,
       };
       let res: any;
+      setIsLoading(true)
       if (course_id != undefined) {
         res = await editCourse(body);
       } else {
@@ -124,6 +191,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
       }
 
       if (res.status == 200) {
+      setIsLoading(false)
         Swal.fire({
           icon: "success",
           title: "Los datos se guardaron",
@@ -131,6 +199,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           router.back();
         });
       } else {
+        setIsLoading(false)
         Swal.fire({
           icon: "error",
           title: "No se pudo guardar los datos",
@@ -143,6 +212,21 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
   });
 
   return (
+    <>
+          {isLoading && (
+        <Box
+          position="absolute"
+          display="flex"
+          width="100%"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
+          zIndex={999}
+          bgcolor="rgba(255, 255, 255, 0.8)"
+        >
+          <CircularProgress size={100} color="error" />
+        </Box>
+      )}
     <Container>
       <form
         action=""
@@ -168,6 +252,9 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           id="start_at"
           name="start_at"
           label="Fecha de inicio"
+          InputProps={{
+            inputProps: { min: minDate }
+          }}
           value={formik.values.start_at}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -180,6 +267,9 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           id="end_at"
           name="end_at"
           label="Fecha de cierre"
+          InputProps={{
+            inputProps: { min: formik.values.start_at || minDate }
+          }}
           value={formik.values.end_at}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
@@ -250,7 +340,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           onBlur={formik.handleBlur}
           error={formik.touched.type && Boolean(formik.errors.type)}
         >
-          <MenuItem value="">No seleccionado</MenuItem>
+          <MenuItem value="no">No seleccionado</MenuItem>
           <MenuItem value="short">Corto</MenuItem>
           <MenuItem value="large">Largo</MenuItem>
           <MenuItem value="master class">Master Class</MenuItem>
@@ -267,7 +357,6 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           onBlur={formik.handleBlur}
           error={formik.touched.visible && Boolean(formik.errors.visible)}
         >
-          <MenuItem value="false">No seleccionado</MenuItem>
           <MenuItem value="true">Visible</MenuItem>
           <MenuItem value="false">No visible</MenuItem>
         </TextField>
@@ -291,7 +380,16 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
             }}
           />
         </div>
-
+          {
+            !!course_id?(
+              <>
+              <Typography component="p">Imagen actual</Typography>
+              <Image src={formik.values.img_url} width={300} height={300} alt="" />
+              </>
+            ):(
+              <></>
+            )
+          }
         <div>
           <Typography component="p">Requerimientos</Typography>
           <ReactQuill
@@ -318,5 +416,6 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         </div>
       </form>
     </Container>
+    </>
   );
 };

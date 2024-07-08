@@ -7,6 +7,7 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router'
 import React, { FC, useEffect, useState } from 'react'
 import styles from '@/styles/Custom.module.css'
+import * as yup from "yup";
 interface Props {
     module_id?: number;
     course_id?: number;
@@ -35,7 +36,11 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
         img_url: ''
     })
     const [teachers, setTeachers] = useState<TeacherModel[]>([])
-
+    const validateMessage = "Campo obligatorio";
+    const someValidation = yup.object({
+        title: yup.string().required(validateMessage),
+        teacher_id:yup.number().required(validateMessage).notOneOf([0],validateMessage),
+      });
     const getData = async () => {
         const { data: t } = await enagApi.get(`/teachers`)
         setTeachers(t)
@@ -57,6 +62,7 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
     const formik = useFormik({
         initialValues: initialValues,
         enableReinitialize: true,
+        validationSchema:someValidation,
         onSubmit: async (values, { resetForm }) => {
             const body = {
                 id: values.id,
@@ -113,15 +119,6 @@ export const FormAModule: FC<Props> = ({ module_id, course_id, onSubmitResource,
                         </MenuItem>
                     ))}
                 </TextField>
-                {/* <Typography component='p'>Descripción</Typography>
-                <ReactQuill
-                    theme="snow"
-                    id="content"
-                    value={content}
-                    onChange={setContent}
-                /> */}
-
-
                 <div>
                     <Button variant='contained' type='submit' color='error' > Guardar</Button>
                     <Button variant='contained' className={styles.black_button + ' ms-2'} onClick={onCancel} > Cancelar</Button>

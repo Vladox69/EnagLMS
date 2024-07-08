@@ -43,7 +43,7 @@ export const MyCourseByName: NextPage<Props> = ({ }) => {
                             display="flex"
                             justifyContent="center"
                             alignItems="center"
-                            minHeight="80vh" // Ajusta esta altura según tus necesidades
+                            minHeight="80vh" 
                         >
                             <CircularProgress size={100} color='error' />
                         </Box>

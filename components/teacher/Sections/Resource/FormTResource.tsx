@@ -1,12 +1,11 @@
 import React, { FC, useState, useEffect, ChangeEvent } from 'react'
 import { useRouter } from 'next/router';
-import { enagApi } from '@/apis';
-import { SectionResourceModel } from '@/models';
 import { useFormik } from 'formik';
 import { Button, Container, TextField } from '@mui/material';
 import { newSectionResource } from '@/utils/section/resource/newSectionResource';
 import Swal from 'sweetalert2';
 import styles from '@/styles/Custom.module.css';
+import * as yup from "yup";
 
 interface Props {
     section_id?: number;
@@ -26,10 +25,16 @@ export const FormTResource: FC<Props> = ({ section_id, onSubmitResource, onCance
         title: '',
         file: null
     })
-
+    const validateMessage = "Campo obligatorio";
+    const allValidationSchema = yup.object({
+        file: yup
+        .mixed()
+        .required("Se requiere un archivo")
+      });
 
     const formik = useFormik({
         initialValues: initialValues,
+        validationSchema:allValidationSchema,
         enableReinitialize: true,
         onSubmit: async (values, { resetForm }) => {
 

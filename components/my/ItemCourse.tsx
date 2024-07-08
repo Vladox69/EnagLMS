@@ -30,9 +30,9 @@ export const ItemCourse: FC<Props> = ({ module }) => {
                         <Typography gutterBottom variant="h5" color='white' >
                             {module.title}
                         </Typography>
-                        <Typography component='p'  dangerouslySetInnerHTML={{
+                        {/* <Typography component='p'  dangerouslySetInnerHTML={{
                             __html:module.content
-                        }} />
+                        }} /> */}
                     </CardContent>
                 </CardActionArea>
             </Card>

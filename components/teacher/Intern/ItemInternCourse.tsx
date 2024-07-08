@@ -28,7 +28,7 @@ export const ItemInternCourse: FC<Props> = ({ course }) => {
         }}
       >
         <Image
-          src={bgImage}
+          src={course.img_url}
           width={100}
           height={100}
           className="p-2"

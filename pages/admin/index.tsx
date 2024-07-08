@@ -7,6 +7,7 @@ import ClassIcon from '@mui/icons-material/Class';
 import Person4Icon from '@mui/icons-material/Person4';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ImageIcon from '@mui/icons-material/Image';
 import Link from 'next/link';
 
 export default function Admin() {
@@ -62,6 +63,14 @@ export default function Admin() {
                             </Link>
                         </Button>
                         <Typography variant='h5' className='fw-bold'> Pasantías </Typography>
+                    </Grid>
+                    <Grid item xs={6} md={3} className='text-center'>
+                        <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
+                            <Link href={'/admin/resources'} >
+                                <ImageIcon sx={{ width: 125, height: 125 }} style={{ color: 'white' }} />
+                            </Link>
+                        </Button>
+                        <Typography variant='h5' className='fw-bold'> Recursos </Typography>
                     </Grid>
                 </Grid>
             </Container>

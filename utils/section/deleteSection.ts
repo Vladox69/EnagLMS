@@ -1,5 +1,5 @@
 import { enagApi } from "@/apis";
-import { SectionModel } from "@/models";
+import { ActivityModel, SectionModel, SubmissionModel } from "@/models";
 
 export const deleteSection=async(section:SectionModel)=>{
     try {

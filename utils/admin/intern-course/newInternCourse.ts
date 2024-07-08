@@ -11,6 +11,7 @@ export const newInternCourse = async (intern_course: any) => {
       end_at: intern_course.end_at,
       img_url: res_img.url,
       teacher_id: intern_course.teacher_id,
+      is_start:intern_course.is_start
     }
     const res = await enagApi.post(`/intern_course`,body)
     return res

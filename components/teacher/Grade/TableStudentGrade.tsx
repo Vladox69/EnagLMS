@@ -27,7 +27,7 @@ export const TableStudentGrade:FC<Props> = ({student}) => {
                             <TableCell className='fw-bold'>Actividad</TableCell>
                             <TableCell className='fw-bold' align="right">Ponderación</TableCell>
                             <TableCell className='fw-bold' align="right">Calificación</TableCell>
-                            <TableCell className='fw-bold' align="right">Observaciones</TableCell>
+                            <TableCell className='fw-bold' >Observaciones</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -41,7 +41,7 @@ export const TableStudentGrade:FC<Props> = ({student}) => {
                                         <TableCell>{activity.title}</TableCell>
                                         <TableCell align="right">{activity.ponderation}</TableCell>
                                         <TableCell align="right">{activity.submission.grade}</TableCell>
-                                        <TableCell align="right" dangerouslySetInnerHTML={{
+                                        <TableCell dangerouslySetInnerHTML={{
                                             __html:activity.submission.comment
                                         }} />
                                     </TableRow>

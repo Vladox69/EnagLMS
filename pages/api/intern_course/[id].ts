@@ -122,7 +122,7 @@ const updateInternCourse = async (
   try {
     const { id } = req.query;
     const course_id = id?.toString().substring("course_id=".length);
-    const { title, content, start_at, end_at, img_url, teacher_id } = req.body;
+    const { title, content, start_at, end_at, img_url, teacher_id,is_start } = req.body;
     const intern_course = await prisma.intern_course.update({
       where: {
         id: Number(course_id),
@@ -134,6 +134,7 @@ const updateInternCourse = async (
         end_at,
         img_url,
         teacher_id,
+        is_start
       },
     });
     if (!intern_course) {

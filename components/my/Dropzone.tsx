@@ -2,9 +2,20 @@ import React, { FC, useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ImageIcon from "@mui/icons-material/Image";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { Box, Button, Container, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Container,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { uploadFile } from "@/utils";
-import { ActivityModel, SubmissionModel, SubmissionResourceModel } from "@/models";
+import {
+  ActivityModel,
+  SubmissionModel,
+  SubmissionResourceModel,
+} from "@/models";
 import { enagApi } from "@/apis";
 import { handleDownload } from "@/utils/file/handleDownload";
 import { useRouter } from "next/router";
@@ -17,7 +28,7 @@ import { CustomDialog } from "./CustomDialog";
 interface Props {
   submission: SubmissionModel;
   resources: SubmissionResourceModel[];
-  activity:ActivityModel
+  activity: ActivityModel;
 }
 
 interface ItemResourceSubmissionProps {
@@ -30,7 +41,6 @@ const ItemResourceSubmmission: FC<ItemResourceSubmissionProps> = ({
   remove,
 }) => {
   const [open, setOpen] = useState(false);
-
   const handleOpen = () => {
     if (resource.title.includes(".pdf")) {
       setOpen(true);
@@ -73,8 +83,13 @@ const ItemResourceSubmmission: FC<ItemResourceSubmissionProps> = ({
   );
 };
 
-export const Dropzone: FC<Props> = ({ submission, resources: resc ,activity}) => {
+export const Dropzone: FC<Props> = ({
+  submission,
+  resources: resc,
+  activity,
+}) => {
   const [files, setFiles] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [resources, setResources] = useState<SubmissionResourceModel[]>([]);
   const [resourceRemoved, setResourceRemoved] = useState<
     SubmissionResourceModel[]
@@ -86,8 +101,8 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc ,activity}) =>
 
   const router = useRouter();
 
-  // Guardada de archivo
   const onSave = async () => {
+    setIsLoading(true)
     const fileUploadPromises = [];
 
     if (resourceRemoved.length > 0) {
@@ -116,7 +131,8 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc ,activity}) =>
           resourcePromises.push(enagApi.post(`/submissions/resources`, body));
         }
       }
-      const responsesResources = await Promise.all(resourcePromises);
+      await Promise.all(resourcePromises);
+      setIsLoading(false)
     }
 
     router.back();
@@ -171,7 +187,6 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc ,activity}) =>
     );
   };
 
-  // Métodos de drop de los archivos
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles?.length) {
       setFiles((previousFiles: File[]) => [
@@ -188,6 +203,20 @@ export const Dropzone: FC<Props> = ({ submission, resources: resc ,activity}) =>
 
   return (
     <>
+      {isLoading && (
+        <Box
+          position="absolute"
+          display="flex"
+          width="100%"
+          height="100vh"
+          justifyContent="center"
+          alignItems="center"
+          zIndex={999}
+          bgcolor="rgba(255, 255, 255, 0.8)"
+        >
+          <CircularProgress size={100} color="error" />
+        </Box>
+      )}
       <Typography variant="h4"> Agregar entrega </Typography>
       <form className="border rounded my-2">
         <div

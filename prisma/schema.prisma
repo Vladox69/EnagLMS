@@ -237,6 +237,15 @@ model submission_intern{
   activity_id     Int
 }
 
+
+model resources{
+  id              Int @id @default(autoincrement())
+  url_resource    String
+  title           String
+  description     String
+  type            String
+}
+
 enum StatusAsistance{
   PRESENTE
   ATRASO

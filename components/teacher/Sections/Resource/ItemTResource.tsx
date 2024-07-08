@@ -1,13 +1,13 @@
 import { SectionResourceModel } from '@/models'
 import { Container, IconButton, Typography } from '@mui/material'
 import ArticleIcon from '@mui/icons-material/Article';
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { handleDownload } from '@/utils/file/handleDownload';
-import SettingsIcon from '@mui/icons-material/Settings';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
 import { deleteSectionResource } from '@/utils/section/resource/deleteSectionResource';
 import styles from '@/styles/Custom.module.css';
+import { CustomDialog } from '@/components/my/CustomDialog';
 
 interface Props {
     section_resource: SectionResourceModel,
@@ -16,6 +16,19 @@ interface Props {
 
 export const ItemTResource: FC<Props> = ({ section_resource,onDeleteResource }) => {
 
+  const [open, setOpen] = useState(false)
+
+  const handleOpen = () => {
+    if (section_resource.title.includes('.pdf')) {
+      setOpen(true)
+    } else {
+      handleDownload(section_resource.url_resource, section_resource.title)
+    }
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
     const handleDelete = () => {
 
         let res: any;
@@ -52,7 +65,9 @@ export const ItemTResource: FC<Props> = ({ section_resource,onDeleteResource }) 
                     width: 50,
                     height: 50
                 }} />
-                <Typography component='p' onClick={() => handleDownload(section_resource.url_resource, section_resource.title)} > {section_resource.title} </Typography>
+                <Typography component='p' onClick={handleOpen} > {section_resource.title} </Typography>
+                <CustomDialog open={open}  handleClose={handleClose} title={section_resource.title} url={section_resource.url_resource} />
+    
             </div>
             <div>
                 <IconButton onClick={handleDelete} >

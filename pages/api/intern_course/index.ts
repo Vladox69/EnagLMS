@@ -36,7 +36,7 @@ const createInternCourse = async (
   res: NextApiResponse<Data>
 ) => {
   try {
-    const { title, content, start_at, end_at, img_url, teacher_id } = req.body
+    const { title, content, start_at, end_at, img_url, teacher_id ,is_start} = req.body
     const intern_course = await prisma.intern_course.create({
         data:{
             title,
@@ -44,7 +44,8 @@ const createInternCourse = async (
             start_at,
             end_at,
             img_url,
-            teacher_id
+            teacher_id,
+            is_start
         }
     })
     return res.status(200).json(intern_course)

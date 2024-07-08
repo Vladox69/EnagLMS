@@ -1,4 +1,4 @@
-import { prisma } from '@/apis';
+import { enagApi, prisma } from '@/apis';
 import { SectionModel } from '@/models';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -93,6 +93,14 @@ const deleteSectionById= async (req: NextApiRequest, res: NextApiResponse<Data>)
     try {
         const {id}=req.query
         const section_id=id?.toString().substring("section_id=".length)
+        const {data:sect_res}=await enagApi.delete(`/sections/resources/section_id=${section_id}`)
+        console.log('Resources sections delete');
+        console.log(sect_res);
+        
+        const {data}= await enagApi.delete(`/activities/section_id=${section_id}`)
+        console.log('Section delete');
+        console.log(data);
+
         const section=await prisma.section.delete({
             where:{
                 id:Number(section_id)
