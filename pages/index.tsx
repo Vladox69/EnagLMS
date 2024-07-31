@@ -30,15 +30,19 @@ export default function Home() {
 
   const getCourses = async () => {
     const { data } = await enagApi.get<CourseModel[]>(`/courses`)
-    setCortos(data.filter(c => c.type == 'Cortos'))
-    setLargos(data.filter(c => c.type == 'Largos'))
-    setMaster(data.filter(c => c.type == 'Master'))
+    setCortos(data.filter(c => c.type == 'short'))
+    setLargos(data.filter(c => c.type == 'large'))
+    setMaster(data.filter(c => c.type == 'master'))
   }
 
   const router = useRouter()
 
   const goToCourses=()=>{
     router.push(`/cursos`)
+  }
+
+  const goToInterns=()=>{
+    router.push(`/pasantias`)
   }
 
   return (
@@ -131,7 +135,7 @@ export default function Home() {
         <Typography variant='h4' color='white' > PROGRAMA DE PASANTÍAS</Typography>
         <Typography component='p' color='white' fontWeight='bold' className='px-3' > ¡Descubre tu pasión culinaria y adquiere experiencia práctica en nuestra escuela de gastronomía! Únete a nuestro emocionante programa de pasantías,
           donde trabajarás junto a talentosos chefs en un entorno real de cocina. Prepárate para una exitosa carrera culinaria. </Typography>
-        <Button variant='contained' color='error' >Mas información</Button>
+        <Button variant='contained' color='error' onClick={goToInterns} >Mas información</Button>
       </div>
 
       {/** Cuarta sección */}
@@ -189,7 +193,7 @@ export default function Home() {
       {/** Quinta sección */}
 
  
-      <div className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+      {/* <div className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
         backgroundImage: "url('/assets/fondo.jpg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -208,10 +212,10 @@ export default function Home() {
             Harry
           </Typography>
         </Container>
-      </div>
+      </div> */}
 
       {/**Sexta sección */}
-      <Container className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
+      {/* <Container className='d-flex flex-column justify-content-center align-items-center text-center ' style={{
         // backgroundImage:`url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -253,7 +257,7 @@ export default function Home() {
 
         </Grid>
         <Button variant='contained' color='error' onClick={goToCourses} >Mas información</Button>
-      </Container>
+      </Container> */}
 
       <Footer />
 

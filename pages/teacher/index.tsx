@@ -36,12 +36,21 @@ export default function Teacher() {
           {" "}
           Cursos de pasantías{" "}
         </Typography>
-        <GridInternCourse courses={interns} />
+        {interns.length == 0 ? (
+          <Typography variant="h6"> Sin cursos aún </Typography>
+        ) : (
+          <GridInternCourse courses={interns} />
+        )}
+
         <Typography variant="h4" className="mb-3">
           {" "}
           Módulos académicos{" "}
         </Typography>
-        <GridTModule modules={modules} />
+        {modules.length == 0 ? (
+          <Typography variant="h6">Sin módulos aún</Typography>
+        ) : (
+          <GridTModule modules={modules} />
+        )}
       </Container>
     </Layout>
   );

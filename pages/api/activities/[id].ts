@@ -180,25 +180,6 @@ const deleteActivitiesByIdSection = async (
   try {
     const { id } = req.query;
     const section_id = id?.toString().substring("section_id=".length);
-    const activities_temp = await prisma.activity.findMany({
-      where: {
-        section_id: Number(section_id),
-      },
-    });
-    activities_temp.map(async (activity) => {
-      const { data: act_res } = await enagApi.delete(
-        `/activities/resources/activity_id=${activity.id}`
-      );
-      console.log("Activity resource delete");
-      console.log(act_res);
-
-      const { data } = await enagApi.delete(
-        `/submissions/activity_id=${activity.id}`
-      );
-      console.log("Activity delete");
-      console.log(data);
-    });
-
     const activities = await prisma.activity.deleteMany({
       where: {
         section_id: Number(section_id),

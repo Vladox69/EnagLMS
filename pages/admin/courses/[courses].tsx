@@ -22,6 +22,7 @@ import { ListAStudent } from "../../../components/admin/course/ListAStudent";
 import { FormAInscription } from "@/components/admin/course/FormAInscription";
 import Swal from "sweetalert2";
 import { editCourse } from "@/utils/admin/course/editCourse";
+import { resetCourse } from "@/utils/admin/course/resetCourse";
 
 export const CourseAdminById = () => {
   const router = useRouter();
@@ -34,22 +35,24 @@ export const CourseAdminById = () => {
   const [inscriptions, setInscriptions] = useState<InscriptionModel[]>([]);
 
   const getData = async () => {
-    const { data: course } = await enagApi.get(`/courses/course_id=${id}`);
-    setCourse(course);
-    const { data: modules } = await enagApi.get(`/modules/course_id=${id}`);
-    setModules(modules);
-    const { data: insciptions } = await enagApi.get<InscriptionModel[]>(
-      `/inscriptions/course_id=${id}`
-    );
-    setInscriptions(insciptions);
-    const studentsPromises = insciptions.map(async (ins) => {
-      const { data: student } = await enagApi.get(
-        `/students/student_id=${ins.student_id}`
+    if (router.isReady) {
+      const { data: course } = await enagApi.get(`/courses/course_id=${id}`);
+      setCourse(course);
+      const { data: modules } = await enagApi.get(`/modules/course_id=${id}`);
+      setModules(modules);
+      const { data: insciptions } = await enagApi.get<InscriptionModel[]>(
+        `/inscriptions/course_id=${id}`
       );
-      return student;
-    });
-    const students = await Promise.all(studentsPromises);
-    setStudents(students);
+      setInscriptions(insciptions);
+      const studentsPromises = insciptions.map(async (ins) => {
+        const { data: student } = await enagApi.get(
+          `/students/student_id=${ins.student_id}`
+        );
+        return student;
+      });
+      const students = await Promise.all(studentsPromises);
+      setStudents(students);
+    }
   };
 
   const handleOpen = () => {
@@ -114,8 +117,40 @@ export const CourseAdminById = () => {
     });
   };
 
+  const reset = async () => {
+    let res: any;
+    Swal.fire({
+      icon: "question",
+      title:
+        "Después de reiniciar todos los datos serán eliminados. ¿Está seguro?",
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const courseReset = {
+          ...course,
+          is_start: false,
+        };
+        const resReset: any = await resetCourse(courseReset);
+        if (resReset.status == 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Curso reiniciado",
+          }).then(() => {
+            getData()
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo reiniciar el curso",
+          });
+        }
+      }
+    });
+  };
+
   useEffect(() => {
-    if(router.isReady){
+    if (router.isReady) {
       getData();
     }
   }, [router.isReady]);
@@ -123,7 +158,7 @@ export const CourseAdminById = () => {
   return (
     <Layout>
       <Container className="container ">
-        <Typography variant="h4">Bienvenidos a al {course?.topic}</Typography>
+        <Typography variant="h4">Bienvenidos al curso {course?.topic}</Typography>
         <Typography
           component="p"
           dangerouslySetInnerHTML={{
@@ -191,6 +226,17 @@ export const CourseAdminById = () => {
           <Button variant="contained" color="error" onClick={handleOpen}>
             {" "}
             Nuevo módulo{" "}
+          </Button>
+        )}
+        {course?.is_start && (
+          <Button
+            onClick={reset}
+            variant="contained"
+            color="error"
+            className="mb-2"
+          >
+            {" "}
+            Reiniciar curso{" "}
           </Button>
         )}
       </Container>

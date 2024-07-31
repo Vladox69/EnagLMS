@@ -8,6 +8,7 @@ import {
   StudentModel,
 } from "@/models";
 import { editInternCourse } from "@/utils/admin/intern-course/editInternCourse";
+import { resetInternCourse } from "@/utils/admin/intern-course/resetInternCourse";
 import {
   Box,
   Button,
@@ -111,6 +112,37 @@ export const InternCourseById = () => {
     });
   };
   
+  const reset=async()=>{
+    Swal.fire({
+      icon: "question",
+      title:
+        "Después de reiniciar todos los datos serán eliminados. ¿Está seguro?",
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const courseReset = {
+          ...course,
+          is_start: false,
+        };
+        const resReset: any = await resetInternCourse(courseReset);
+        if (resReset.status == 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Curso reiniciado",
+          }).then(() => {
+            getData()
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo reiniciar el curso",
+          });
+        }
+      }
+    });
+  }
+
   return (
     <Layout>
       {course == undefined ||
@@ -170,7 +202,18 @@ export const InternCourseById = () => {
             Agregar estudiante{" "}
           </Button>
         )}
-          <ListInternStudent inscriptions={inscriptions} />
+          <ListInternStudent inscriptions={inscriptions} is_start={course?.is_start || false} />
+          {course?.is_start && (
+          <Button
+            onClick={reset}
+            variant="contained"
+            color="error"
+            className="mb-2"
+          >
+            {" "}
+            Reiniciar curso{" "}
+          </Button>
+        )}
         </Container>
       )}
     </Layout>

@@ -42,7 +42,7 @@ export const MyAsistanceModuleById: NextPage<Props> = ({ }) => {
 
   return (
     <Layout title='My asistance module'>
-      <Typography variant='h4' className='mb-2'> Tabla de asistencias por materia </Typography>
+      <Typography variant='h4' className='mb-2'> Tabla de asistencias por módulo </Typography>
       <TableAsistance asistances={asistances} />
       <Button variant='contained' onClick={goToNewRegister} color='error' className='mt-2'> Nuevo registro </Button>
       <Button variant='contained' onClick={goBack} className={styles.black_button + ' mt-2 ms-2'}> Cancelar </Button>

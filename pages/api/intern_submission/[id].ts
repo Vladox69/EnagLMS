@@ -23,9 +23,9 @@ export default function handler(
   const { id } = req.query;
   switch (req.method) {
     case "GET":
-      if(id?.includes('student_id=') && id?.includes('activity_id=')){
-        return getSubmissionByIdActivityAndStudent(req,res)
-      }else if (id?.includes("submission_id=")) {
+      if (id?.includes("student_id=") && id?.includes("activity_id=")) {
+        return getSubmissionByIdActivityAndStudent(req, res);
+      } else if (id?.includes("submission_id=")) {
         return getInternSubmissionById(req, res);
       } else if (id?.includes("activity_id=")) {
         return getInternSubmissionByIdActivity(req, res);
@@ -103,30 +103,42 @@ const getInternSubmissionByIdActivity = async (
   }
 };
 
-const getSubmissionByIdActivityAndStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const getSubmissionByIdActivityAndStudent = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
   try {
-      const { id } = req.query;
-      const qp = id?.toString().split('&');
-      console.log(id);
-      const student_id = qp![0].toString().substring("student_id=".length)
-      const activity_id = qp![1].toString().substring("activity_id=".length)
+    const { id } = req.query;
+    const qp = id?.toString().split("&");
+    console.log(id);
+    const student_id = qp![0].toString().substring("student_id=".length);
+    const activity_id = qp![1].toString().substring("activity_id=".length);
 
-      const submission = await prisma.submission_intern.findFirst({
-          where: {
-              activity_id: Number(activity_id),
-              student_id: Number(student_id)
-          }
-      })
-      if (!submission) {
-          return res.status(200).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible."});
-      }
-      return res.status(200).json(submission)
+    const submission = await prisma.submission_intern.findFirst({
+      where: {
+        activity_id: Number(activity_id),
+        student_id: Number(student_id),
+      },
+    });
+    if (!submission) {
+      return res
+        .status(200)
+        .json({
+          message:
+            "Failed to fetch resource. The requested data is missing or inaccessible.",
+        });
+    }
+    return res.status(200).json(submission);
   } catch (error) {
-
-      console.log(error);
-      return res.status(400).json({ message: "Failed to fetch resource. The requested data is missing or inaccessible." });
+    console.log(error);
+    return res
+      .status(400)
+      .json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
   }
-}
+};
 
 const createSubmissionsByIdStudents = async (
   req: NextApiRequest,
@@ -154,12 +166,10 @@ const createSubmissionsByIdStudents = async (
       });
       return res.status(200).json(submission_intern);
     }
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to create. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to create. The requested data is missing or inaccessible.",
+    });
   } catch (error) {
     return res.status(400).json({
       message:
@@ -178,13 +188,13 @@ const updateInternSubmission = async (
     const { url_resource } = req.body;
 
     const submission_temp = await prisma.submission_intern.findFirst({
-      where:{
-        id:Number(submission_id)
-      }
-    })
+      where: {
+        id: Number(submission_id),
+      },
+    });
 
-    if(submission_temp?.url_resource!=url_resource){
-      await deleteFile(submission_temp?.url_resource||'')
+    if (submission_temp?.url_resource != url_resource) {
+      await deleteFile(submission_temp?.url_resource || "");
     }
 
     const submission_intern = await prisma.submission_intern.update({
@@ -217,6 +227,14 @@ const deleteInternSubmissionById = async (
   try {
     const { id } = req.query;
     const submission_id = id?.toString().substring("submission_id=".length);
+    const submission_temp = await prisma.submission_intern.findFirst({
+      where: {
+        id: Number(submission_id),
+      },
+    });
+
+    await deleteFile(submission_temp?.url_resource || "");
+
     const submission_intern = await prisma.submission_intern.delete({
       where: {
         id: Number(submission_id),
@@ -246,12 +264,10 @@ const deleteInternSubmissionsByIdActivity = async (
     if (submissions.count == 0) {
       return res.status(200).json({ message: "No hay entregas por eliminar" });
     }
-    return res
-      .status(200)
-      .json({
-        message: "Entregas eliminadas con éxito",
-        count: submissions.count,
-      });
+    return res.status(200).json({
+      message: "Entregas eliminadas con éxito",
+      count: submissions.count,
+    });
   } catch (error) {
     return res.status(400).json({
       message:

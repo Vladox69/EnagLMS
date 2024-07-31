@@ -6,7 +6,7 @@ import {
   StudentModel,
   SubmissionModel,
 } from "@/models";
-import { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import {
   Typography,
@@ -15,7 +15,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Box,
   CircularProgress,
 } from "@mui/material";
@@ -51,47 +50,51 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   const [open, setOpen] = useState(false);
 
   const getData = async () => {
-    if (router.isReady) {
-      const { activity: id } = router.query;
-      const { data: actv } = await enagApi.get<ActivityModel>(
-        `/activities/activity_id=${id}`
-      );
-      const { data: actv_res } = await enagApi.get<ActivityResourceModel[]>(
-        `/activities/resources/activity_id=${id}`
-      );
-      const { data: subms } = await enagApi.get<SubmissionModel[]>(
-        `/submissions/activity_id=${id}`
-      );
-      const studentsPromises = subms.map(async (sub) => {
-        const { data: student } = await enagApi.get<StudentModel>(
-          `/students/student_id=${sub.student_id}`
+    try {
+      if (router.isReady) {
+        const { activity: id } = router.query;
+        const { data: actv } = await enagApi.get<ActivityModel>(
+          `/activities/activity_id=${id}`
         );
-        return student;
-      });
-      const students = await Promise.all(studentsPromises);
-      const resourcePromises = subms.map(async (sub) => {
-        const { data: resource } = await enagApi.get(
-          `/submissions/resources/submission_id=${sub.id}`
+        const { data: actv_res } = await enagApi.get<ActivityResourceModel[]>(
+          `/activities/resources/activity_id=${id}`
         );
-        return resource;
-      });
-      const data = await Promise.all(resourcePromises);
-      const resSub = data.flat();
+        const { data: subms } = await enagApi.get<SubmissionModel[]>(
+          `/submissions/activity_id=${id}`
+        );
+        const studentsPromises = subms.map(async (sub) => {
+          const { data: student } = await enagApi.get<StudentModel>(
+            `/students/student_id=${sub.student_id}`
+          );
+          return student;
+        });
+        const students = await Promise.all(studentsPromises);
+        const resourcePromises = subms.map(async (sub) => {
+          const { data: resource } = await enagApi.get(
+            `/submissions/resources/submission_id=${sub.id}`
+          );
+          return resource;
+        });
+        const data = await Promise.all(resourcePromises);
+        const resSub = data.flat();
 
-      const sub_stu = subms.map((submission) => {
-        const student = students.find((s) => s.id == submission.student_id);
-        const resource = resSub.filter((r) => r.submission_id == submission.id);
-        return {
-          id_submission: submission.id,
-          student: student,
-          submission: submission,
-          resources: resource || "No entregado",
-        };
-      });
-      setActivity(actv);
-      setActivity_resources(actv_res);
-      setSubmission_student(sub_stu);
-    }
+        const sub_stu = subms.map((submission) => {
+          const student = students.find((s) => s.id == submission.student_id);
+          const resource = resSub.filter(
+            (r) => r.submission_id == submission.id
+          );
+          return {
+            id_submission: submission.id,
+            student: student,
+            submission: submission,
+            resources: resource || "No entregado",
+          };
+        });
+        setActivity(actv);
+        setActivity_resources(actv_res);
+        setSubmission_student(sub_stu);
+      }
+    } catch (error) {}
   };
 
   const handleOpen = () => {
@@ -104,11 +107,11 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
 
   const handleFormSubmit = (formData: any) => {
     if (formData.status == 200) {
-      //TODO: Rehidratación de la página añadir a la lista el nuevo recurso
       handleClose();
-    } else {
     }
   };
+
+  
 
   return (
     <Layout title="My activity">
@@ -120,7 +123,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="80vh" 
+            minHeight="80vh"
           >
             <CircularProgress size={100} color="error" />
           </Box>

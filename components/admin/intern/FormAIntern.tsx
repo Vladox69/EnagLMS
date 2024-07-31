@@ -38,9 +38,9 @@ export const FormAIntern = () => {
 
       if (localStorage.getItem("intern-form")) {
         Swal.fire({
-            icon: "warning",
-            title: "Tus datos ya han sido enviados",
-          });        
+          icon: "warning",
+          title: "Tus datos ya han sido enviados",
+        });
       } else {
         let res: any;
         res = await newIntern(body);
@@ -49,6 +49,7 @@ export const FormAIntern = () => {
             icon: "success",
             title: "Tus datos han sido enviados",
           }).then(() => {
+            localStorage.setItem("intern-form", "true");
             router.replace("/pasantias");
           });
         } else {
@@ -59,10 +60,8 @@ export const FormAIntern = () => {
             router.replace("/pasantias");
           });
         }
-        localStorage.setItem("intern-form",'true');
       }
       resetForm();
-      
     },
   });
 

@@ -22,6 +22,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         case 'DELETE':
             if (id?.includes('inscription_id=')) {
                 return deleteInscriptionById(req, res);
+            }else if(id?.includes('course_id=')){
+                return deleteInscriptionByIdCourse(req, res);
             }
         default:
             break;
@@ -100,6 +102,25 @@ const deleteInscriptionById = async (req: NextApiRequest, res: NextApiResponse<D
             }
         })
         return res.status(200).json(inscription)
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ message: 'Error al eliminar' })
+    }
+}
+
+const deleteInscriptionByIdCourse= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const course_id = id?.toString().substring('course_id='.length)
+        const inscription = await prisma.inscription.deleteMany({
+            where: {
+                course_id: Number(course_id)
+            }
+        })
+        if(inscription.count>0){
+            return res.status(200).json({message:`Rows deleted ${inscription.count}`})
+        }
+        return res.status(204).json({message:'No content to delete'})
     } catch (error) {
         console.log(error);
         return res.status(400).json({ message: 'Error al eliminar' })

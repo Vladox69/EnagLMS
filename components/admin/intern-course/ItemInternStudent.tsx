@@ -9,12 +9,14 @@ import { deleteInternInscription } from "@/utils/admin/intern-inscription/delete
 
 interface Props {
   inscription: InternInscriptionModel;
+  is_start: boolean;
   onDeleteStudent: (inscription: InternInscriptionModel) => void;
 }
 
 export const ItemInternStudent: FC<Props> = ({
   onDeleteStudent,
   inscription,
+  is_start
 }) => {
   const [student, setStudent] = useState<StudentModel>();
 
@@ -64,9 +66,10 @@ export const ItemInternStudent: FC<Props> = ({
       <Typography component="p" className="ms-2">
         {" "}
         {student?.names}{" "}
+        {student?.last_names}
       </Typography>
       <Box>
-        <IconButton onClick={handleDelete}>
+        <IconButton className={!is_start?'visible':'invisible'} onClick={handleDelete}>
           <DeleteIcon />
         </IconButton>
       </Box>

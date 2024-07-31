@@ -23,6 +23,8 @@ import styles from "@/styles/Custom.module.css";
 import * as yup from "yup";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Image from "next/image";
+import DownloadIcon from '@mui/icons-material/Download';
+import { handleDownload } from "@/utils/file/handleDownload";
 interface Props {
   user_id?: number;
 }
@@ -47,6 +49,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     photo_url: "",
     photo_file: null,
   });
+  
   const validateMessage = "Campo obligatorio";
   const allValidation = yup.object({
     username: yup
@@ -103,9 +106,11 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
   });
 
   const handleClickShowPassword = () => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev) => !prev);
   };
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
   const onPhotoInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -114,12 +119,16 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     formik.setFieldValue("photo_file", target.files?.[0]);
   };
 
+  const downloadImage=()=>{
+    handleDownload(initialValues.photo_url,`${initialValues.username}.png`)
+  }
+
   useEffect(() => {
     if (user_id != undefined) {
       getData();
-      setValidationSchema(someValidation)
-    }else{
-      setValidationSchema(allValidation)
+      setValidationSchema(someValidation);
+    } else {
+      setValidationSchema(allValidation);
     }
   }, [user_id]);
 
@@ -308,15 +317,32 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
 
         {!!user_id ? (
           <>
-              <Typography component="p">Imagen actual</Typography>
-              <Image src={formik.values.photo_url} width={300} height={300} alt="" />
+            <Typography component="p">Imagen actual</Typography>
+            <Box position="relative" display="inline-block">
+              <Image
+                src={formik.values.photo_url}
+                width={300}
+                height={300}
+                alt=""
+              />
+              <IconButton
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  color: "white", 
+                }}
+                onClick={downloadImage}
+              >
+                <DownloadIcon color="error" />
+              </IconButton>
+            </Box>
           </>
         ) : (
           <></>
         )}
-        {
-          user_id==undefined?(
-            <TextField
+        {user_id == undefined ? (
+          <TextField
             id="rol"
             select
             name="rol"
@@ -331,8 +357,9 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
             <MenuItem value="TEACHER">PROFESOR</MenuItem>
             <MenuItem value="STUDENT">ESTUDIANTE</MenuItem>
           </TextField>
-          ):(<></>)
-        }
+        ) : (
+          <></>
+        )}
 
         <div>
           <Button color="error" variant="contained" type="submit">

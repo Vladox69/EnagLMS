@@ -25,7 +25,6 @@ export const editCourse = async (course: any) => {
       is_start:course.is_start
     };
     const res = await enagApi.put(`/courses/course_id=${body.id}`, body);
-    console.log(res);
     return res;
   } catch (error) {
     return error;

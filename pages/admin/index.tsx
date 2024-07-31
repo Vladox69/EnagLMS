@@ -64,14 +64,14 @@ export default function Admin() {
                         </Button>
                         <Typography variant='h5' className='fw-bold'> Pasantías </Typography>
                     </Grid>
-                    <Grid item xs={6} md={3} className='text-center'>
+                    {/* <Grid item xs={6} md={3} className='text-center'>
                         <Button sx={{ width: 150, height: 150 }} variant='contained' color='error' className='rounded-circle' >
                             <Link href={'/admin/resources'} >
                                 <ImageIcon sx={{ width: 125, height: 125 }} style={{ color: 'white' }} />
                             </Link>
                         </Button>
                         <Typography variant='h5' className='fw-bold'> Recursos </Typography>
-                    </Grid>
+                    </Grid> */}
                 </Grid>
             </Container>
         </Layout>

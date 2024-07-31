@@ -1,5 +1,6 @@
 import { prisma } from "@/apis";
 import { InternCourseModel } from "@/models";
+import { deleteFile } from "@/utils/deleteFiles";
 import { NextApiRequest, NextApiResponse } from "next";
 
 type Data = { message: string } | InternCourseModel | InternCourseModel[];
@@ -123,6 +124,15 @@ const updateInternCourse = async (
     const { id } = req.query;
     const course_id = id?.toString().substring("course_id=".length);
     const { title, content, start_at, end_at, img_url, teacher_id,is_start } = req.body;
+    const course_temp = await prisma.intern_course.findFirst({
+      where: {
+        id: Number(course_id),
+      },
+    });
+
+    if (course_temp?.img_url != img_url) {
+      await deleteFile(course_temp?.img_url||'')
+    }
     const intern_course = await prisma.intern_course.update({
       where: {
         id: Number(course_id),

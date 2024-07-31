@@ -119,7 +119,6 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
     })
   }
   const handleFormSubmitPlanificacion=async(formData:any)=>{
-    console.log(formData);
     if(formData.status==200){
       Swal.fire({
         icon: "success",

@@ -132,7 +132,7 @@ model activity{
   title      String
   content    String
   time_due   DateTime
-  ponderation Int
+  ponderation Float
   submission submission[]
   resources  activity_resource[]
   section    section @relation(fields: [section_id],references: [id])

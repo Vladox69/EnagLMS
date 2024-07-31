@@ -107,7 +107,7 @@ export default function Cursos() {
                       <Typography gutterBottom variant="h5" component="div">
                         {cc.topic}
                       </Typography>
-                      <Typography
+                      {/* <Typography
                         component="p"
                         color="text.secondary"
                         sx={{
@@ -116,7 +116,7 @@ export default function Cursos() {
                         dangerouslySetInnerHTML={{
                           __html: cc.content,
                         }}
-                      />
+                      /> */}
                     </CardContent>
                     <CardActions style={{ justifyContent: "center" }}>
                       <Button
@@ -158,9 +158,16 @@ export default function Cursos() {
                       <Typography gutterBottom variant="h5" component="div">
                         {cl.topic}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {cl.content}
-                      </Typography>
+                      {/* <Typography
+                        component="p"
+                        color="text.secondary"
+                        sx={{
+                          textAlign: "justify",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: cl.content,
+                        }}
+                      /> */}
                     </CardContent>
                     <CardActions style={{ justifyContent: "center" }}>
                       <Button
@@ -202,9 +209,9 @@ export default function Cursos() {
                       <Typography gutterBottom variant="h5" component="div">
                         {mc.topic}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      {/* <Typography variant="body2" color="text.secondary">
                         {mc.content}
-                      </Typography>
+                      </Typography> */}
                     </CardContent>
                     <CardActions style={{ justifyContent: "center" }}>
                       <Button

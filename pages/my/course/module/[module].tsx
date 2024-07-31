@@ -50,30 +50,33 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   }, [router.isReady]);
 
   const getData = async () => {
-    const { module: id } = router.query;
-    const { data: p } = await enagApi.get(`/auth/profile`);
-    const { data: s } = await enagApi.get<StudentModel>(
-      `/students/user_id=${p.user_id}`
-    );
-    const { data: secs } = await enagApi.get<SectionModel[]>(
-      `/sections/module_id=${id}`
-    );
-    const { data: md } = await enagApi.get<ModuleModel>(
-      `/modules/module_id=${id}`
-    );
-    const { data: rscs } = await enagApi.get<ModuleResourceModel[]>(
-      `/modules/resources/module_id=${id}`
-    );
-    const { data: tch } = await enagApi.get<TeacherModel>(
-      `/teachers/teacher_id=${md.teacher_id}`
-    );
-    if (rscs.length != 0) {
-      setResources(rscs[0]);
+    if (router.isReady) {
+      const { module: id } = router.query;
+      const { data: p } = await enagApi.get(`/auth/profile`);
+      const { data: s } = await enagApi.get<StudentModel>(
+        `/students/user_id=${p.user_id}`
+      );
+      const { data: secs } = await enagApi.get<SectionModel[]>(
+        `/sections/module_id=${id}`
+      );
+      const { data: md } = await enagApi.get<ModuleModel>(
+        `/modules/module_id=${id}`
+      );
+      const { data: rscs } = await enagApi.get<ModuleResourceModel[]>(
+        `/modules/resources/module_id=${id}`
+      );
+      const { data: tch } = await enagApi.get<TeacherModel>(
+        `/teachers/teacher_id=${md.teacher_id}`
+      );
+      if (rscs.length != 0) {
+        setResources(rscs[0]);
+      }
+
+      setSections(secs);
+      setTeacher(tch);
+      setModule(md);
+      setStudent(s);
     }
-    setSections(secs);
-    setTeacher(tch);
-    setModule(md);
-    setStudent(s);
   };
 
   const handleOpenPlanificacion = () => {
@@ -106,15 +109,12 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   const css = " container d-flex border rounded align-items-center mb-2";
   return (
     <Layout title="My Module">
-      {module == undefined ||
-      sections == undefined ||
-      resources == undefined ||
-      teacher == undefined ? (
+      {module == undefined || sections == undefined || teacher == undefined ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight="80vh" 
+          minHeight="80vh"
         >
           <CircularProgress size={100} color="error" />
         </Box>
@@ -170,7 +170,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             open={openPlanificacion}
             handleClose={handleClosePlanificacion}
             title="Planificación de la materia"
-            url={resources.url_resource}
+            url={resources?.url_resource||''}
           />
           <Divider />
 

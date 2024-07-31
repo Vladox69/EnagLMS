@@ -37,6 +37,7 @@ const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>)
 
     try {
         const { grade, comment, student_id, activity_id, state_gra, state_sub } = req.body
+        console.log(req.body);
         const submission=await prisma.submission.create({
             data:{
                 grade,
@@ -53,9 +54,5 @@ const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>)
         return res.status(400).json({message:'Error al crear las entregas'})
         
     }
-
-}
-
-const putSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
 }

@@ -138,14 +138,14 @@ export const Layout:FC<Props>= ({title='OpenJira',children}) => {
                   <ListItemText primary={'Home'} />
                 </ListItemButton>
               </ListItem>
-              <ListItem  disablePadding>
+              {/* <ListItem  disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
                     <PersonIcon/>
                   </ListItemIcon>
                   <ListItemText primary={'Perfíl'} />
                 </ListItemButton>
-              </ListItem>
+              </ListItem> */}
               <ListItem  disablePadding>
                 <ListItemButton onClick={onLogout} >
                   <ListItemIcon>

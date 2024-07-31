@@ -75,7 +75,7 @@ export default function SobreNosotros() {
           <iframe
             width="1000"
             height="500"
-            src="https://www.youtube.com/embed/5AKWzn04BuU?si=24iOTnD9W2faQtY_"
+            src="https://www.youtube.com/embed/PBdwmzAx5IE"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -88,12 +88,12 @@ export default function SobreNosotros() {
           {" "}
           DONDE NOS ENCONTRAMOS{" "}
         </Typography>
-        <p>
+        {/* <p>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo soluta
           ut cupiditate eligendi iusto optio voluptatibus nostrum tempora eius
           quos officia, totam tempore nesciunt, modi dolore aperiam deserunt
           quam. Nulla!
-        </p>
+        </p> */}
         <Container>
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1994.4267208197675!2d-78.62407727240137!3d-1.2601033998409856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d38188a19532c3%3A0xdd8e91d84a701f98!2sRinc%C3%B3n%20del%20Pepino!5e0!3m2!1ses!2sec!4v1702336156185!5m2!1ses!2sec"

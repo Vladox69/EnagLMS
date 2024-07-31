@@ -14,8 +14,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
             return getUsers(res)
         case 'POST':
             return createUser(req,res)
-        case 'PUT':
-            return {}
         default:
             return res.status(400).json({ message: 'Endpoint no existe' });
     }

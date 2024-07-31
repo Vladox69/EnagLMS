@@ -27,6 +27,8 @@ export default function handler(
         return postSubmissionsByIdActivity(req, res);
       } else if (id?.includes("activity_ids&student_id")) {
         return postSubmissionsByIdStudentActivity(req, res);
+      } else if (id?.includes("activity_id=")) {
+        return createSubmissionByIdActivity(req, res);
       }
     case "PUT":
       return updateSubmission(req, res);
@@ -60,22 +62,18 @@ const getSubmissionByIdActivityAndStudent = async (
       },
     });
     if (!submission) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(submission);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -94,22 +92,18 @@ const getSubmissionsByIdActivity = async (
       },
     });
     if (!submissions) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(submissions);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -153,22 +147,18 @@ const postSubmissionsByIdActivity = async (
       },
     });
     if (!submissions) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(submissions);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -189,22 +179,51 @@ const postSubmissionsByIdStudentActivity = async (
       (submission) => submission.student_id === Number(student_id)
     );
     if (!submissions) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(submissions);
   } catch (error) {
     console.log(error);
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
+  }
+};
+
+const createSubmissionByIdActivity = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const { student_ids } = req.body;
+    const submission_data = student_ids.map((id_student: any) => {
+      return {
+        activity_id: Number(id),
+        comment: "",
+        grade: 0,
+        state_gra: "",
+        state_sub: "",
+        student_id: id_student,
+      };
+    });
+
+    const submissions = await prisma.submission.createMany({
+      data: submission_data,
+    });
     return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+      .status(200)
+      .json({ message: `Submission created ${submissions.count}` });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -229,22 +248,18 @@ const updateSubmission = async (
       },
     });
     if (!submission) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to update resource. The target data is missing or cannot be accessed.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to update resource. The target data is missing or cannot be accessed.",
+      });
     }
     return res.status(200).json(submission);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to update resource. The target data is missing or cannot be accessed.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to update resource. The target data is missing or cannot be accessed.",
+    });
   }
 };
 
@@ -264,11 +279,9 @@ const deleteSubmissionsByIdActivity = async (
 
     if (submissions_temp.length > 0) {
       submissions_temp.map(async (submission) => {
-        const { data } = await enagApi.delete(
+        await enagApi.delete(
           `/submissions/resources/submission_id=${submission.id}`
         );
-        console.log("Submission delete");
-        console.log(data);
       });
     }
 
@@ -282,12 +295,10 @@ const deleteSubmissionsByIdActivity = async (
       return res.status(200).json({ message: "No hay entregas por eliminar" });
     }
 
-    return res
-      .status(200)
-      .json({
-        message: "Entregas eliminadas con éxito",
-        count: submissions.count,
-      });
+    return res.status(200).json({
+      message: "Entregas eliminadas con éxito",
+      count: submissions.count,
+    });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: "Error al eliminar" });

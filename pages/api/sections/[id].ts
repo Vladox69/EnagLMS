@@ -93,20 +93,35 @@ const deleteSectionById= async (req: NextApiRequest, res: NextApiResponse<Data>)
     try {
         const {id}=req.query
         const section_id=id?.toString().substring("section_id=".length)
-        const {data:sect_res}=await enagApi.delete(`/sections/resources/section_id=${section_id}`)
-        console.log('Resources sections delete');
-        console.log(sect_res);
-        
-        const {data}= await enagApi.delete(`/activities/section_id=${section_id}`)
-        console.log('Section delete');
-        console.log(data);
-
+        // await enagApi.delete(`/sections/resources/section_id=${section_id}`)
+        // await enagApi.delete(`/activities/section_id=${section_id}`)
         const section=await prisma.section.delete({
             where:{
                 id:Number(section_id)
             }
         })
         return res.status(200).json(section)
+    } catch (error) {
+        console.log(error);
+        return res.status(200).json({message:'No se pudo eliminar el módulo'})
+    }
+}
+
+const deleteSectionByIdModule= async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const {id}=req.query
+        const section_id=id?.toString().substring("section_id=".length)
+        await enagApi.delete(`/sections/resources/section_id=${section_id}`)
+        await enagApi.delete(`/activities/section_id=${section_id}`)
+        const sections_deleted=await prisma.section.deleteMany({
+            where:{
+                id:Number(section_id)
+            }
+        })
+        if(sections_deleted.count>0){
+            return res.status(200).json({message:`Rows deleted ${sections_deleted}`}) 
+        }
+        return res.status(204).json({message:`No content to delete`})
     } catch (error) {
         console.log(error);
         return res.status(200).json({message:'No se pudo eliminar el módulo'})
