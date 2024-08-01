@@ -13,6 +13,7 @@ import {
 } from "@/models";
 import { enagApi } from "@/apis";
 import { ListCourseIntern } from "@/components/my/intern/ListCourseIntern";
+import Swal from "sweetalert2";
 
 export default function My() {
   const [courses, setCourses] = useState<CourseModel[]>([]);
@@ -23,8 +24,8 @@ export default function My() {
   }, []);
 
   const getData = async () => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const { data: p } = await enagApi.get(`/auth/profile`);
       const { data: s } = await enagApi.get<StudentModel>(
         `/students/user_id=${p.user_id}`
@@ -60,6 +61,10 @@ export default function My() {
       setCourses(allCourses);
       setIsLoading(false);
     } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
       setIsLoading(false);
     }
   };

@@ -11,12 +11,13 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export const TeacherInternById = () => {
   const router = useRouter();
   const [intern, setIntern] = useState<InternCourseModel>();
   const [activities, setActivities] = useState<ActivityInternModel[]>([])
-
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -24,15 +25,25 @@ export const TeacherInternById = () => {
   }, [router.isReady]);
 
   const getData = async () => {
-    const { intern: id } = router.query
-    const { data: it } = await enagApi.get<InternCourseModel>(
-      `/intern_course/course_id=${id}`
-    )
-    setIntern(it)
-    const {data:acts}=await enagApi.get<ActivityInternModel[]>(
-    `/intern_activity/course_id=${id}`
-    )
-    setActivities(acts)
+    setIsLoading(true)
+    try {
+      const { intern: id } = router.query
+      const { data: it } = await enagApi.get<InternCourseModel>(
+        `/intern_course/course_id=${id}`
+      )
+      setIntern(it)
+      const {data:acts}=await enagApi.get<ActivityInternModel[]>(
+      `/intern_activity/course_id=${id}`
+      )
+      setActivities(acts)
+      setIsLoading(false)
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false);
+    }
   }
   const goToNewActivity=async()=>{
     const {intern:id}=router.query
@@ -43,7 +54,7 @@ export const TeacherInternById = () => {
   }
   return (
     <Layout title="Intern teacher module">
-      {(intern == undefined||activities==undefined) ? (
+      {isLoading ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -59,7 +70,7 @@ export const TeacherInternById = () => {
             {intern?.title}{" "}
           </Typography>
           <Typography component='p'  dangerouslySetInnerHTML={{
-                            __html:intern.content
+                            __html:intern?.content||''
                         }} />
           <GridInternActivity activities={activities} />
           <Button

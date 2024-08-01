@@ -16,13 +16,13 @@ export const GridTSection: FC<Props> = ({ sections: sects }) => {
 
   return (
     <Grid container className="gap-2">
-      {sections.map((section) => (
-        <ItemTSection
-          key={section.id}
-          section={section}
-          onDeleteSection={() => onDeleteSection(section)}
-        />
-      ))}
+    {Array.isArray(sections) && sections.map((section) => (
+      <ItemTSection
+        key={section.id}
+        section={section}
+        onDeleteSection={() => onDeleteSection(section)}
+      />
+    ))}
     </Grid>
   );
 };

@@ -19,6 +19,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { TableStudentGrade } from "@/components/teacher/Grade/TableStudentGrade";
+import Swal from "sweetalert2";
 
 export interface StudentQualif extends StudentModel {
   sections: SectionActivities[];
@@ -43,9 +44,10 @@ export const StudentsModuleById = () => {
   }, [router.isReady]);
 
   const [studentQualification, setStudentQualification] = useState<StudentQualif[]>([])
-
+  const [isLoading, setIsLoading] = useState(false)
   const getData = async () => {
     const { students: id } = router.query;
+    setIsLoading(true)
     try {
       const { data: mdl } = await enagApi.get<ModuleModel>(
         `/modules/module_id=${id}`
@@ -93,8 +95,13 @@ export const StudentsModuleById = () => {
         };
       });
       setStudentQualification(studentQualification)
+      setIsLoading(false)
     } catch (error) {
-      console.log(`error`);
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false)
     }
 
   };

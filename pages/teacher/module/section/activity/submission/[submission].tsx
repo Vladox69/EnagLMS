@@ -10,9 +10,8 @@ import { NextPage } from "next";
 import { enagApi } from "@/apis";
 import { FormSubmission } from "@/components/teacher/Activity/Submission/FormSubmission";
 import { useRouter } from "next/router";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { handleDownload } from "@/utils/file/handleDownload";
 import { ItemTSubmissionResource } from "@/components/teacher/Activity/Submission/ItemTSubmissionResource";
+import Swal from "sweetalert2";
 
 interface Props {
   submission: SubmissionModel;
@@ -25,7 +24,7 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
   const [submission, setSubmission] = useState<SubmissionModel>();
   const [student, setStudent] = useState<StudentModel>();
   const [resources, setResources] = useState<SubmissionResourceModel[]>([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -33,25 +32,35 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
   }, [router.isReady]);
 
   const getData = async () => {
-    const { submission: id } = router.query;
-    const { data: sbm } = await enagApi.get<SubmissionModel>(
-      `/submissions/submission_id=${id}`
-    );
-    const { data: st } = await enagApi.get<StudentModel>(
-      `/students/student_id=${sbm.student_id}`
-    );
-    const { data: rsc } = await enagApi.get<SubmissionResourceModel[]>(
-      `/submissions/resources/submission_id=${sbm.id}`
-    );
-    setSubmission(sbm);
-    setStudent(st);
-    setResources(rsc);
+    setIsLoading(true);
+    try {
+      const { submission: id } = router.query;
+      const { data: sbm } = await enagApi.get<SubmissionModel>(
+        `/submissions/submission_id=${id}`
+      );
+      setSubmission(sbm);
+      const { data: st } = await enagApi.get<StudentModel>(
+        `/students/student_id=${sbm.student_id}`
+      );
+      setStudent(st);
+      const { data: rsc } = await enagApi.get<SubmissionResourceModel[]>(
+        `/submissions/resources/submission_id=${sbm.id}`
+      );
+      setResources(rsc);
+      setIsLoading(false);
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
     <Layout title="Submission">
       <Container className="container ">
-        {submission == undefined ? (
+        {isLoading ? (
           <Box
             display="flex"
             justifyContent="center"
@@ -72,7 +81,7 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
                   {" "}
                   Estado de la entrega{" "}
                 </Typography>
-                {submission.state_gra ? (
+                {submission?.state_gra ? (
                   <Typography
                     component="p"
                     className={
@@ -84,15 +93,15 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
                   </Typography>
                 ) : (
                   <Typography
-                  component="p"
-                  className={
-                    "bg-danger w-25 text-center mb-2 border rounded text-light"
-                  }
-                >
-                  No entregado
-                </Typography>
+                    component="p"
+                    className={
+                      "bg-danger w-25 text-center mb-2 border rounded text-light"
+                    }
+                  >
+                    No entregado
+                  </Typography>
                 )}
-                {submission.state_sub ? (
+                {submission?.state_sub ? (
                   <Typography
                     component="p"
                     className={
@@ -106,7 +115,10 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
                   <></>
                 )}
                 {resources.map((resource) => (
-                  <ItemTSubmissionResource key={resource.id} resource={resource} />
+                  <ItemTSubmissionResource
+                    key={resource.id}
+                    resource={resource}
+                  />
                 ))}
               </Container>
               <FormSubmission submission={submission!} />

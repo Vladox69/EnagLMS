@@ -48,25 +48,36 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
   const [teacher, setTeacher] = useState<TeacherModel>();
   const [resources, setResources] = useState<ModuleResourceModel>();
   const [openPlanificacionForm, setOpenPlanificacionForm] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const getData = async () => {
-    const { module } = router.query;
-    const { data: p } = await enagApi.get(`/auth/profile`);
-    const {data:mr}=await enagApi.get<ModuleResourceModel[]>(`/modules/resources/module_id=${module}`)
-    if(mr.length!=0){
-      setResources(mr[0])
+    setIsLoading(true)
+    try {
+      const { module } = router.query;
+      const { data: p } = await enagApi.get(`/auth/profile`);
+      const {data:mr}=await enagApi.get<ModuleResourceModel[]>(`/modules/resources/module_id=${module}`)
+      if(mr.length!=0){
+        setResources(mr[0])
+      }
+      const { data: t } = await enagApi.get<TeacherModel>(
+        `/teachers/user_id=${p.user_id}`
+      );
+      setTeacher(t);
+      const { data: m } = await enagApi.get<ModuleModel>(
+        `/modules/module_id=${module}`
+      );
+      setModule(m);
+      const { data: s } = await enagApi.get<SectionModel[]>(
+        `/sections/module_id=${module}`
+      );
+      setSections(s);
+      setIsLoading(false)
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false)
     }
-    const { data: t } = await enagApi.get<TeacherModel>(
-      `/teachers/user_id=${p.user_id}`
-    );
-    const { data: s } = await enagApi.get<SectionModel[]>(
-      `/sections/module_id=${module}`
-    );
-    const { data: m } = await enagApi.get<ModuleModel>(
-      `/modules/module_id=${module}`
-    );
-    setTeacher(t);
-    setSections(s);
-    setModule(m);
   };
 
   const handleClosePlanificacionForm=()=>{
@@ -137,7 +148,7 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
 
   return (
     <Layout title="My teacher module">
-      {teacher == undefined || module == undefined || sections == undefined ? (
+      {isLoading ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -155,7 +166,7 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
           <Typography
             component="p"
             dangerouslySetInnerHTML={{
-              __html: module.content,
+              __html: module?.content||'',
             }}
           />
           <Button
@@ -189,7 +200,7 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
             open={openDocente}
             handleClose={handleCloseDocente}
             title="Hoja de vida del docente"
-            url={teacher.cv_url}
+            url={teacher?.cv_url||''}
           />
 
           <Container
@@ -225,7 +236,7 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
         >
           <DialogTitle id="form-dialog-title">Agregar planificación</DialogTitle>
           <DialogContent>
-          <FormPlanificacionModule module_id={module.id} onCancel={handleClosePlanificacionForm} onSubmitResource={handleFormSubmitPlanificacion} />
+          <FormPlanificacionModule module_id={module?.id||0} onCancel={handleClosePlanificacionForm} onSubmitResource={handleFormSubmitPlanificacion} />
           </DialogContent>
         </Dialog>
           <CustomDialog

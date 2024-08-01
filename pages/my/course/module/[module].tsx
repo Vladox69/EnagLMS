@@ -23,6 +23,7 @@ import ViewListIcon from "@mui/icons-material/ViewList";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { CustomDialog } from "@/components/my/CustomDialog";
 import styles from "@/styles/Custom.module.css";
+import Swal from "sweetalert2";
 
 interface Props {
   module: string;
@@ -42,7 +43,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   const [resources, setResources] = useState<ModuleResourceModel>();
   const [teacher, setTeacher] = useState<TeacherModel>();
   const [student, setStudent] = useState<StudentModel>();
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -50,32 +51,41 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   }, [router.isReady]);
 
   const getData = async () => {
-    if (router.isReady) {
-      const { module: id } = router.query;
-      const { data: p } = await enagApi.get(`/auth/profile`);
-      const { data: s } = await enagApi.get<StudentModel>(
-        `/students/user_id=${p.user_id}`
-      );
-      const { data: secs } = await enagApi.get<SectionModel[]>(
-        `/sections/module_id=${id}`
-      );
-      const { data: md } = await enagApi.get<ModuleModel>(
-        `/modules/module_id=${id}`
-      );
-      const { data: rscs } = await enagApi.get<ModuleResourceModel[]>(
-        `/modules/resources/module_id=${id}`
-      );
-      const { data: tch } = await enagApi.get<TeacherModel>(
-        `/teachers/teacher_id=${md.teacher_id}`
-      );
-      if (rscs.length != 0) {
-        setResources(rscs[0]);
+    setIsLoading(true);
+    try {
+      if (router.isReady) {
+        const { module: id } = router.query;
+        const { data: p } = await enagApi.get(`/auth/profile`);
+        const { data: s } = await enagApi.get<StudentModel>(
+          `/students/user_id=${p.user_id}`
+        );
+        setStudent(s);
+        const { data: md } = await enagApi.get<ModuleModel>(
+          `/modules/module_id=${id}`
+        );
+        setModule(md);
+        const { data: secs } = await enagApi.get<SectionModel[]>(
+          `/sections/module_id=${id}`
+        );
+        setSections(secs);
+        const { data: rscs } = await enagApi.get<ModuleResourceModel[]>(
+          `/modules/resources/module_id=${id}`
+        );
+        const { data: tch } = await enagApi.get<TeacherModel>(
+          `/teachers/teacher_id=${md.teacher_id}`
+        );
+        setTeacher(tch);
+        if (rscs.length != 0) {
+          setResources(rscs[0]);
+        }
+        setIsLoading(false);
       }
-
-      setSections(secs);
-      setTeacher(tch);
-      setModule(md);
-      setStudent(s);
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false);
     }
   };
 
@@ -109,7 +119,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   const css = " container d-flex border rounded align-items-center mb-2";
   return (
     <Layout title="My Module">
-      {module == undefined || sections == undefined || teacher == undefined ? (
+      {isLoading ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -147,7 +157,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             open={openDocente}
             handleClose={handleCloseDocente}
             title="Hoja de vida del docente"
-            url={teacher?.cv_url}
+            url={teacher?.cv_url||''}
           />
 
           <Divider />
@@ -170,7 +180,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             open={openPlanificacion}
             handleClose={handleClosePlanificacion}
             title="Planificación de la materia"
-            url={resources?.url_resource||''}
+            url={resources?.url_resource || ""}
           />
           <Divider />
 

@@ -8,6 +8,7 @@ import { NextPage } from "next";
 import React, { useContext, useEffect, useState } from "react";
 import { TableGrades } from "@/components/my/grade/TableGrades";
 import { useRouter } from "next/router";
+import Swal from "sweetalert2";
 
 interface Props {
   grades: GradesI;
@@ -15,6 +16,7 @@ interface Props {
 
 export const MyGradeById: NextPage<Props> = ({}) => {
   const [grades, setGrades] = useState<GradesI>();
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
     if (router.isReady) {
@@ -28,6 +30,7 @@ export const MyGradeById: NextPage<Props> = ({}) => {
     const [q1, q2] = qp;
     const student_id = q1.substring(`student_id=`.length);
     const module_id = q2.substring(`module_id=`.length);
+    setIsLoading(true);
     try {
       const { data: sect } = await enagApi.get<SectionModel[]>(
         `/sections/module_id=${module_id}`
@@ -41,30 +44,25 @@ export const MyGradeById: NextPage<Props> = ({}) => {
         );
         return submission;
       });
-  
-      const activity_ids=acts.map((act)=>{
-          return act.id
-      })
-      const body={
-          student_id,
-          activity_ids
-      }
-/*       const {data:subm} = await enagApi.post<SubmissionModel[]>(
-          `/submissions/activity_ids&student_id`,
-          body
-      ) 
-      console.log(subm); */
-      
+
+      const activity_ids = acts.map((act) => {
+        return act.id;
+      });
+      const body = {
+        student_id,
+        activity_ids,
+      };
+
       const submissions = await Promise.all(submissionsPromises);
       const sections = sect.map((section) => {
         const activities_no_sub = acts.filter(
           (activity) => activity.section_id == section.id
         );
         let total = 0;
-  
+
         const activities = activities_no_sub.map((act) => {
           const submission = submissions.find((s) => s.activity_id == act.id);
-          const grade = (submission?.grade! * act.ponderation)/10;
+          const grade = (submission?.grade! * act.ponderation) / 10;
           total = total + grade;
           return {
             ...act,
@@ -85,26 +83,30 @@ export const MyGradeById: NextPage<Props> = ({}) => {
         sections,
       };
       setGrades(gr);
+      setIsLoading(false);
     } catch (error) {
-      console.log(error);
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false);
     }
-
   };
 
   return (
     <Layout>
       <Container>
-        {grades == undefined ? (
+        {isLoading ? (
           <Box
             display="flex"
             justifyContent="center"
             alignItems="center"
-            minHeight="80vh" 
+            minHeight="80vh"
           >
             <CircularProgress size={100} color="error" />
           </Box>
         ) : (
-          <TableGrades grades={grades} />
+          grades && <TableGrades grades={grades} />
         )}
       </Container>
     </Layout>

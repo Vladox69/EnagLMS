@@ -7,6 +7,7 @@ import { AsistanceModel } from '@/models';
 import { enagApi } from '@/apis';
 import { useRouter } from 'next/router';
 import styles from '@/styles/Custom.module.css'
+import Swal from 'sweetalert2';
 
 interface Props {
   asistances: AsistanceModel[]
@@ -16,6 +17,7 @@ export const MyAsistanceModuleById: NextPage<Props> = ({ }) => {
 
   const router = useRouter();
   const [asistances, setAsistances] = useState<AsistanceModel[]>([])
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     if (router.isReady) {
       getData()
@@ -23,9 +25,19 @@ export const MyAsistanceModuleById: NextPage<Props> = ({ }) => {
   }, [router.isReady])
 
   const getData = async () => {
-    const { asistance } = router.query
-    const { data: ast } = await enagApi.get<AsistanceModel[]>(`/asistances/module_id=${asistance}`);
-    setAsistances(ast)
+    setIsLoading(true)
+    try {
+      const { asistance } = router.query
+      const { data: ast } = await enagApi.get<AsistanceModel[]>(`/asistances/module_id=${asistance}`);
+      setAsistances(ast)
+      setIsLoading(false)
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false)      
+    }
   }
 
   const goToNewRegister = () => {

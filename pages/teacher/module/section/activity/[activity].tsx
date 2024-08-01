@@ -23,6 +23,7 @@ import { SubmissionStudentI } from "@/interface/submission_student";
 import { useRouter } from "next/router";
 import { GridTActivityResource } from "@/components/teacher/Activity/Resource/GridTActivityResource";
 import { FormActivityResource } from "@/components/teacher/Activity/Resource/FormActivityResource";
+import Swal from "sweetalert2";
 
 interface Props {
   activity: ActivityModel;
@@ -48,17 +49,17 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   >([]);
 
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
 
   const getData = async () => {
+    setIsLoading(true)
     try {
       if (router.isReady) {
         const { activity: id } = router.query;
         const { data: actv } = await enagApi.get<ActivityModel>(
           `/activities/activity_id=${id}`
         );
-        const { data: actv_res } = await enagApi.get<ActivityResourceModel[]>(
-          `/activities/resources/activity_id=${id}`
-        );
+        setActivity(actv);
         const { data: subms } = await enagApi.get<SubmissionModel[]>(
           `/submissions/activity_id=${id}`
         );
@@ -90,11 +91,20 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
             resources: resource || "No entregado",
           };
         });
-        setActivity(actv);
-        setActivity_resources(actv_res);
         setSubmission_student(sub_stu);
+        const { data: actv_res } = await enagApi.get<ActivityResourceModel[]>(
+          `/activities/resources/activity_id=${id}`
+        );
+        setActivity_resources(actv_res);
+        setIsLoading(false)
       }
-    } catch (error) {}
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false)
+    }
   };
 
   const handleOpen = () => {
@@ -116,9 +126,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   return (
     <Layout title="My activity">
       <Container className="container">
-        {activity == undefined ||
-        submission_students == undefined ||
-        activity_resources == undefined ? (
+        {isLoading ? (
           <Box
             display="flex"
             justifyContent="center"
@@ -129,11 +137,11 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
           </Box>
         ) : (
           <Container className="container">
-            <Typography variant="h4"> {activity.title} </Typography>
+            <Typography variant="h4"> {activity?.title} </Typography>
             <Typography
               component="p"
               dangerouslySetInnerHTML={{
-                __html: activity.content,
+                __html: activity?.content||'',
               }}
             />
             <Typography component="p" className="fw-bold">
@@ -142,7 +150,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
             </Typography>
             <Typography component="p">
               {" "}
-              {activity.time_due
+              {activity?.time_due
                 .toString()
                 .substring(0, activity.time_due.toString().indexOf("T"))}{" "}
             </Typography>
@@ -158,7 +166,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
               </DialogTitle>
               <DialogContent>
                 <FormActivityResource
-                  activity_id={activity.id}
+                  activity_id={activity?.id||0}
                   onSubmitResource={handleFormSubmit}
                   onCancel={handleClose}
                 />
