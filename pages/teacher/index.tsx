@@ -6,27 +6,39 @@ import { TeacherContext } from "@/context/teacher";
 import { InternCourseModel, ModuleModel, TeacherModel } from "@/models";
 import { enagApi } from "@/apis";
 import { GridInternCourse } from "@/components/teacher/Intern/GridInternCourse";
+import Swal from "sweetalert2";
 
 export default function Teacher() {
   const [modules, setModules] = useState<ModuleModel[]>([]);
   const [interns, setInterns] = useState<InternCourseModel[]>([]);
+  const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     getData();
   }, []);
 
   const getData = async () => {
-    const { data: p } = await enagApi.get(`/auth/profile`);
-    const { data: t } = await enagApi.get<TeacherModel>(
-      `/teachers/user_id=${p.user_id}`
-    );
-    const { data } = await enagApi.get<ModuleModel[]>(
-      `/modules/teacher_id=${t.id}`
-    );
-    setModules(data);
-    const { data: intrs } = await enagApi.get<InternCourseModel[]>(
-      `/intern_course/teacher_id=${t.id}`
-    );
-    setInterns(intrs);
+    setIsLoading(true)
+    try {
+      const { data: p } = await enagApi.get(`/auth/profile`);
+      const { data: t } = await enagApi.get<TeacherModel>(
+        `/teachers/user_id=${p.user_id}`
+      );
+      const { data } = await enagApi.get<ModuleModel[]>(
+        `/modules/teacher_id=${t.id}`
+      );
+      setModules(data);
+      const { data: intrs } = await enagApi.get<InternCourseModel[]>(
+        `/intern_course/teacher_id=${t.id}`
+      );
+      setInterns(intrs);
+      setIsLoading(false)      
+    } catch (error) {
+      Swal.fire({
+        icon: "info",
+        title: "Tenemos porblemas al cargar los datos",
+      });
+      setIsLoading(false)
+    }
   };
 
   return (

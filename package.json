@@ -10,10 +10,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.14.8",
-    "@mui/material": "^5.14.8",
+    "@mui/material": "^5.16.6",
+    "@mui/x-data-grid": "^7.12.0",
     "@prisma/client": "^5.12.0",
     "@react-pdf-viewer/core": "^3.12.0",
     "@react-pdf/renderer": "^3.4.4",

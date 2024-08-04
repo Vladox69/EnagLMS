@@ -30,7 +30,7 @@ export const TeacherInternActivityById = () => {
         `/intern_submission/activity_id=${id}`
       );
       setSubmission(sbms);
-      
+      setIsLoading(false)
     } catch (error) {
       Swal.fire({
         icon: "info",

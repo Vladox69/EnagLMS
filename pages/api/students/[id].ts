@@ -16,7 +16,9 @@ export default function handler(
         return getStudentById(req, res);
       } else if (id?.includes("course_id=")) {
         return getStudentsByIdCourse(req, res);
-      } else {
+      } else if(id?.includes("intern_id=")){
+        return getStudentsByIdIntern(req,res);
+      }else{
         return getStudentByIdUser(req, res);
       }
     case "POST":
@@ -131,26 +133,64 @@ const getStudentsByIdCourse = async (
   }
 };
 
+const getStudentsByIdIntern = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const intern_id = id?.toString().substring("intern_id=".length);
+    const inscriptions = await prisma.intern_inscription.findMany({
+      where: {
+        course_id: Number(intern_id),
+      },
+    });
+    const inscription_ids = inscriptions.map(
+      (inscription) => inscription.student_id
+    );
+    const students = await prisma.student.findMany({
+      where: {
+        id: {
+          in: inscription_ids,
+        },
+      },
+    });
+    if (!students) {
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
+    }
+    return res.status(200).json(students);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message:
+        "Failed to retrieve resource. The requested data is missing or inaccessible.",
+    });
+  }
+};
+
 const postStudentsByIds = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
   try {
-    const {inscription_ids}=req.body
-    const students= await prisma.student.findMany({
-        where:{
-            id:{
-                in:inscription_ids
-            }
-        }
-    })
+    const { inscription_ids } = req.body;
+    const students = await prisma.student.findMany({
+      where: {
+        id: {
+          in: inscription_ids,
+        },
+      },
+    });
     if (!students) {
-        return res.status(200).json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
-      }
-      return res.status(200).json(students);
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
+    }
+    return res.status(200).json(students);
   } catch (error) {
     console.log(error);
     return res
@@ -169,18 +209,18 @@ const updateStudent = async (
     const { id } = req.query;
     const student_id = id?.toString().substring("student_id=".length);
 
-    const student_temp=await prisma.student.findFirst({
-      where:{
-        id:Number(student_id)
-      }
-    })
+    const student_temp = await prisma.student.findFirst({
+      where: {
+        id: Number(student_id),
+      },
+    });
 
-    if(student_temp?.ID_card_url!=ID_card_url){
-      await deleteFile(student_temp?.ID_card_url||'')
+    if (student_temp?.ID_card_url != ID_card_url) {
+      await deleteFile(student_temp?.ID_card_url || "");
     }
 
-    if(student_temp?.study_certificate_url||study_certificate_url){
-      await deleteFile(student_temp?.study_certificate_url||'')
+    if (student_temp?.study_certificate_url || study_certificate_url) {
+      await deleteFile(student_temp?.study_certificate_url || "");
     }
 
     const student = await prisma.student.update({
@@ -216,15 +256,15 @@ const deleteStudent = async (
   try {
     const { id } = req.query;
     const student_id = id?.toString().substring("student_id=".length);
-    
-    const student_temp=await prisma.student.findFirst({
-      where:{
-        id:Number(student_id)
-      }
-    })
 
-    await deleteFile(student_temp?.ID_card_url||'')
-    await deleteFile(student_temp?.study_certificate_url||'')
+    const student_temp = await prisma.student.findFirst({
+      where: {
+        id: Number(student_id),
+      },
+    });
+
+    await deleteFile(student_temp?.ID_card_url || "");
+    await deleteFile(student_temp?.study_certificate_url || "");
 
     const student = await prisma.student.delete({
       where: {

@@ -24,6 +24,7 @@ import {
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import { GridRActivity } from "./GridRActivity";
+import Swal from "sweetalert2";
 
 interface Props {
   activity: ActivityModel;
@@ -56,24 +57,35 @@ export const Activity: FC<Props> = ({ activity }) => {
   const [resources, setResources] = useState<SubmissionResourceModel[]>();
   const [act_res, setAct_res] = useState<ActivityResourceModel[]>()
   const [isFutureDate, setIsFutureDate] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const getDataSubmission = async () => {
-    const { data: p } = await enagApi.get(`/auth/profile`);
-    const { data: s } = await enagApi.get<StudentModel>(
-      `/students/user_id=${p.user_id}`
-    );
-    const { data: sub } = await enagApi.get<SubmissionModel>(
-      `/submissions/student_id=${s?.id}&activity_id=${activity.id}`
-    );
-    const { data: reso } = await enagApi.get<SubmissionResourceModel[]>(
-      `/submissions/resources/submission_id=${sub.id}`
-    );
-    const { data: res_act } = await enagApi.get<ActivityResourceModel[]>(
-      `/activities/resources/activity_id=${activity.id}`
-    );
-    setAct_res(res_act);
-    setSubmission(sub);
-    setResources(reso);
-    comparteDate()
+    setIsLoading(true)
+    try {
+      const { data: p } = await enagApi.get(`/auth/profile`);
+      const { data: s } = await enagApi.get<StudentModel>(
+        `/students/user_id=${p.user_id}`
+      );
+      const { data: sub } = await enagApi.get<SubmissionModel>(
+        `/submissions/student_id=${s?.id}&activity_id=${activity.id}`
+      );
+      const { data: reso } = await enagApi.get<SubmissionResourceModel[]>(
+        `/submissions/resources/submission_id=${sub.id}`
+      );
+      const { data: res_act } = await enagApi.get<ActivityResourceModel[]>(
+        `/activities/resources/activity_id=${activity.id}`
+      );
+      setAct_res(res_act);
+      setSubmission(sub);
+      setResources(reso);
+      comparteDate()
+      setIsLoading(false)
+    } catch (error) {
+      // Swal.fire({
+      //   icon: "info",
+      //   title: "Tenemos porblemas al cargar los datos",
+      // });
+      setIsLoading(false)
+    }
   };
 
   return (
