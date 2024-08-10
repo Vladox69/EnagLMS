@@ -90,6 +90,7 @@ interface Props {
 interface Submenu {
   name: string;
   path: string;
+  icon: ReactNode;
 }
 
 interface ItemBar {
@@ -188,7 +189,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
         {
           icon: <AssignmentTurnedInIcon />,
           name: "Pasantías",
-          onClick: () => onClickGoTo("admin/interns"),
+          onClick: () => onClickGoTo("admin/intern_course"),
         },
         {
           icon: <AssessmentIcon />,
@@ -196,8 +197,9 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
           onClick: () => toggleSubMenu(6),
           submenu: [
             {
-              name: "Calificaciones",
-              path: "admin/reports/grades",
+              name: "Cursos",
+              path: "admin/reports/courses",
+              icon:<ClassIcon />
             },
             // Agrega más submenús aquí si es necesario
           ],
@@ -285,7 +287,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
                         onClick={() => onClickGoTo(subItem.path)}
                       >
                         <ListItemIcon>
-                          <ChevronRightIcon />
+                          {subItem.icon}
                         </ListItemIcon>
                         <ListItemText primary={subItem.name} />
                       </ListItemButton>

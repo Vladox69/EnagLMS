@@ -62,7 +62,6 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
       const { data } = await enagApi.get<ActivityModel>(
         `/activities/activity_id=${activity_id}`
       );
-      console.log(data);
       setInitialValues({
         id: data.id,
         title: data.title,

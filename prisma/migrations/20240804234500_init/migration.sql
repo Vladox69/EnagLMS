@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "activity" ALTER COLUMN "ponderation" SET DATA TYPE DOUBLE PRECISION;

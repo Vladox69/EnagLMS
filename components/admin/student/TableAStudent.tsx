@@ -147,7 +147,7 @@ export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
   ];
 
   return (
-    <div  className="mt-2">
+    <div className="mt-2">
       <Box sx={{ height: 450, width: "100%"}}>
         <DataGrid
           rows={students}

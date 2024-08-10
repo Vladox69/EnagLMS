@@ -37,7 +37,7 @@ export const ItemTModule: FC<Props> = ({ module }) => {
         },
       }} >
         <Image
-          src={module.img_url}
+          src={course?.img_url||''}
           width={100}
           height={100}
           className='p-2'

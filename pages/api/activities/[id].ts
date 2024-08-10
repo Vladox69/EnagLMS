@@ -21,6 +21,8 @@ export default function handler(
         return getActivitiesByIdSection(req, res);
       } else if (id?.includes("module_id=")) {
         return getActivitiesByIdModule(req, res);
+      } else if (id?.includes("course_id=")) {
+        return getActivitiesByIdCourse(req, res);
       }
     case "DELETE":
       if (id?.includes("section_id=")) {
@@ -34,6 +36,49 @@ export default function handler(
       break;
   }
 }
+
+const getActivitiesByIdCourse = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const course_id = id?.toString().substring("course_id=".length);
+    const modules = await prisma.module.findMany({
+      where: {
+        course_id: Number(course_id),
+      },
+    });
+    const module_ids = modules.map((module) => module.id);
+    const sections = await prisma.section.findMany({
+      where: {
+        module_id: {
+          in: module_ids,
+        },
+      },
+    });
+    const section_ids = sections.map((section) => section.id);
+    const activities = await prisma.activity.findMany({
+      where: {
+        section_id: {
+          in: section_ids,
+        },
+      },
+    });
+    if (!activities) {
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
+    }
+    return res.status(200).json(activities);
+  } catch (error) {
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
+  }
+};
 
 const getActivitiesByIdModule = async (
   req: NextApiRequest,
@@ -56,22 +101,17 @@ const getActivitiesByIdModule = async (
       },
     });
     if (!activities) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
-    }
-    return res.status(200).json(activities);
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(400)
-      .json({
+      return res.status(200).json({
         message:
           "Failed to fetch resource. The requested data is missing or inaccessible.",
       });
+    }
+    return res.status(200).json(activities);
+  } catch (error) {
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -88,22 +128,18 @@ const getActivitiesByIdSection = async (
       },
     });
     if (!activities) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(activities);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -120,22 +156,18 @@ const getActivityById = async (
       },
     });
     if (!activity) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to fetch resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(activity);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to fetch resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 

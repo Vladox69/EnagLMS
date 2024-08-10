@@ -34,8 +34,8 @@ export const newActivity = async (activity: ActivityModel) => {
         comment: "",
         student_id: student.student_id,
         activity_id: res.data.id,
-        state_gra: "",
-        state_sub: "",
+        state_gra: "Sin calificar",
+        state_sub: "No entregado",
       };
      student_submission.push(enagApi.post(`/submissions`, body))      
     });
