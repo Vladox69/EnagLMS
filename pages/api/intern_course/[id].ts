@@ -16,6 +16,8 @@ export default function handler(
         return getInternCourseById(req, res)
       }else if(id?.includes("teacher_id=")){
         return getInternCourseByIdTeacher(req, res)
+      }else if(id?.includes("student_id=")){
+        return getInternCourseByStudentId(req,res)
       }
     case "POST":
       if (id?.includes("course_ids")) {
@@ -71,6 +73,41 @@ const getInternCourseByIdTeacher= async (
     const intern_courses=await prisma.intern_course.findMany({
       where:{
         teacher_id:Number(teacher_id)
+      }
+    })
+    if(!intern_courses){
+      return res.status(200).json({
+        message:
+          "Failed to retrieve resource. The requested data is missing or inaccessible.",
+      })
+    }
+    return res.status(200).json(intern_courses)
+  } catch (error) {
+    return res.status(400).json({
+      message:
+        "Failed to retrieve resource. The requested data is missing or inaccessible.",
+    });
+  }
+}
+
+const getInternCourseByStudentId= async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const student_id = id?.toString().substring("student_id=".length);
+    const inscriptions=await prisma.intern_inscription.findMany({
+      where:{
+        student_id:Number(student_id)
+      }
+    })
+    const inscriptions_ids = inscriptions.map((inscription) => inscription.course_id);
+    const intern_courses=await prisma.intern_course.findMany({
+      where:{
+        id:{
+          in:inscriptions_ids
+        }
       }
     })
     if(!intern_courses){

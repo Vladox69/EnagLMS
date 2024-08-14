@@ -20,7 +20,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef,gridFilteredSortedRowIdsSelector,GridToolbar,useGridApiContext, useGridApiRef} from "@mui/x-data-grid";
+import { DataGrid, GridColDef,useGridApiRef} from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { gradeByModule } from "@/utils/grades/gradeByModule";
 import { gradeByCouse } from "@/utils/grades/gradeByCourse";
@@ -76,8 +76,6 @@ const getStateGradeActivity=(submission:any)=>{
 }
 
 const getStateSubmissionActivity=(submission:any)=>{
-  console.log(submission);
-  
   return submission==undefined?"N/A":submission.state_sub
 }
 
@@ -1227,7 +1225,7 @@ export default function ReportCourse() {
   return (
     <Layout>
       <Typography variant="h4" className="mb-2">
-        Reportes por curso
+        Reportes de calificaciones
       </Typography>
       <Box display="flex" gap={2} alignItems="center">
         <TextField

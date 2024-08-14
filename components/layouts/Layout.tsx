@@ -16,6 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import BookIcon from "@mui/icons-material/Book";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ClassIcon from "@mui/icons-material/Class";
@@ -28,8 +29,22 @@ import Face6Icon from "@mui/icons-material/Face6";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ChecklistRtlIcon from "@mui/icons-material/ChecklistRtl";
+import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
+import SchoolIcon from "@mui/icons-material/School";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import CastForEducationIcon from "@mui/icons-material/CastForEducation";
 import { useRouter } from "next/router";
 import { enagApi } from "@/apis";
+import {
+  CourseModel,
+  InscriptionModel,
+  InternCourseModel,
+  InternInscriptionModel,
+  ModuleModel,
+  StudentModel,
+  TeacherModel,
+} from "@/models";
 
 const drawerWidth = 240;
 
@@ -90,11 +105,13 @@ interface Props {
 interface Submenu {
   name: string;
   path: string;
-  icon: ReactNode;
+  icon?: ReactNode;
+  submenu?: Submenu[];
 }
 
 interface ItemBar {
   name: string;
+  path: string;
   icon: ReactNode;
   onClick: () => void;
   submenu?: Submenu[];
@@ -104,6 +121,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<Set<number>>(new Set());
+  const [openSubSubMenu, setOpenSubSubMenu] = useState<Set<number>>(new Set());
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [barItems, setBarItems] = useState<ItemBar[]>([]);
@@ -127,12 +145,31 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
 
   const onClickGoTo = (path: string) => {
     if (path !== "") {
+      const hasNumber = /\d/.test(path);
+      if (hasNumber) {
+        const home = router.pathname.split("/")[1];
+        if (home === "teacher" || home === "my") {
+          router.push(`/${home}`);
+        }
+      }
       router.push(`/${path}`);
     }
   };
 
   const toggleSubMenu = (index: number) => {
     setOpenSubMenu((prevOpenSubMenu) => {
+      const newOpenSubMenu = new Set(prevOpenSubMenu);
+      if (newOpenSubMenu.has(index)) {
+        newOpenSubMenu.delete(index);
+      } else {
+        newOpenSubMenu.add(index);
+      }
+      return newOpenSubMenu;
+    });
+  };
+
+  const toggleSubSubMenu = (parentIndex: number, index: number) => {
+    setOpenSubSubMenu((prevOpenSubMenu) => {
       const newOpenSubMenu = new Set(prevOpenSubMenu);
       if (newOpenSubMenu.has(index)) {
         newOpenSubMenu.delete(index);
@@ -151,18 +188,20 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
     setIsLoading(true);
     try {
       const { data: profile } = await enagApi.get(`/auth/profile`);
-      buildData(profile.rol);
+      buildData(profile);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
     }
   };
 
-  const buildData = (tipo: string) => {
-    if (tipo == "ADMIN") {
+  const buildData = async (profile: any) => {
+    const { rol } = profile;
+    if (rol == "ADMIN") {
       const items: ItemBar[] = [
         {
           icon: <PersonIcon />,
+          path: "admin/users",
           name: "Usuarios",
           onClick: () => onClickGoTo("admin/users"),
         },
@@ -170,46 +209,173 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
           icon: <Person4Icon />,
           name: "Profesores",
           onClick: () => onClickGoTo("admin/teachers"),
+          path: "admin/teachers",
         },
         {
           icon: <Face6Icon />,
           name: "Estudiantes",
           onClick: () => onClickGoTo("admin/students"),
+          path: "admin/students",
         },
         {
           icon: <ClassIcon />,
           name: "Cursos",
           onClick: () => onClickGoTo("admin/courses"),
+          path: "admin/courses",
         },
         {
           icon: <AssignmentIcon />,
           name: "CV",
           onClick: () => onClickGoTo("admin/interns"),
+          path: "admin/interns",
         },
         {
           icon: <AssignmentTurnedInIcon />,
           name: "Pasantías",
           onClick: () => onClickGoTo("admin/intern_course"),
+          path: "admin/intern_course",
         },
         {
           icon: <AssessmentIcon />,
           name: "Reportes",
+          path: "",
           onClick: () => toggleSubMenu(6),
           submenu: [
             {
-              name: "Cursos",
+              name: "Calificaciones",
               path: "admin/reports/courses",
-              icon:<ClassIcon />
+              icon: <ClassIcon />,
             },
-            // Agrega más submenús aquí si es necesario
+            {
+              name: "Asistencias",
+              path: "admin/reports/assistances",
+              icon: <ChecklistRtlIcon />,
+            },
+            {
+              name: "Inscripciones",
+              path: "admin/reports/assistances",
+              icon: <ChecklistRtlIcon />,
+            },
           ],
         },
       ];
       setBarItems(items);
-    } else if (tipo == "STUDENT") {
+    } else if (rol == "STUDENT") {
       // Añade lógica específica para estudiantes
-    } else if (tipo == "TEACHER") {
+      const { data: p } = await enagApi.get(`/auth/profile`);
+      const { data: s } = await enagApi.get<StudentModel>(
+        `/students/user_id=${p.user_id}`
+      );
+      const { data: crs } = await enagApi.get<CourseModel[]>(
+        `/courses/student_id=${s.id}`
+      );
+      const { data: mdls } = await enagApi.get<ModuleModel[]>(`/modules`);
+      let courses: Submenu[] = [];
+      crs.map((cr) => {
+        const modulesTemp: ModuleModel[] = mdls.filter(
+          (md) => md.course_id == cr.id
+        );
+        const subMenuModulesTemp: Submenu[] = modulesTemp.map((mdt) => ({
+          name: mdt.title,
+          path: `my/course/module/${mdt.id}`,
+          icon: <LibraryBooksIcon />,
+        }));
+        const menuTemp: Submenu = {
+          name: cr.topic,
+          path: `my/course/${cr.id}`,
+          icon: <SchoolIcon />,
+          submenu: subMenuModulesTemp,
+        };
+        courses = [...courses, menuTemp];
+      });
+
+      const { data: intrs } = await enagApi.get<InternCourseModel[]>(
+        `/intern_course/student_id=${s.id}`
+      );
+      let interns: Submenu[] = [];
+      if (intrs.length > 0) {
+        interns = intrs.map((itr) => ({
+          name: itr.title,
+          path: `my/intern/${itr.id}`,
+          icon: <CastForEducationIcon />,
+        }));
+      }
+
+      const items: ItemBar[] = [
+        {
+          icon: <HistoryEduIcon />,
+          name: "Cursos",
+          path: "",
+          onClick: () => toggleSubMenu(6),
+          submenu: courses,
+        },
+        {
+          icon: <BookIcon />,
+          name: "Pasantías",
+          path: "",
+          onClick: () => toggleSubMenu(6),
+          submenu: interns,
+        },
+      ];
+      setBarItems(items);
+    } else if (rol == "TEACHER") {
       // Añade lógica específica para profesores
+      const { data: t } = await enagApi.get<TeacherModel>(
+        `/teachers/user_id=${profile.user_id}`
+      );
+      const { data: mdls } = await enagApi.get<ModuleModel[]>(
+        `/modules/teacher_id=${t.id}`
+      );
+      const modules: Submenu[] = mdls.map((md) => ({
+        name: md.title,
+        path: `teacher/module/${md.id}`,
+        icon: <SchoolIcon />,
+      }));
+
+      const { data: intrs } = await enagApi.get<InternCourseModel[]>(
+        `/intern_course/teacher_id=${t.id}`
+      );
+
+      const interns: Submenu[] = intrs.map((itr) => ({
+        name: itr.title,
+        path: `teacher/intern/${itr.id}`,
+        icon: <SchoolIcon />,
+      }));
+      const items: ItemBar[] = [
+        {
+          icon: <AssessmentIcon />,
+          name: "Reportes",
+          onClick: () => toggleSubMenu(6),
+          path: "",
+          submenu: [
+            {
+              name: "Calificaciones",
+              path: "teacher/reports/grades",
+              icon: <ClassIcon />,
+            },
+            {
+              name: "Asistencias",
+              path: "teacher/reports/assistances",
+              icon: <ChecklistRtlIcon />,
+            },
+          ],
+        },
+        {
+          icon: <HistoryEduIcon />,
+          name: "Módulos",
+          path: "",
+          onClick: () => toggleSubMenu(6),
+          submenu: modules,
+        },
+        {
+          icon: <BookIcon />,
+          name: "Pasantías",
+          path: "",
+          onClick: () => toggleSubMenu(6),
+          submenu: interns,
+        },
+      ];
+      setBarItems(items);
     }
   };
 
@@ -267,30 +433,85 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
           {barItems.map((item, index) => (
             <React.Fragment key={index}>
               <ListItem disablePadding>
-                <ListItemButton onClick={item.submenu ? () => toggleSubMenu(index) : item.onClick}>
+                <ListItemButton
+                  onClick={
+                    item.submenu
+                      ? () => toggleSubMenu(index)
+                      : () => onClickGoTo(item?.path || "")
+                  }
+                >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.name} />
                   {item.submenu && (
                     <IconButton>
-                      {openSubMenu.has(index) ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                      {openSubMenu.has(index) ? (
+                        <ChevronLeftIcon />
+                      ) : (
+                        <ChevronRightIcon />
+                      )}
                     </IconButton>
                   )}
                 </ListItemButton>
               </ListItem>
               {item.submenu && (
-                <Collapse in={openSubMenu.has(index)} timeout="auto" unmountOnExit>
+                <Collapse
+                  in={openSubMenu.has(index)}
+                  timeout="auto"
+                  unmountOnExit
+                >
                   <List component="div" disablePadding>
                     {item.submenu.map((subItem, subIndex) => (
-                      <ListItemButton
-                        key={subIndex}
-                        sx={{ pl: 4 }}
-                        onClick={() => onClickGoTo(subItem.path)}
-                      >
-                        <ListItemIcon>
-                          {subItem.icon}
-                        </ListItemIcon>
-                        <ListItemText primary={subItem.name} />
-                      </ListItemButton>
+                      <React.Fragment key={subIndex}>
+                        <ListItemButton
+                          sx={{ pl: 4 }}
+                          onClick={
+                            subItem.submenu
+                              ? () => toggleSubSubMenu(index, subIndex)
+                              : () => onClickGoTo(subItem.path || "")
+                          }
+                        >
+                          <ListItemIcon>{subItem.icon}</ListItemIcon>
+                          <ListItemText
+                            primary={subItem.name}
+                            onClick={() => onClickGoTo(subItem.path || "")}
+                          />
+                          {subItem.submenu && (
+                            <IconButton>
+                              {openSubSubMenu.has(subIndex) ? (
+                                <ChevronLeftIcon />
+                              ) : (
+                                <ChevronRightIcon />
+                              )}
+                            </IconButton>
+                          )}
+                        </ListItemButton>
+                        {subItem.submenu && (
+                          <Collapse
+                            in={openSubSubMenu.has(subIndex)}
+                            timeout="auto"
+                            unmountOnExit
+                          >
+                            <List component="div" disablePadding>
+                              {subItem.submenu.map(
+                                (subSubItem, subSubIndex) => (
+                                  <ListItemButton
+                                    key={subSubIndex}
+                                    sx={{ pl: 6 }}
+                                    onClick={() =>
+                                      onClickGoTo(subSubItem.path || "")
+                                    }
+                                  >
+                                    <ListItemIcon>
+                                      {subSubItem.icon}
+                                    </ListItemIcon>
+                                    <ListItemText primary={subSubItem.name} />
+                                  </ListItemButton>
+                                )
+                              )}
+                            </List>
+                          </Collapse>
+                        )}
+                      </React.Fragment>
                     ))}
                   </List>
                 </Collapse>

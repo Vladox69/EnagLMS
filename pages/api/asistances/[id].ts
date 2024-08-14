@@ -17,6 +17,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
                 return getAsistancesByIdCourseStudent(req, res);
             } else if (id?.includes('module_id=')) {
                 return getAsistancesByIdModule(req, res);
+            } else if (id?.includes('course_id=')) {
+                return getAsistancesByIdCourse(req, res)
             } else {
                 return getAsistancesById(req, res);
             }
@@ -78,6 +80,30 @@ const getAsistancesByIdModule = async (req: NextApiRequest, res: NextApiResponse
         const asistances = await prisma.asistance.findMany({
             where: {
                 module_id: Number(module_id)
+            }
+        })
+        return res.status(200).json(asistances);
+    } catch (error) {
+        console.log('Failed to retrieve resource. The requested data is missing or inaccessible.', error);
+        return res.status(500).json({ message: 'Failed to retrieve resource. The requested data is missing or inaccessible.' });
+    }
+}
+
+const getAsistancesByIdCourse = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+    try {
+        const { id } = req.query;
+        const course_id = id?.toString().substring('course_id='.length);
+        const modules = await prisma.module.findMany({
+            where: {
+              course_id: Number(course_id),
+            },
+        });
+        const module_ids = modules.map((module) => module.id); 
+        const asistances = await prisma.asistance.findMany({
+            where: {
+                module_id: {
+                    in:module_ids
+                }
             }
         })
         return res.status(200).json(asistances);

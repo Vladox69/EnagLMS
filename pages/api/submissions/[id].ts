@@ -19,6 +19,8 @@ export default function handler(
         return getSubmissionByIdActivityAndStudent(req, res);
       } else if (id?.includes("activity_id=")) {
         return getSubmissionsByIdActivity(req, res);
+      } else if (id?.includes("student_id=")) {
+        return getSubmissionsByIdStudent(req,res)
       } else if (id?.includes("submission_id=")) {
         return getSubmissionById(req, res);
       }
@@ -69,7 +71,6 @@ const getSubmissionByIdActivityAndStudent = async (
     }
     return res.status(200).json(submission);
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       message:
         "Failed to fetch resource. The requested data is missing or inaccessible.",
@@ -77,13 +78,39 @@ const getSubmissionByIdActivityAndStudent = async (
   }
 };
 
+const getSubmissionsByIdStudent = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const student_id = id?.toString().substring("student_id=".length);
+    const submissions=await prisma.submission.findMany({
+      where:{
+        student_id:Number(student_id)
+      }
+    })
+    if (!submissions) {
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
+    }
+    return res.status(200).json(submissions);
+  } catch (error) {
+    return res.status(400).json({
+      message:
+        "Failed to fetch resource. The requested data is missing or inaccessible.",
+    });
+  }
+}
+
 const getSubmissionsByIdActivity = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
   try {
     const { id } = req.query;
-
     const activity_id = id?.toString().substring("activity_id=".length);
 
     const submissions = await prisma.submission.findMany({

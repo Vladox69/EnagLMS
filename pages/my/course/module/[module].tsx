@@ -107,7 +107,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
 
   const goToAsistance = () => {
     router.push(
-      `/my/course/asistance/student_id=${student?.id}&module_id=${module?.id}`
+      `/my/course/module/asistance/student_id=${student?.id}&module_id=${module?.id}`
     );
   };
 

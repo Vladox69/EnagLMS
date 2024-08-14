@@ -15,6 +15,8 @@ export default function handler(
     case "GET":
       if (id?.includes("course_id=")) {
         return getCourseById(req, res);
+      }else if(id?.includes("student_id=")){
+        return getCoursesByStudentId(req,res)
       }
     case "PUT":
       if (id?.includes("course_id=")) {
@@ -56,6 +58,38 @@ const getCourseById = async (
     });
   }
 };
+
+const getCoursesByStudentId= async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  try {
+    const { id } = req.query;
+    const student_id = id?.toString().substring("student_id=".length);
+    const inscriptions=await prisma.inscription.findMany({
+      where:{
+        student_id:Number(student_id)
+      }
+    })
+    const inscriptions_ids = inscriptions.map((inscription) => inscription.course_id);
+    const courses=await prisma.course.findMany({
+      where:{
+        id:{
+          in:inscriptions_ids
+        }
+      }
+    })
+    if (!courses) {
+      return res.status(200).json({
+        message:
+          "Failed to fetch resource. The requested data is missing or inaccessible.",
+      });
+    }
+    return res.status(200).json(courses);
+  } catch (error) {
+    
+  }
+}
 
 const updateCourse = async (
   req: NextApiRequest,
