@@ -163,7 +163,7 @@ export const FormActivity: FC<Props> = ({ section_id, activity_id }) => {
           onSubmit={formik.handleSubmit}
           className="container w-75 d-flex flex-column gap-3"
         >
-          <Typography variant="h5" className="">
+          <Typography component="p"  fontSize={22} fontWeight={700} className="">
             Formulario de{" "}
             {activity_id != undefined ? " edición " : " creación "} de actividad{" "}
           </Typography>

@@ -1,11 +1,9 @@
-import { Layout } from "@/components/layouts";
 import React, { useEffect, useState } from "react";
 import { TableACourse } from "../../../components/admin/course/TableACourse";
 import { CourseModel } from "@/models";
 import { enagApi } from "@/apis";
 import { Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
-import { GridColDef } from "@mui/x-data-grid";
 
 export default function Courses() {
   const router = useRouter();
@@ -24,8 +22,8 @@ export default function Courses() {
   };
 
   return (
-    <Layout>
-      <Typography variant="h4"> Tabla de cursos </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700}> Cursos </Typography>
       <TableACourse courses={courses} />
       <Button
         variant="contained"
@@ -36,6 +34,6 @@ export default function Courses() {
         {" "}
         Nuevo curso{" "}
       </Button>
-    </Layout>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layouts";
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -91,7 +90,7 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
   };
 
   return (
-    <Layout title="Teacher section">
+    <>
       <Container className="container">
         {isLoading ? (
           <Box
@@ -104,16 +103,28 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
           </Box>
         ) : (
           <Container className="container ">
-            <Typography variant="h3"> {section?.title} </Typography>
+            <Typography component="p" fontWeight={700} fontSize={24}>
+              {" "}
+              {section?.title}{" "}
+            </Typography>
             <Typography
               component="p"
               dangerouslySetInnerHTML={{
-                __html: section?.content||'',
+                __html: section?.content || "",
               }}
             />
 
-            <Typography variant="h5"> Recursos </Typography>
-            {/* <Button variant='contained' onClick={goToNewResource} >Nuevo recurso</Button> */}
+            <Typography component="p" fontSize={20} fontWeight={700}>
+              {" "}
+              Recursos{" "}
+            </Typography>
+            {resources.length == 0 ? (
+              <Typography variant="h6" color="textSecondary">
+                No existen recursos
+              </Typography>
+            ) : (
+              <GridTResource section_resources={resources} />
+            )}
             <Dialog
               open={open}
               onClose={handleClose}
@@ -130,7 +141,6 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
                 />
               </DialogContent>
             </Dialog>
-            <GridTResource section_resources={resources} />
             <Button
               variant="contained"
               color="error"
@@ -140,8 +150,17 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
               Nuevo recurso
             </Button>
 
-            <Typography variant="h5"> Actividades </Typography>
-            <GridTActivity activities={activities} />
+            <Typography component="p" fontSize={20} fontWeight={700}>
+              {" "}
+              Actividades{" "}
+            </Typography>
+            {activities.length == 0 ? (
+              <Typography component="p" color="textSecondary">
+                No existen actividades
+              </Typography>
+            ) : (
+              <GridTActivity activities={activities} />
+            )}
             <Button
               variant="contained"
               color="error"
@@ -153,7 +172,7 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
           </Container>
         )}
       </Container>
-    </Layout>
+    </>
   );
 };
 

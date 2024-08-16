@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layouts";
 import { Button, CardMedia, Grid, IconButton, Typography } from "@mui/material";
 import Image from "next/image";
 import bgImage from "@/assets/fondo.jpg";
@@ -59,7 +58,7 @@ export default function Resources() {
   }
 
   return (
-    <Layout>
+    <>
       <Grid container spacing={2}>
         {resources.map((resource) => (
           <Grid item xs={6} md={3} key={resource.id}>
@@ -120,6 +119,6 @@ export default function Resources() {
       >
         Agregar recurso
       </Button>
-    </Layout>
+    </>
   );
 }

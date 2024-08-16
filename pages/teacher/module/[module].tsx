@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Layout } from "@/components/layouts";
 import {
   Box,
   Button,
@@ -24,7 +23,7 @@ import { useRouter } from "next/router";
 import { GridTSection } from "../../../components/teacher/Sections/GridTSection";
 import styles from "@/styles/Custom.module.css";
 import { CustomDialog } from "@/components/my/CustomDialog";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 import { FormPlanificacionModule } from "@/components/teacher/Module/FormPlanificacionModule";
 import Swal from "sweetalert2";
 
@@ -34,12 +33,13 @@ interface Props {
 
 export const TeacherModuleById: NextPage<Props> = ({}) => {
   const router = useRouter();
+  const { module: id } = router.query;
 
   useEffect(() => {
-    if (router.isReady) {
+    if (id) {
       getData();
     }
-  }, [router.isReady]);
+  }, [id]);
 
   const [openPlanificacion, setPlanificacion] = useState(false);
   const [openDocente, setDocente] = useState(false);
@@ -47,16 +47,18 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
   const [module, setModule] = useState<ModuleModel>();
   const [teacher, setTeacher] = useState<TeacherModel>();
   const [resources, setResources] = useState<ModuleResourceModel>();
-  const [openPlanificacionForm, setOpenPlanificacionForm] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [openPlanificacionForm, setOpenPlanificacionForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const getData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const { module } = router.query;
       const { data: p } = await enagApi.get(`/auth/profile`);
-      const {data:mr}=await enagApi.get<ModuleResourceModel[]>(`/modules/resources/module_id=${module}`)
-      if(mr.length!=0){
-        setResources(mr[0])
+      const { data: mr } = await enagApi.get<ModuleResourceModel[]>(
+        `/modules/resources/module_id=${module}`
+      );
+      if (mr.length != 0) {
+        setResources(mr[0]);
       }
       const { data: t } = await enagApi.get<TeacherModel>(
         `/teachers/user_id=${p.user_id}`
@@ -70,23 +72,23 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
         `/sections/module_id=${module}`
       );
       setSections(s);
-      setIsLoading(false)
+      setIsLoading(false);
     } catch (error) {
       Swal.fire({
         icon: "info",
         title: "Tenemos porblemas al cargar los datos",
       });
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
-  const handleClosePlanificacionForm=()=>{
-    setOpenPlanificacionForm(false)
-  }
+  const handleClosePlanificacionForm = () => {
+    setOpenPlanificacionForm(false);
+  };
 
-  const handleOpenPlanificacionForm=()=>{
-    setOpenPlanificacionForm(true)
-  }
+  const handleOpenPlanificacionForm = () => {
+    setOpenPlanificacionForm(true);
+  };
 
   const handleOpenPlanificacion = () => {
     setPlanificacion(true);
@@ -122,32 +124,32 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
     router.push(`/teacher/module/students/${module}`);
   };
 
-  const goToEditModule=()=>{
+  const goToEditModule = () => {
     const { module } = router.query;
     router.push({
-      pathname:"/teacher/module/edit",
-      query:{id:module}
-    })
-  }
-  const handleFormSubmitPlanificacion=async(formData:any)=>{
-    if(formData.status==200){
+      pathname: "/teacher/module/edit",
+      query: { id: module },
+    });
+  };
+  const handleFormSubmitPlanificacion = async (formData: any) => {
+    if (formData.status == 200) {
       Swal.fire({
         icon: "success",
         title: "Datos guardados",
-      })
-      getData()
-      handleClosePlanificacionForm()
-    }else{
-      getData()
+      });
+      getData();
+      handleClosePlanificacionForm();
+    } else {
+      getData();
       Swal.fire({
         icon: "error",
         title: "No se pudo guardar los datos",
       });
     }
-  }
+  };
 
   return (
-    <Layout title="My teacher module">
+    <>
       {isLoading ? (
         <Box
           display="flex"
@@ -159,14 +161,19 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
         </Box>
       ) : (
         <Container className="container ">
-          <Typography variant="h4" className="my-2">
+          <Typography
+            component="p"
+            fontWeight={700}
+            fontSize={24}
+            className="my-2"
+          >
             {" "}
             {module?.title}{" "}
           </Typography>
           <Typography
             component="p"
             dangerouslySetInnerHTML={{
-              __html: module?.content||'',
+              __html: module?.content || "",
             }}
           />
           <Button
@@ -200,7 +207,7 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
             open={openDocente}
             handleClose={handleCloseDocente}
             title="Hoja de vida del docente"
-            url={teacher?.cv_url||''}
+            url={teacher?.cv_url || ""}
           />
 
           <Container
@@ -210,43 +217,52 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
             }
             component="div"
           >
-            <div className="d-flex align-items-center" 
-            onClick={handleOpenPlanificacion}
+            <div
+              className="d-flex align-items-center"
+              onClick={handleOpenPlanificacion}
             >
-            <ArticleIcon
-              sx={{
-                width: 50,
-                height: 50,
-              }}
-            />
-            <Typography component="p">
-              Planificación académica de la materia{" "}
-            </Typography>
+              <ArticleIcon
+                sx={{
+                  width: 50,
+                  height: 50,
+                }}
+              />
+              <Typography component="p">
+                Planificación académica de la materia{" "}
+              </Typography>
             </div>
             <div className="d-flex align-items-center">
-              <IconButton onClick={handleOpenPlanificacionForm} >
+              <IconButton onClick={handleOpenPlanificacionForm}>
                 <EditIcon />
               </IconButton>
             </div>
           </Container>
           <Dialog
-          open={openPlanificacionForm}
-          onClose={handleClosePlanificacionForm}
-          aria-labelledby="form-dialog-title"
-        >
-          <DialogTitle id="form-dialog-title">Agregar planificación</DialogTitle>
-          <DialogContent>
-          <FormPlanificacionModule module_id={module?.id||0} onCancel={handleClosePlanificacionForm} onSubmitResource={handleFormSubmitPlanificacion} />
-          </DialogContent>
-        </Dialog>
+            open={openPlanificacionForm}
+            onClose={handleClosePlanificacionForm}
+            aria-labelledby="form-dialog-title"
+          >
+            <DialogTitle id="form-dialog-title">
+              Agregar planificación
+            </DialogTitle>
+            <DialogContent>
+              <FormPlanificacionModule
+                module_id={module?.id || 0}
+                onCancel={handleClosePlanificacionForm}
+                onSubmitResource={handleFormSubmitPlanificacion}
+              />
+            </DialogContent>
+          </Dialog>
           <CustomDialog
             open={openPlanificacion}
             handleClose={handleClosePlanificacion}
             title="Planificación de la materia"
-            url={resources?.url_resource||''}
+            url={resources?.url_resource || ""}
           />
 
-          <Typography variant="h2">Asistencia</Typography>
+          <Typography component="p" fontWeight={700} fontSize={20}>
+            Asistencias
+          </Typography>
 
           <Container
             className={
@@ -265,7 +281,9 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
             <Typography component="p">Asistencia</Typography>
           </Container>
 
-          <Typography variant="h2">Calificaciones</Typography>
+          <Typography component="p" fontWeight={700} fontSize={20}>
+            Calificaciones
+          </Typography>
 
           <Container
             className={
@@ -292,10 +310,13 @@ export const TeacherModuleById: NextPage<Props> = ({}) => {
           >
             Crear nueva sección
           </Button>
+          <Typography component="p" fontWeight={700} fontSize={20}>
+            Secciones
+          </Typography>
           <GridTSection sections={sections} />
         </Container>
       )}
-    </Layout>
+    </>
   );
 };
 

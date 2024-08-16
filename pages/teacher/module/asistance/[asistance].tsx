@@ -1,4 +1,3 @@
-import { Layout } from '@/components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import React, { useEffect, useState } from 'react'
 import { Button, Typography } from '@mui/material';
@@ -53,12 +52,12 @@ export const MyAsistanceModuleById: NextPage<Props> = ({ }) => {
   }
 
   return (
-    <Layout title='My asistance module'>
-      <Typography variant='h4' className='mb-2'> Tabla de asistencias por módulo </Typography>
+    < >
+      <Typography component="p" fontSize={22} fontWeight={700} className='mb-2'>Asistencias</Typography>
       <TableAsistance asistances={asistances} />
       <Button variant='contained' onClick={goToNewRegister} color='error' className='mt-2'> Nuevo registro </Button>
       <Button variant='contained' onClick={goBack} className={styles.black_button + ' mt-2 ms-2'}> Cancelar </Button>
-    </Layout>
+    </>
   )
 }
 

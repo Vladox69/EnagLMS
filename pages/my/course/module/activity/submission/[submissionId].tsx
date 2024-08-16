@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layouts";
 import React, { useEffect, useState } from "react";
 import { Container, Button } from "@mui/material";
 import { NextPage } from "next";
@@ -56,7 +55,7 @@ export const MySubmissionById: NextPage<Props> = ({}) => {
   };
 
   return (
-    <Layout title="My submision">
+    <>
       <Container className="container">
         <Container className="container">
           <Dropzone
@@ -66,7 +65,7 @@ export const MySubmissionById: NextPage<Props> = ({}) => {
           />
         </Container>
       </Container>
-    </Layout>
+    </>
   );
 };
 

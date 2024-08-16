@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Layout } from "@/components/layouts";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import { InternCourseModel, TeacherModel } from "@/models";
 import { enagApi } from "@/apis";
@@ -145,10 +144,8 @@ export default function InternCourse() {
     },
   ];
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
-        Tabla de cursos de pasantía
-      </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700}> Pasantías </Typography>
       <Box sx={{ height: 450, width: "100%" }}>
         <DataGrid
           rows={courses}
@@ -172,6 +169,6 @@ export default function InternCourse() {
         {" "}
         Nuevo curso{" "}
       </Button>
-    </Layout>
+    </>
   );
 }

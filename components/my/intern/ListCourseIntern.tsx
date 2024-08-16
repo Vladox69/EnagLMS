@@ -11,7 +11,9 @@ export const ListCourseIntern:FC<Props> = ({courses}) => {
   return (
     <Container className='container'>
         {courses.map((course)=>(
-            <ItemCourseIntern course={course} key={course.id} />
+            <li key={course.id}>
+
+            </li>
         ))
 
         }

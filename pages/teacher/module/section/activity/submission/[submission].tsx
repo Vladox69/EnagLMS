@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layouts";
 import React, { useEffect, useState } from "react";
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import {
@@ -58,7 +57,7 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
   };
 
   return (
-    <Layout title="Submission">
+    < >
       <Container className="container ">
         {isLoading ? (
           <Box
@@ -73,11 +72,11 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
           <>
             <Container className="container ">
               <Container className="w-75">
-                <Typography variant="h4" className="mb-1">
+                <Typography component="p" fontSize={22} fontWeight={700} className="mb-1">
                   {" "}
                   Formulario de revisión de tareas{" "}
                 </Typography>
-                <Typography variant="h5" className="mb-1">
+                <Typography component="p" className="mb-1">
                   {" "}
                   Estado de la entrega{" "}
                 </Typography>
@@ -126,7 +125,7 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
           </>
         )}
       </Container>
-    </Layout>
+    </>
   );
 };
 

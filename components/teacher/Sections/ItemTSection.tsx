@@ -6,8 +6,8 @@ import { useRouter } from "next/router";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import styles from "@/styles/Custom.module.css";
-import Swal from "sweetalert2";
 import { deleteSection } from "@/utils/section/deleteSection";
+import Swal from "sweetalert2";
 
 interface Props {
   section: SectionModel;

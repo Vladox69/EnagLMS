@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { StudentModuleAsistance } from "@/interface/models_combine";
 import {
   AsistanceModel,
@@ -99,42 +98,42 @@ const columnModule: GridColDef[] = [
 ];
 
 const columnAsistance: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 50,
-    },
-    {
-      field: "names",
-      headerName: "Nombres",
-      width: 200,
-      valueGetter: (value, row) => getStudentName(row.student),
-    },
-    {
-      field: "lastnames",
-      headerName: "Apellidos",
-      width: 200,
-      valueGetter: (value, row) => getStudentLasName(row.student),
-    },
-    {
-      field: "description",
-      headerName: "Descripción",
-      width: 200,
-      valueGetter: (value, row) => getDescriptionAsistance(row.asistance),
-    },
-    {
-      field: "date",
-      headerName: "Fecha",
-      width: 150,
-      valueGetter: (value, row) => getDateAsistance(row.asistance),
-    },
-    {
-      field: "status",
-      headerName: "Estado",
-      width: 150,
-      valueGetter: (value, row) => getRegisterState(row.register),
-    },
-  ];
+  {
+    field: "id",
+    headerName: "ID",
+    width: 50,
+  },
+  {
+    field: "names",
+    headerName: "Nombres",
+    width: 200,
+    valueGetter: (value, row) => getStudentName(row.student),
+  },
+  {
+    field: "lastnames",
+    headerName: "Apellidos",
+    width: 200,
+    valueGetter: (value, row) => getStudentLasName(row.student),
+  },
+  {
+    field: "description",
+    headerName: "Descripción",
+    width: 200,
+    valueGetter: (value, row) => getDescriptionAsistance(row.asistance),
+  },
+  {
+    field: "date",
+    headerName: "Fecha",
+    width: 150,
+    valueGetter: (value, row) => getDateAsistance(row.asistance),
+  },
+  {
+    field: "status",
+    headerName: "Estado",
+    width: 150,
+    valueGetter: (value, row) => getRegisterState(row.register),
+  },
+];
 
 export default function ReportAsistances() {
   const apiRef = useGridApiRef();
@@ -211,37 +210,43 @@ export default function ReportAsistances() {
     }
   };
 
-  const asistanceByModule=()=>{
-    setColumns(columnModule)
-    let asistanceModuleTemp:StudentModuleAsistance[]=[]
+  const asistanceByModule = () => {
+    setColumns(columnModule);
+    let asistanceModuleTemp: StudentModuleAsistance[] = [];
     let rowsIndex: any[] = [];
-    if(selectedModule==-1&&selectedAsistance==0){
-        asistanceModuleTemp=studentModuleAsistance
-    }else if(selectedModule>0&&selectedAsistance==0){
-        asistanceModuleTemp=studentModuleAsistance.filter((stmdas)=>stmdas.module.id==selectedModule)
+    if (selectedModule == -1 && selectedAsistance == 0) {
+      asistanceModuleTemp = studentModuleAsistance;
+    } else if (selectedModule > 0 && selectedAsistance == 0) {
+      asistanceModuleTemp = studentModuleAsistance.filter(
+        (stmdas) => stmdas.module.id == selectedModule
+      );
     }
-    rowsIndex=asistanceModuleTemp.map((data,index)=>({
-        ...data,
-        id: index + 1,
-    }))
-    setRows(rowsIndex)
-  }
+    rowsIndex = asistanceModuleTemp.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
+  };
 
-  const getAsistances=()=>{
-    setColumns(columnAsistance)
-    let asistanceModuleTemp:StudentModuleAsistance[]=[]
+  const getAsistances = () => {
+    setColumns(columnAsistance);
+    let asistanceModuleTemp: StudentModuleAsistance[] = [];
     let rowsIndex: any[] = [];
-    if(selectedModule>0&&selectedAsistance==-1){
-        asistanceModuleTemp=studentModuleAsistance.filter((stmdas)=>stmdas.module.id==selectedModule)
-    }else if(selectedModule>0&&selectedAsistance>0){
-        asistanceModuleTemp=studentModuleAsistance.filter((stmdas)=>stmdas.asistance.id==selectedAsistance)
+    if (selectedModule > 0 && selectedAsistance == -1) {
+      asistanceModuleTemp = studentModuleAsistance.filter(
+        (stmdas) => stmdas.module.id == selectedModule
+      );
+    } else if (selectedModule > 0 && selectedAsistance > 0) {
+      asistanceModuleTemp = studentModuleAsistance.filter(
+        (stmdas) => stmdas.asistance.id == selectedAsistance
+      );
     }
-    rowsIndex=asistanceModuleTemp.map((data,index)=>({
-        ...data,
-        id: index + 1,
-    }))
-    setRows(rowsIndex)
-  }
+    rowsIndex = asistanceModuleTemp.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
+  };
 
   const buildData = () => {
     let studentModuleAsistancesTemp: StudentModuleAsistance[] = [];
@@ -251,7 +256,11 @@ export default function ReportAsistances() {
       );
       const student = students.find((st) => st.id == rgas.student_id);
       const modul = modules.find((md) => md.id == asistance?.module_id);
-      if (modul != undefined &&asistance != undefined &&student != undefined) {
+      if (
+        modul != undefined &&
+        asistance != undefined &&
+        student != undefined
+      ) {
         const studentModuleAsistanceTemp: StudentModuleAsistance = {
           asistance,
           module: modul,
@@ -264,7 +273,7 @@ export default function ReportAsistances() {
         ];
       }
     });
-    setStudentModuleAsistance(studentModuleAsistancesTemp)
+    setStudentModuleAsistance(studentModuleAsistancesTemp);
   };
 
   const handleChangeAsistance = async (
@@ -316,91 +325,122 @@ export default function ReportAsistances() {
 
   const searchData = () => {
     if (selectedModule == -1 && selectedAsistance == 0) {
-        asistanceByModule();
-      } else if (selectedModule > 0 && selectedAsistance == 0) {
-        asistanceByModule();
-      } else if (selectedModule > 0 && selectedAsistance == -1) {
-        getAsistances()
-      }else if(selectedModule > 0 && selectedAsistance >0){
-        getAsistances()
-      }
+      asistanceByModule();
+    } else if (selectedModule > 0 && selectedAsistance == 0) {
+      asistanceByModule();
+    } else if (selectedModule > 0 && selectedAsistance == -1) {
+      getAsistances();
+    } else if (selectedModule > 0 && selectedAsistance > 0) {
+      getAsistances();
+    }
   };
 
-  const exportPDF=()=>{
+  const exportPDF = () => {
     const doc = new jsPDF({
-        orientation: "landscape",
+      orientation: "landscape",
     });
-    let title=""
-    const modl=modules.find((md)=>md.id==selectedModule);
+    let title = "";
+    const modl = modules.find((md) => md.id == selectedModule);
     let ast;
     let date;
-    let head:any=[]
+    let head: any = [];
+    const newDate = new Date().toLocaleDateString();
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("Registro de asistencias", 14, 15);
     doc.text(`Módulo:`, 14, 20);
     doc.setFont("helvetica", "normal");
     doc.text(`${modl?.title}`, 34, 20);
-    if(selectedModule>0&&selectedAsistance==0){
-        title=`${modl?.title}`
-        const asCSV=apiRef.current.getDataAsCsv()
-        const rowsArray = asCSV.split(/\r?\n/);
-        head = rowsArray.shift()?.split(',').map(header => header.trim())
-        const body = rowsArray.map(row => row.split(',').map(cell => cell.trim()));
-        autoTable(doc, {
-          startY: 25,
-          head:[head],
-          body:body,
-        });
-    }else if(selectedModule>0&&selectedAsistance>0){
-        ast=auxAsistances.find((ast)=>ast.id==selectedAsistance)
-        date=transformDate(ast?.date.toString()||'')
-        title=`${modl?.title}_${date}`
-        doc.setFont("helvetica", "bold");
-        doc.text(`Fecha:`, 14, 25);
-        doc.setFont("helvetica", "normal");
-        doc.text(`${date}`,34, 25)
-        const asCSV=apiRef.current.getDataAsCsv()
-        const rowsArray = asCSV.split(/\r?\n/);
-        head = rowsArray.shift()?.split(',').map(header => header.trim())
-        const body = rowsArray.map(row => row.split(',').map(cell => cell.trim()));
-        autoTable(doc, {
-          startY: 30,
-          head:[head],
-          body:body,
-        });
+    doc.setFont("helvetica", "bold");
+    doc.text(`Fecha:`, 14, 25);
+    doc.setFont("helvetica", "normal");
+    doc.text(`${newDate}`, 34, 25);
+    if (selectedModule > 0 && selectedAsistance == 0) {
+      title = `${modl?.title}`;
+      const asCSV = apiRef.current.getDataAsCsv();
+      const rowsArray = asCSV.split(/\r?\n/);
+      head = rowsArray
+        .shift()
+        ?.split(",")
+        .map((header) => header.trim());
+      const body = rowsArray.map((row) =>
+        row.split(",").map((cell) => cell.trim())
+      );
+      autoTable(doc, {
+        startY: 30,
+        head: [head],
+        body: body,
+      });
+    } else if (selectedModule > 0 && selectedAsistance == -1) {
+      const asCSV = apiRef.current.getDataAsCsv();
+      const rowsArray = asCSV.split(/\r?\n/);
+      head = rowsArray
+        .shift()
+        ?.split(",")
+        .map((header) => header.trim());
+      const body = rowsArray.map((row) =>
+        row.split(",").map((cell) => cell.trim())
+      );
+      autoTable(doc, {
+        startY: 30,
+        head: [head],
+        body: body,
+      });
+    } else if (selectedModule > 0 && selectedAsistance > 0) {
+      ast = auxAsistances.find((ast) => ast.id == selectedAsistance);
+      date = transformDate(ast?.date.toString() || "");
+      title = `${modl?.title}_${date}`;
+      const asCSV = apiRef.current.getDataAsCsv();
+      const rowsArray = asCSV.split(/\r?\n/);
+      head = rowsArray
+        .shift()
+        ?.split(",")
+        .map((header) => header.trim());
+      const body = rowsArray.map((row) =>
+        row.split(",").map((cell) => cell.trim())
+      );
+      autoTable(doc, {
+        startY: 30,
+        head: [head],
+        body: body,
+      });
     }
     doc.save(`registro-de-asistencias${title}.pdf`);
     handleClose();
-  } 
+  };
 
-  const exportExcel=()=>{
-    let title=""
-    const modl=modules.find((md)=>md.id==selectedModule);
-    if(selectedModule>0&&selectedAsistance==0){
-        title=`${modl?.title}`
-    }else if(selectedModule>0&&selectedAsistance>0){
-        const ast=auxAsistances.find((ast)=>ast.id==selectedAsistance)
-        const date=transformDate(ast?.date.toString()||'')
-        title=`${modl?.title}_${date}`
+  const exportExcel = () => {
+    let title = "";
+    const modl = modules.find((md) => md.id == selectedModule);
+    if (selectedModule > 0 && selectedAsistance == 0) {
+      title = `${modl?.title}`;
+    } else if (selectedModule > 0 && selectedAsistance > 0) {
+      const ast = auxAsistances.find((ast) => ast.id == selectedAsistance);
+      const date = transformDate(ast?.date.toString() || "");
+      title = `${modl?.title}_${date}`;
     }
-    let head:any=[]
-    const asCSV=apiRef.current.getDataAsCsv()
+    let head: any = [];
+    const asCSV = apiRef.current.getDataAsCsv();
     const rowsArray = asCSV.split(/\r?\n/);
-    head = rowsArray.shift()?.split(',').map(header => header.trim())
-    const body = rowsArray.map(row => row.split(',').map(cell => cell.trim()));
-    const data=[head,...body]
-    const ws:WorkSheet =utils.aoa_to_sheet(data)
-    ws['!cols'] = head.map(() => ({ wch: 22 }));
+    head = rowsArray
+      .shift()
+      ?.split(",")
+      .map((header) => header.trim());
+    const body = rowsArray.map((row) =>
+      row.split(",").map((cell) => cell.trim())
+    );
+    const data = [head, ...body];
+    const ws: WorkSheet = utils.aoa_to_sheet(data);
+    ws["!cols"] = head.map(() => ({ wch: 22 }));
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, `${title}`);
     writeFile(wb, `registro-de-asistencias${title}.xlsx`);
-    handleClose()
-  }
+    handleClose();
+  };
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2">
         {" "}
         Reportes de asistencias{" "}
       </Typography>
@@ -450,7 +490,7 @@ export default function ReportAsistances() {
             onClose={handleClose}
           >
             <MenuItem onClick={exportExcel}>Excel</MenuItem>
-            <MenuItem onClick={exportPDF} >PDF</MenuItem>
+            <MenuItem onClick={exportPDF}>PDF</MenuItem>
           </Menu>
         </Box>
         <IconButton onClick={searchData}>
@@ -462,6 +502,7 @@ export default function ReportAsistances() {
         <DataGrid
           apiRef={apiRef}
           rows={rows}
+          disableRowSelectionOnClick
           columns={columns}
           initialState={{
             pagination: {
@@ -473,6 +514,6 @@ export default function ReportAsistances() {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 }

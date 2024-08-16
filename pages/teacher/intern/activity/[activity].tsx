@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { TableInternSubmission } from "@/components/teacher/Intern/TableInternSubmission";
 import { ActivityInternModel, SubmissionInternModel } from "@/models";
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
@@ -40,7 +39,7 @@ export const TeacherInternActivityById = () => {
     }
   };
   return (
-    <Layout>
+    <>
       <Container className="container">
         {isLoading ? (
           <Box
@@ -53,7 +52,7 @@ export const TeacherInternActivityById = () => {
           </Box>
         ) : (
           <>
-            <Typography variant="h4" className="my-2">
+            <Typography component="p"  fontWeight={700} fontSize={22} className="my-2">
               {" "}
               {activity?.title}{" "}
             </Typography>
@@ -67,7 +66,7 @@ export const TeacherInternActivityById = () => {
           </>
         )}
       </Container>
-    </Layout>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { InternModel } from "@/models";
 import React, { useEffect, useState } from "react";
 import { TableAIntern } from "../../../components/admin/intern/TableAIntern";
@@ -109,10 +108,8 @@ export default function Interns() {
   ];
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
-        Tabla de hojas de vida
-      </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700}> Hojas de vida </Typography>
       <Box sx={{ height: 450, width: "100%" }}>
         <DataGrid
           rows={interns}
@@ -127,6 +124,6 @@ export default function Interns() {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 }

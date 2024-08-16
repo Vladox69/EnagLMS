@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { AsistanceModel, AsistanceRegisterModel } from "@/models";
 import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/router";
@@ -143,8 +142,8 @@ export const MyAsistanceById = () => {
   };
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700}>
         Reportes de calificaciones
       </Typography>
       <div className="mt-2"></div>
@@ -165,7 +164,7 @@ export const MyAsistanceById = () => {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 };
 

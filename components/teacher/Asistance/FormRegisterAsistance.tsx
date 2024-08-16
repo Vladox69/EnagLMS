@@ -131,7 +131,7 @@ export const FormRegisterAsistance: FC<Props> = ({
           onSubmit={formik.handleSubmit}
           className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
         >
-          <Typography variant="h4">
+          <Typography component="p" fontSize={22} fontWeight={700}>
             Formulario para{" "}
             {asistance_id != undefined ? " edición " : " creación "} de
             asistencia{" "}

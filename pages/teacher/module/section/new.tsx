@@ -1,4 +1,3 @@
-import { Layout } from '@/components/layouts'
 import React, { useEffect, useState } from 'react'
 import { FormSection } from '../../../../components/teacher/Sections/FormSection';
 import { useRouter } from 'next/router';
@@ -16,9 +15,9 @@ export const NewSection = () => {
     }, [router.isReady])
     
   return (
-    <Layout title='Nueva sección'>
+    < >
         <FormSection  module_id={module_id} />
-    </Layout>
+    </>
   )
 }
 

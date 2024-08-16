@@ -15,6 +15,10 @@ export const ItemInternActivity: FC<Props> = ({ activity }) => {
     router.push(`/my/intern/activity/${activity.id}`);
   };
 
+  const transformDate = (dateString: string) => {
+    return dateString.split("T")[0];
+  };
+
   return (
     <Container
       className={

@@ -66,7 +66,7 @@ export const TableRegister: FC<Props> = ({ asistance_students: as, asistance }) 
 
     return (
         <>
-            <Typography variant='h4' className='mb-2'> Tabla de registro de asistencias </Typography>
+            <Typography component="p" fontSize={22} fontWeight={700}  className='mb-2'> Registro de asistencias </Typography>
             <TableContainer component={Paper} className='border rounded'>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>

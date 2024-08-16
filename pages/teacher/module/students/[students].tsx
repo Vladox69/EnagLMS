@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   ActivityModel,
   ModuleModel,
@@ -107,7 +106,7 @@ export const StudentsModuleById = () => {
   };
 
   return (
-    <Layout>
+    <>
       <h3>Calificaciones</h3>
       {(studentQualification==undefined) ? (
         <Box
@@ -135,7 +134,7 @@ export const StudentsModuleById = () => {
         }
         </>
       )}
-    </Layout>
+    </>
   );
 };
 

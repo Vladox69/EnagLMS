@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   ActivityModel,
   ActivityResourceModel,
@@ -124,7 +123,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   
 
   return (
-    <Layout title="My activity">
+    < >
       <Container className="container">
         {isLoading ? (
           <Box
@@ -137,7 +136,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
           </Box>
         ) : (
           <Container className="container">
-            <Typography variant="h4"> {activity?.title} </Typography>
+            <Typography component="p" fontSize={22} fontWeight={700} > {activity?.title} </Typography>
             <Typography
               component="p"
               dangerouslySetInnerHTML={{
@@ -185,7 +184,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
           </Container>
         )}
       </Container>
-    </Layout>
+    </>
   );
 };
 

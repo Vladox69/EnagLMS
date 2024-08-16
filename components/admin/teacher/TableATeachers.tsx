@@ -158,9 +158,7 @@ export const TableATeachers: FC<Props> = ({ teachers: tchrs }) => {
 
   return (
     <>
-      <Typography variant="h4" className="mb-2">
-        Tabla de profesores
-      </Typography>
+      <Typography component="p" fontSize={22} fontWeight={700}> Profesores </Typography>
       <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
           rows={teachers}

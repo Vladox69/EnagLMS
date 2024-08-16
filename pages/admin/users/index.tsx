@@ -1,5 +1,4 @@
 import { enagApi } from '@/apis'
-import { Layout } from '@/components/layouts'
 import { UserModel } from '@/models'
 import React, { useState,useEffect } from 'react'
 import { TableAUser } from '../../../components/admin/user/TableAUser';
@@ -18,8 +17,8 @@ export default function Users() {
     }
 
     return (
-        <Layout>
+        <>
             <TableAUser  users={users} />
-        </Layout>
+        </>
     )
 }

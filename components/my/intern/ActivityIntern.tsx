@@ -180,7 +180,7 @@ interface FormTable {
 interface PDFData {
   data: FormTable[];
   student: StudentModel;
-  title:string;
+  title: string;
 }
 
 export const ActivityIntern: FC<Props> = ({ activity }) => {
@@ -271,14 +271,14 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
   const generateAndSendPDF = async () => {
     const file = await generatePDFBlob();
     if (file) {
-      setIsLoading(true)
+      setIsLoading(true);
       const body = {
         id: submission.id,
         file,
       };
       const res: any = await updateInternSubmission(body);
       if (res.status == 200) {
-        setIsLoading(false)
+        setIsLoading(false);
         Swal.fire({
           icon: "success",
           title: "Datos guardados",
@@ -286,7 +286,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
           router.back();
         });
       } else {
-        setIsLoading(false)
+        setIsLoading(false);
         Swal.fire({
           icon: "error",
           title: "No se pudo guardar los datos",
@@ -309,7 +309,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
     const dataTable: PDFData = {
       data: formTable,
       student,
-      title:activity.title
+      title: activity.title,
     };
     if (!validateFormTable()) {
       Swal.fire({
@@ -333,7 +333,6 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
   };
 
   const onClickSave = async () => {
-    
     if (option == "file") {
       uploadOptionFile();
     } else {
@@ -347,10 +346,10 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
         id: submission.id,
         file: fileIntern,
       };
-      setIsLoading(true)
+      setIsLoading(true);
       const res: any = await updateInternSubmission(body);
       if (res.status == 200) {
-        setIsLoading(false)
+        setIsLoading(false);
         Swal.fire({
           icon: "success",
           title: "Datos guardados",
@@ -358,7 +357,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
           router.back();
         });
       } else {
-        setIsLoading(false)
+        setIsLoading(false);
         Swal.fire({
           icon: "error",
           title: "No se pudo guardar los datos",
@@ -395,15 +394,20 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
         </Box>
       )}
       <Container className="container">
-        <Typography variant="h4"> {activity.title} </Typography>
-        <Typography
-          component="p"
-          dangerouslySetInnerHTML={{
-            __html: activity.content,
-          }}
-        />
+        <Typography component="p" fontSize={22} fontWeight={700}>
+          {" "}
+          {activity.title}{" "}
+        </Typography>
+        {activity.content && (
+          <Typography
+            component="span"
+            dangerouslySetInnerHTML={{
+              __html: activity.content,
+            }}
+          />
+        )}
         {submission.url_resource && (
-          <div>
+          <>
             <Typography className="text-danger">
               Archivos entregados{" "}
             </Typography>
@@ -430,7 +434,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
                 url={submission.url_resource}
               />
             </Container>
-          </div>
+          </>
         )}
 
         <FormControl>
@@ -440,23 +444,19 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
           <RadioGroup
             row
             aria-labelledby="demo-row-radio-buttons-group-label"
+            value={option}
             name="row-radio-buttons-group"
+            onChange={(event) => setOption(event.target.value)}
           >
             <FormControlLabel
               value="file"
               control={<Radio />}
               label="Archivo"
-              onClick={() => {
-                setOption("file");
-              }}
             />
             <FormControlLabel
               value="form"
               control={<Radio />}
               label="Formulario"
-              onClick={() => {
-                setOption("form");
-              }}
             />
           </RadioGroup>
         </FormControl>
@@ -539,9 +539,6 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
         >
           Agregar actvidad
         </Button>
-        {/* <PDFViewer width="100%" height="600">
-        <PDFDocument   />
-      </PDFViewer> */}
       </Container>
     </>
   );

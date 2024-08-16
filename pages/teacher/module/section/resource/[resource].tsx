@@ -1,4 +1,3 @@
-import { Layout } from '@/components/layouts'
 import { SectionResourceModel } from '@/models'
 import { NextPage } from 'next'
 import React from 'react'
@@ -10,7 +9,7 @@ interface Props {
 
 export const TeacherResourceById: NextPage<Props> = ({ resource }) => {
     return (
-        <Layout>
+        <>
             <Container className='container bg-primary'>
                 <Container className='container bg-danger'>
                     <Typography component='p'> {resource?.title} </Typography>
@@ -22,7 +21,7 @@ export const TeacherResourceById: NextPage<Props> = ({ resource }) => {
 
                 </Container>
             </Container>
-        </Layout>
+        </>
     )
 }
 

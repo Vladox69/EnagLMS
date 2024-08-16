@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   StudentAsistance,
   StudentCourse,
@@ -528,11 +527,8 @@ export default function ReportAsistances() {
   }
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
-        {" "}
-        Reportes de asistencias{" "}
-      </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2" > Asistencias </Typography>
       <Box display="flex" gap={2} alignItems="center">
         <TextField
           select
@@ -618,6 +614,6 @@ export default function ReportAsistances() {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 }

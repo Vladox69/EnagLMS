@@ -1,5 +1,4 @@
 import { enagApi } from '@/apis'
-import { Layout } from '@/components/layouts'
 import { ActivityIntern } from '@/components/my/intern/ActivityIntern'
 import { ActivityInternModel } from '@/models'
 import { Box, CircularProgress } from '@mui/material'
@@ -22,7 +21,7 @@ export const  MyInternActivityById= () => {
     }   
 
   return (
-    <Layout>
+    <>
         {
             (activity==undefined)?
             (                <Box
@@ -37,7 +36,7 @@ export const  MyInternActivityById= () => {
                 <ActivityIntern  activity={activity} />
             )
         }
-    </Layout>
+    </>
   )
 }
 

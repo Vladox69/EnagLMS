@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   CourseModel,
   InscriptionModel,
@@ -156,7 +155,7 @@ export const CourseAdminById = () => {
   }, [router.isReady]);
 
   return (
-    <Layout>
+    <>
       <Container className="container ">
         <Typography variant="h4">Bienvenidos al curso {course?.topic}</Typography>
         <Typography
@@ -240,7 +239,7 @@ export const CourseAdminById = () => {
           </Button>
         )}
       </Container>
-    </Layout>
+    </>
   );
 };
 

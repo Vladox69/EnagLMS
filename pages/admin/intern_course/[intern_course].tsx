@@ -1,7 +1,6 @@
 import { enagApi } from "@/apis";
 import { FormInternInscription } from "@/components/admin/intern-course/FormInternInscription";
 import { ListInternStudent } from "@/components/admin/intern-course/ListInternStudent";
-import { Layout } from "@/components/layouts";
 import {
   InternCourseModel,
   InternInscriptionModel,
@@ -144,7 +143,7 @@ export const InternCourseById = () => {
   }
 
   return (
-    <Layout>
+    <>
       {course == undefined ||
       students == undefined ||
       inscriptions == undefined ? (
@@ -216,7 +215,7 @@ export const InternCourseById = () => {
         )}
         </Container>
       )}
-    </Layout>
+    </>
   );
 };
 

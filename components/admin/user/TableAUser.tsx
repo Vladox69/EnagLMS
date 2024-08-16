@@ -136,10 +136,7 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
 
   return (
     <>
-      <Typography variant="h4" className="mb-2">
-        {" "}
-        Tabla de usuarios{" "}
-      </Typography>
+      <Typography component="p" fontSize={22} fontWeight={700}> Usuarios </Typography>
       <Box sx={{ height: 500, width: "100%" }}>
         <DataGrid
           rows={users}

@@ -1,5 +1,4 @@
 import { NextPage } from "next";
-import { Layout } from "@/components/layouts";
 import {
   Container,
   Typography,
@@ -37,7 +36,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
 
   const [openPlanificacion, setPlanificacion] = useState(false);
   const [openDocente, setDocente] = useState(false);
-
+  const { module: id } = router.query;
   const [module, setModule] = useState<ModuleModel>();
   const [sections, setSections] = useState<SectionModel[]>([]);
   const [resources, setResources] = useState<ModuleResourceModel>();
@@ -45,16 +44,15 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   const [student, setStudent] = useState<StudentModel>();
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
-    if (router.isReady) {
+    if (id) {
       getData();
     }
-  }, [router.isReady]);
+  }, [id]);
 
   const getData = async () => {
     setIsLoading(true);
     try {
-      if (router.isReady) {
-        const { module: id } = router.query;
+      if (id) {
         const { data: p } = await enagApi.get(`/auth/profile`);
         const { data: s } = await enagApi.get<StudentModel>(
           `/students/user_id=${p.user_id}`
@@ -81,10 +79,10 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
         setIsLoading(false);
       }
     } catch (error) {
-      Swal.fire({
-        icon: "info",
-        title: "Tenemos porblemas al cargar los datos",
-      });
+      // Swal.fire({
+      //   icon: "info",
+      //   title: "Tenemos porblemas al cargar los datos",
+      // });
       setIsLoading(false);
     }
   };
@@ -118,7 +116,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
   };
   const css = " container d-flex border rounded align-items-center mb-2";
   return (
-    <Layout title="My Module">
+    < >
       {isLoading ? (
         <Box
           display="flex"
@@ -130,7 +128,9 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
         </Box>
       ) : (
         <Container className="container">
-          <Typography variant="h2">{module?.title}</Typography>
+          <Typography component="p" fontWeight={700} fontSize={26}>
+            {module?.title}
+          </Typography>
           <Typography
             component="p"
             dangerouslySetInnerHTML={{
@@ -157,7 +157,7 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             open={openDocente}
             handleClose={handleCloseDocente}
             title="Hoja de vida del docente"
-            url={teacher?.cv_url||''}
+            url={teacher?.cv_url || ""}
           />
 
           <Divider />
@@ -184,7 +184,9 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
           />
           <Divider />
 
-          <Typography variant="h3">Asistencias</Typography>
+          <Typography component="p" fontSize={20} fontWeight={700}>
+            Asistencias
+          </Typography>
 
           <Container
             className={styles.hover_effect + css}
@@ -200,7 +202,9 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             <Typography component="p">Asistencias </Typography>
           </Container>
 
-          <Typography variant="h3">Calificaciones</Typography>
+          <Typography component="p" fontSize={20} fontWeight={700}>
+            Calificaciones
+          </Typography>
 
           <Container
             className={styles.hover_effect + css}
@@ -215,10 +219,19 @@ export const MyModuleByName: NextPage<Props> = ({}) => {
             />
             <Typography component="p">Calificaciones </Typography>
           </Container>
-          <GridSection sections={sections} />
+          <Typography component="p" fontSize={20} fontWeight={700}>
+            Secciones
+          </Typography>
+          {sections.length == 0 ? (
+            <Typography component="p" color="textSecondary">
+              No existen secciones
+            </Typography>
+          ) : (
+            <GridSection sections={sections} />
+          )}
         </Container>
       )}
-    </Layout>
+    </>
   );
 };
 

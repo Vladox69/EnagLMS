@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   ActivityModel,
   CourseModel,
@@ -1223,10 +1222,8 @@ export default function ReportCourse() {
   }
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
-        Reportes de calificaciones
-      </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2"> Calificaciones </Typography>
       <Box display="flex" gap={2} alignItems="center">
         <TextField
           select
@@ -1328,6 +1325,6 @@ export default function ReportCourse() {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 }

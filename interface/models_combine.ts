@@ -3,6 +3,9 @@ import {
   AsistanceModel,
   AsistanceRegisterModel,
   CourseModel,
+  InscriptionModel,
+  InternCourseModel,
+  InternInscriptionModel,
   ModuleModel,
   SectionModel,
   StudentModel,
@@ -184,3 +187,15 @@ export interface AsistanceRegister{
   asistance:AsistanceModel;
   register:AsistanceRegisterModel;
 } 
+
+export interface StudentInscriptionCourse{
+  inscription:InscriptionModel;
+  course:CourseModel;
+  student:StudentModel;
+}
+
+export interface StudentInscriptionIntern{
+  inscription:InternInscriptionModel;
+  intern:InternCourseModel;
+  student:StudentModel;
+}

@@ -1,0 +1,19 @@
+.card {
+  background-color: black; /* Fondo negro para la tarjeta */
+  color: white; /* Texto blanco */
+  border: 1px solid #333; /* Color del borde si es necesario */
+  transition: transform 0.3s ease; /* Transición para el efecto hover */
+}
+
+.card:hover {
+  transform: scale(1.05); /* Efecto de zoom en hover */
+}
+
+.card-body {
+  color: black; /* Texto negro dentro del cuerpo de la tarjeta */
+}
+
+.card-title,
+.card-text {
+  color: white; /* Texto negro para el título y el contenido */
+}

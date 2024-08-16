@@ -1,14 +1,13 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { GradesI } from "@/interface";
 import { ActivityModel, SectionModel, SubmissionModel } from "@/models";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
-import { NextPage } from "next";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { SectionActivitySubmission } from "@/interface/models_combine";
 import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
+import Link from "next/link";
 const checkGrade = (grade: any) => {
   return grade === undefined || isNaN(grade) || grade == -1 ? "N/A" : grade;
 };
@@ -71,7 +70,12 @@ const columnActivity: GridColDef[] = [
     field: "activityname",
     headerName: "Nombre de actividad",
     width: 200,
-    valueGetter: (value, row) => getActivityName(row.activity),
+    valueGetter: (value,row) => getActivityName(row.activity),
+    renderCell: (params) => (
+      <Link href={`/my/course/module/activity/${params.row.activity.id}`} passHref target="_blank" className="text-decoration-none">
+          {params.row.activity.title}
+      </Link>
+    ),
   },
   {
     field: "ponderation",
@@ -99,7 +103,7 @@ const columnActivity: GridColDef[] = [
   },
 ];
 
-export const MyGradeById= () => {
+export const MyGradeById = () => {
   const apiRef = useGridApiRef();
   const [columns, setColumns] = useState<GridColDef[]>(columnActivity);
   const [rows, setRows] = useState<any[]>([]);
@@ -119,11 +123,10 @@ export const MyGradeById= () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    if(!isLoading){
-      buildData()
+    if (!isLoading) {
+      buildData();
     }
-  }, [isLoading])
-  
+  }, [isLoading]);
 
   const getData = async () => {
     const { grade } = router.query;
@@ -184,7 +187,7 @@ export const MyGradeById= () => {
   };
 
   return (
-    <Layout>
+    <>
       {isLoading ? (
         <Box
           display="flex"
@@ -196,8 +199,13 @@ export const MyGradeById= () => {
         </Box>
       ) : (
         <>
-          <Typography variant="h4" className="mb-2">
-            Reportes de calificaciones
+          <Typography
+            component="p"
+            fontSize={22}
+            fontWeight={700}
+            className="mb-2"
+          >
+            Calificaciones
           </Typography>
           <div className="mt-2"></div>
           <Box sx={{ height: 450, width: "100%" }}>
@@ -218,7 +226,7 @@ export const MyGradeById= () => {
           </Box>
         </>
       )}
-    </Layout>
+    </>
   );
 };
 

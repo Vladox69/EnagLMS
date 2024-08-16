@@ -1,5 +1,4 @@
 import { enagApi } from '@/apis'
-import { Layout } from '@/components/layouts'
 import { TeacherModel } from '@/models'
 import React, { useEffect, useState } from 'react'
 import { TableATeachers } from '../../../components/admin/teacher/TableATeachers';
@@ -18,8 +17,8 @@ export default function Teachers() {
     }
 
     return (
-        <Layout>
+        <>
             <TableATeachers teachers={teachers!} />
-        </Layout>
+        </>
     )
 }

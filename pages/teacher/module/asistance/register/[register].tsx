@@ -1,5 +1,4 @@
 import { enagApi } from '@/apis'
-import { Layout } from '@/components/layouts'
 import { AsistanceModel, AsistanceRegisterModel,  StudentModel } from '@/models'
 import {  NextPage } from 'next'
 import { useRouter } from 'next/router'
@@ -59,9 +58,9 @@ export const MyAsistanceRegisterById: NextPage<Props> = ({ }) => {
   }
 
   return (
-    <Layout title='My register asistance'>
+    < >
       <TableRegister asistance_students={register} asistance={asistance!} />
-    </Layout>
+    </>
   )
 }
 

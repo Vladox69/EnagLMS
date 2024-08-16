@@ -1,5 +1,4 @@
 import React from 'react'
-import { Layout } from "@/components/layouts";
 import { Container, Grid, Button, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import Face6Icon from '@mui/icons-material/Face6';
@@ -14,7 +13,7 @@ import Link from 'next/link';
 export default function Admin() {
 
     return (
-        <Layout title='Mi espacio personal' >
+        <  >
             <Container className='container' >
                 {/* <Grid container spacing={2}>
                     <Grid item xs={6} md={3} className='text-center'>
@@ -83,6 +82,6 @@ export default function Admin() {
                     </Grid> 
                 </Grid> */}
             </Container>
-        </Layout>
+        </>
     );
 };

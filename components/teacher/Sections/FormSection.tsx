@@ -125,13 +125,10 @@ export const FormSection: FC<Props> = ({ module_id, section_id }) => {
         onSubmit={formik.handleSubmit}
         className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
       >
-        <Typography className="" variant="h4">
+        <Typography className="" component="p" fontSize={22} fontWeight={700} >
           Formulario de {section_id == null ? "creación " : "edición"} de
           sección
         </Typography>
-        {/* <Typography className='' component='p'>
-                    
-                </Typography> */}
         <TextField
           type="title"
           variant="outlined"

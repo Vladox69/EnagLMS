@@ -1,40 +1,40 @@
 /* custom.css */
 .hover_effect:hover {
-    background-color: rgba(0, 0, 0, 0.1) !important; /* Slight dark overlay on hover */
-    cursor: pointer; /* Change cursor to pointer */
-  }
-  
-  .hover_effect:hover img {
-    transform: scale(1.05); /* Make the image slightly larger on hover */
-  }
-  
-  .black_button {
-    background-color: #000;
-  }
-  
-  .black_button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
+  background-color: rgba(0,0,0,0.1) !important; /* Slight dark overlay on hover */
+  cursor: pointer; /* Change cursor to pointer */
+}
 
-  .divCursoNombre{
-    position: 'absolute'; 
-    bottom: '-20px'; 
-    left: '20px'; 
-    background: 'rgba(0, 0, 0, 1)';
-    padding: '20px'; 
-    color: 'white'; 
-    font-size: '24px';
-    font-weight: 'bold';
+.hover_effect:hover img {
+  transform: scale(1.05); /* Make the image slightly larger on hover */
+}
+
+.black_button {
+  background-color: #000;
+}
+
+.black_button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.divCursoNombre {
+  position: "absolute";
+  bottom: "-20px";
+  left: "20px";
+  background: "rgba(0, 0, 0, 1)";
+  padding: "20px";
+  color: "white";
+  font-size: "24px";
+  font-weight: "bold";
 }
 @media (min-width: 992px) {
-    .divCursoNombre {
-      left: calc((100% -1200px) / 2);
-    }
+  .divCursoNombre {
+    left: calc((100% -1200px) / 2);
   }
-  
-  /* Media queries para pantallas pequeñas */
-  @media (max-width: 991px) {
-    .divCursoNombre {
-      left: 20px;
-    }
+}
+
+/* Media queries para pantallas pequeñas */
+@media (max-width: 991px) {
+  .divCursoNombre {
+    left: 20px;
   }
+}

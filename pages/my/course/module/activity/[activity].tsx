@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layouts";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
 import { Activity } from "../../../../../components/my/activity";
@@ -40,7 +39,7 @@ export const MyActivityById: NextPage<Props> = ({}) => {
   };
 
   return (
-    <Layout title="Activity">
+    < >
       {isLoading ? (
         <Box
           display="flex"
@@ -53,7 +52,7 @@ export const MyActivityById: NextPage<Props> = ({}) => {
       ) : (
         <Activity activity={activity!} />
       )}
-    </Layout>
+    </>
   );
 };
 

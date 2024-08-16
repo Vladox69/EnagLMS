@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import {
   ActivityModel,
   InscriptionModel,
@@ -516,8 +515,8 @@ export default function ReportGrades() {
   }
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2">
         Reportes de calificaciones
       </Typography>
       <Box display="flex" gap={2} alignItems="center">
@@ -580,6 +579,7 @@ export default function ReportGrades() {
           apiRef={apiRef}
           rows={rows}
           columns={columns}
+          disableRowSelectionOnClick 
           // slots={{toolbar:GridToolbar}}
           initialState={{
             pagination: {
@@ -591,6 +591,6 @@ export default function ReportGrades() {
           pageSizeOptions={[10]}
         />
       </Box>
-    </Layout>
+    </>
   );
 }

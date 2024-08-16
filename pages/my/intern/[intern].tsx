@@ -1,8 +1,15 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
-import { GridIternActivity } from "@/components/my/intern/GridIternActivity";
+import { ItemInternActivity } from "@/components/my/intern/ItemInternActivity";
 import { ActivityInternModel, InternCourseModel } from "@/models";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Typography,
+  TextField,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -10,50 +17,101 @@ export const MyInternCourseById = () => {
   const router = useRouter();
   const [activities, setActivities] = useState<ActivityInternModel[]>([]);
   const [course, setCourse] = useState<InternCourseModel>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filteredActivities, setFilteredActivities] = useState<
+    ActivityInternModel[]
+  >([]);
+
+  // Hook para obtener el tema y media query
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+  const { intern: id } = router.query;
   useEffect(() => {
-    if (router.isReady) {
+    if (id) {
       getData();
     }
-  }, [router.isReady]);
+  }, [id]);
+
+  useEffect(() => {
+    // Filtrar actividades según la búsqueda
+    if (searchQuery) {
+      setFilteredActivities(
+        activities.filter((activity) =>
+          activity.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredActivities(activities);
+    }
+  }, [searchQuery, activities]);
 
   const getData = async () => {
-    if (router.isReady) {
-      const { intern: id } = router.query;
-      const { data: cs } = await enagApi.get<InternCourseModel>(
-        `/intern_course/course_id=${id}`
-      );
-      setCourse(cs);
-      const { data: acts } = await enagApi.get<ActivityInternModel[]>(
-        `/intern_activity/course_id=${id}`
-      );
-      setActivities(acts);
-    }
+    try {
+      if (id) {
+        const { data: cs } = await enagApi.get<InternCourseModel>(
+          `/intern_course/course_id=${id}`
+        );
+        setCourse(cs);
+        const { data: acts } = await enagApi.get<ActivityInternModel[]>(
+          `/intern_activity/course_id=${id}`
+        );
+        setActivities(acts);
+      }
+    } catch (error) {}
   };
 
   return (
-    <Layout>
-      {activities == undefined || course == undefined ? (
+    <>
+      {activities === undefined || course === undefined ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight="80vh" 
+          minHeight="80vh"
         >
           <CircularProgress size={100} color="error" />
         </Box>
       ) : (
         <Container className="container">
-          <Typography variant="h2">{course.title}</Typography>
+          <Typography component="p" fontWeight={700} fontSize={26}>
+            {course.title}
+          </Typography>
           <Typography
             component="p"
             dangerouslySetInnerHTML={{
               __html: course.content,
             }}
           />
-          <GridIternActivity activities={activities} />
+          <Typography component="p" fontSize={20} fontWeight={700}>
+            Actividades semanales
+          </Typography>
+          {/* Campo de búsqueda */}
+          <TextField
+            variant="outlined"
+            fullWidth
+            placeholder="Buscar actividades..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              mb: 2,
+              maxWidth: isLargeScreen ? "400px" : "100%", // Cambia el tamaño basado en el tamaño de pantalla
+              width: isLargeScreen ? "400px" : "100%",
+            }}
+          />
+          {filteredActivities.length === 0 ? (
+            <Typography component="p" color="textSecondary">
+              No existen actividades
+            </Typography>
+          ) : (
+            <>
+              {filteredActivities.map((activity) => (
+                <ItemInternActivity activity={activity} key={activity.id} />
+              ))}
+            </>
+          )}
         </Container>
       )}
-    </Layout>
+    </>
   );
 };
 

@@ -101,7 +101,7 @@ export const Activity: FC<Props> = ({ activity }) => {
         </Box>
       ) : (
         <>
-          <Typography variant="h4">{activity.title}</Typography>
+          <Typography component="p" fontWeight={700} fontSize={20}>{activity.title}</Typography>
           <Typography
             component="p"
             dangerouslySetInnerHTML={{

@@ -34,7 +34,13 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import SchoolIcon from "@mui/icons-material/School";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CastForEducationIcon from "@mui/icons-material/CastForEducation";
-import { useRouter } from "next/router";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import {
+  useRouter,
+  useParams,
+  useSearchParams,
+  usePathname,
+} from "next/navigation";
 import { enagApi } from "@/apis";
 import {
   CourseModel,
@@ -45,6 +51,8 @@ import {
   StudentModel,
   TeacherModel,
 } from "@/models";
+import { Nav } from "react-bootstrap";
+import Link from "next/link";
 
 const drawerWidth = 240;
 
@@ -117,14 +125,30 @@ interface ItemBar {
   submenu?: Submenu[];
 }
 
+interface SubLineMenu {
+  name: string;
+  path: string;
+  submenu?: SubLineMenu[];
+}
+
+interface LineMenu {
+  name: string;
+  path: string;
+  onClick: () => void;
+  submenu?: SubLineMenu[];
+}
+
 export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState<Set<number>>(new Set());
   const [openSubSubMenu, setOpenSubSubMenu] = useState<Set<number>>(new Set());
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [barItems, setBarItems] = useState<ItemBar[]>([]);
+  const [lineMenu, setLineMenu] = useState<LineMenu[]>([]);
+  const [homePath, setHomePath] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -134,8 +158,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   };
 
   const goHome = () => {
-    const home = router.pathname.split("/")[1];
-    router.push(`/${home}`);
+    router.push(`${homePath}`);
   };
 
   const onLogout = async () => {
@@ -145,13 +168,6 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
 
   const onClickGoTo = (path: string) => {
     if (path !== "") {
-      const hasNumber = /\d/.test(path);
-      if (hasNumber) {
-        const home = router.pathname.split("/")[1];
-        if (home === "teacher" || home === "my") {
-          router.push(`/${home}`);
-        }
-      }
       router.push(`/${path}`);
     }
   };
@@ -182,7 +198,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
 
   useEffect(() => {
     getData();
-  }, [router.isReady]);
+  }, []);
 
   const getData = async () => {
     setIsLoading(true);
@@ -198,6 +214,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   const buildData = async (profile: any) => {
     const { rol } = profile;
     if (rol == "ADMIN") {
+      setHomePath("/admin");
       const items: ItemBar[] = [
         {
           icon: <PersonIcon />,
@@ -253,14 +270,15 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
             },
             {
               name: "Inscripciones",
-              path: "admin/reports/assistances",
-              icon: <ChecklistRtlIcon />,
+              path: "admin/reports/inscriptions",
+              icon: <HowToRegIcon />,
             },
           ],
         },
       ];
       setBarItems(items);
     } else if (rol == "STUDENT") {
+      setHomePath("/my");
       // Añade lógica específica para estudiantes
       const { data: p } = await enagApi.get(`/auth/profile`);
       const { data: s } = await enagApi.get<StudentModel>(
@@ -318,8 +336,38 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
         },
       ];
       setBarItems(items);
+
+      const lineMenu: LineMenu[] = [
+        {
+          name: "Cursos",
+          onClick: () => {},
+          path: "",
+        },
+        {
+          name: "Pasantías",
+          onClick: () => {},
+          path: "",
+        },
+        {
+          name: "Módulos",
+          onClick: () => {},
+          path: "",
+        },
+        {
+          name: "Actividades",
+          onClick: () => {},
+          path: "",
+        },
+        {
+          name: "Calificaciones",
+          onClick: () => {},
+          path: "",
+        },
+      ];
+      setLineMenu(lineMenu);
     } else if (rol == "TEACHER") {
       // Añade lógica específica para profesores
+      setHomePath("/teacher");
       const { data: t } = await enagApi.get<TeacherModel>(
         `/teachers/user_id=${profile.user_id}`
       );
@@ -382,7 +430,12 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{ backgroundColor: "black" }}>
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{ backgroundColor: "black" }}
+        component="nav"
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -396,6 +449,16 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
           <Typography variant="h6" noWrap component="div">
             ENAG
           </Typography>
+          <Divider />
+          {/* <List className="d-flex" >
+            {lineMenu.map((item, index) => (
+              <ListItem key={index} disablePadding>
+                <ListItemButton sx={{ textAlign: "center" }}>
+                  <ListItemText primary={item.name} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List> */}
         </Toolbar>
       </AppBar>
       <Drawer

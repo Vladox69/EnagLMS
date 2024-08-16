@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { GridInternActivity } from "@/components/teacher/Intern/GridInternActivity";
 import { ActivityInternModel, InternCourseModel } from "@/models";
 import {
@@ -15,14 +14,15 @@ import Swal from "sweetalert2";
 
 export const TeacherInternById = () => {
   const router = useRouter();
+  const {intern:id}=router.query
   const [intern, setIntern] = useState<InternCourseModel>();
   const [activities, setActivities] = useState<ActivityInternModel[]>([])
   const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
-    if (router.isReady) {
+    if (id) {
       getData();
     }
-  }, [router.isReady]);
+  }, [id]);
 
   const getData = async () => {
     setIsLoading(true)
@@ -46,14 +46,13 @@ export const TeacherInternById = () => {
     }
   }
   const goToNewActivity=async()=>{
-    const {intern:id}=router.query
     router.push({
         pathname:`/teacher/intern/activity/new`,
         query:{intern_id:id}
     })
   }
   return (
-    <Layout title="Intern teacher module">
+    < >
       {isLoading ? (
         <Box
           display="flex"
@@ -65,7 +64,7 @@ export const TeacherInternById = () => {
         </Box>
       ) : (
         <Container className="container">
-          <Typography variant="h4" className="my-2">
+          <Typography component="p" fontSize={22} fontWeight={700} className="my-2">
             {" "}
             {intern?.title}{" "}
           </Typography>
@@ -83,7 +82,7 @@ export const TeacherInternById = () => {
           </Button>
         </Container>
       )}
-    </Layout>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import React from 'react'
-import { Layout } from '@/components/layouts';
 import { Container } from '@mui/material';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
@@ -14,7 +13,7 @@ export const MyResourceById: NextPage<Props> = ({ resource }) => {
 
 
     return (
-        <Layout title='My resource'>
+        < >
             {resource}
             <Container  style={{
                 border: '1px solid rgba(0, 0, 0, 0.3)',
@@ -24,7 +23,7 @@ export const MyResourceById: NextPage<Props> = ({ resource }) => {
                     <Viewer fileUrl="/assets/test.pdf" />
                 </Worker>
             </Container>
-        </Layout>
+        </>
     )
 }
 

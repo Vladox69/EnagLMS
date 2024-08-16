@@ -1,5 +1,4 @@
 import { enagApi } from "@/apis";
-import { Layout } from "@/components/layouts";
 import { CourseModel, InternCourseModel, StudentModel } from "@/models";
 import React, { useEffect, useState } from "react";
 import { TableAStudent } from "../../../components/admin/student/TableAStudent";
@@ -165,10 +164,8 @@ export default function Teachers() {
   };
 
   return (
-    <Layout>
-      <Typography variant="h4" className="mb-2">
-        Tabla de estudiantes
-      </Typography>
+    <>
+      <Typography component="p" fontSize={22} fontWeight={700}> Estudiantes </Typography>
       <Box display="flex" gap={2} alignItems="center">
         <TextField
           select
@@ -236,6 +233,6 @@ export default function Teachers() {
         </IconButton>
       </Box>
       <TableAStudent students={students!} />
-    </Layout>
+    </>
   );
 }
