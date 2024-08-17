@@ -204,7 +204,7 @@ const updateStudent = async (
   res: NextApiResponse<Data>
 ) => {
   try {
-    const { ID_card_url, study_certificate_url, user_id, names, last_names } =
+    const {  study_certificate_url, user_id } =
       req.body;
     const { id } = req.query;
     const student_id = id?.toString().substring("student_id=".length);
@@ -215,10 +215,6 @@ const updateStudent = async (
       },
     });
 
-    if (student_temp?.ID_card_url != ID_card_url) {
-      await deleteFile(student_temp?.ID_card_url || "");
-    }
-
     if (student_temp?.study_certificate_url || study_certificate_url) {
       await deleteFile(student_temp?.study_certificate_url || "");
     }
@@ -228,11 +224,8 @@ const updateStudent = async (
         id: Number(student_id),
       },
       data: {
-        ID_card_url,
         study_certificate_url,
         user_id,
-        names,
-        last_names,
       },
     });
     if (!student) {
@@ -263,7 +256,6 @@ const deleteStudent = async (
       },
     });
 
-    await deleteFile(student_temp?.ID_card_url || "");
     await deleteFile(student_temp?.study_certificate_url || "");
 
     const student = await prisma.student.delete({

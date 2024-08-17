@@ -1,5 +1,5 @@
 import { enagApi } from "@/apis";
-import { ModuleModel, TeacherModel } from "@/models";
+import { ModuleModel, TeacherModel, UserModel } from "@/models";
 import { newModule } from "@/utils/admin/course/module/newModule";
 import { updateModule } from "@/utils/admin/course/module/updateModule";
 import {
@@ -11,31 +11,38 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import "react-quill/dist/quill.snow.css";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import React, { FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import styles from "@/styles/Custom.module.css";
 import * as yup from "yup";
 import Swal from "sweetalert2";
+import { UserTeacher } from "@/interface/models_combine";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import Image from "next/image";
 interface Props {
   module_id?: number;
   course_id?: number;
-  onSubmitResource: (formData: any) => void;
-  onCancel: () => void;
 }
 
-export const FormAModule: FC<Props> = ({
-  module_id,
-  course_id,
-  onSubmitResource,
-  onCancel,
-}) => {
+export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
   const router = useRouter();
-
+  const [content, setContent] = useState("");
+  const [validationSchema, setvalidationSchema] = useState<any>();
   useEffect(() => {
-    getData();
+    if (module_id != undefined) {
+      getData();
+      setvalidationSchema(someValidation);
+    } else {
+      setvalidationSchema(allValidationSchema);
+    }
   }, [module_id]);
-  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => {
+    getUsers();
+  }, []);
+  const [isLoading, setIsLoading] = useState(true);
   const [initialValues, setInitialValues] = useState({
     id: 0,
     title: "",
@@ -47,7 +54,29 @@ export const FormAModule: FC<Props> = ({
     img_url: "",
   });
   const [teachers, setTeachers] = useState<TeacherModel[]>([]);
+  const [users, setUsers] = useState<UserModel[]>([]);
+  const [usersTeachers, setUsersTeachers] = useState<UserTeacher[]>([]);
   const validateMessage = "Campo obligatorio";
+  const allValidationSchema = yup.object({
+    title: yup.string().required(validateMessage),
+    teacher_id: yup
+      .number()
+      .required(validateMessage)
+      .notOneOf([0], validateMessage),
+    img_file: yup
+      .mixed()
+      .required("Se requiere un archivo")
+      .test(
+        "fileFormat",
+        "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
+        (value: any) => {
+          return (
+            value &&
+            ["image/jpeg", "image/png", "image/gif"].includes(value.type)
+          );
+        }
+      ),
+  });
   const someValidation = yup.object({
     title: yup.string().required(validateMessage),
     teacher_id: yup
@@ -55,11 +84,31 @@ export const FormAModule: FC<Props> = ({
       .required(validateMessage)
       .notOneOf([0], validateMessage),
   });
-  const getData = async () => {
-    setIsLoading(true);
+  const onFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    if (target.files && target.files.length === 0) return;
+    formik.setFieldValue("img_file", target.files?.[0]);
+  };
+
+  const goBack = () => {
+    router.back();
+  };
+
+  const getUsers = async () => {
     try {
+      const { data: u } = await enagApi.get(`/users/user_rol=TEACHER`);
+      setUsers(u);
+      
       const { data: t } = await enagApi.get(`/teachers`);
       setTeachers(t);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
+
+  const getData = async () => {
+    try {
       if (module_id != undefined) {
         const { data: m } = await enagApi.get<ModuleModel>(
           `/modules/module_id=${module_id}`
@@ -74,26 +123,41 @@ export const FormAModule: FC<Props> = ({
           img_file: null,
           img_url: m.img_url,
         });
+        setContent(m.content)
       }
-      setIsLoading(false);
-    } catch (error) {
-      Swal.fire({
-        icon: "info",
-        title: "Tenemos porblemas al cargar los datos",
-      });
-      setIsLoading(false);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (!isLoading) {
+      buildData();
     }
+  }, [isLoading]);
+
+  const buildData = () => {
+    let usersTeacherTemp: UserTeacher[] = [];
+    teachers.map((teacher) => {
+      const user = users.find((usr) => usr.id == teacher.user_id);
+      if (user != undefined) {
+        const userTeacher: UserTeacher = {
+          user,
+          teacher,
+        };
+        usersTeacherTemp = [...usersTeacherTemp, userTeacher];
+      }
+    });
+    setUsersTeachers(usersTeacherTemp);
   };
 
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
-    validationSchema: someValidation,
+    validationSchema,
     onSubmit: async (values, { resetForm }) => {
       const body = {
         id: values.id,
         title: values.title,
-        content: values.content,
+        content,
         course_id: values.course_id,
         teacher_id: values.teacher_id,
         hours: values.hours,
@@ -101,12 +165,28 @@ export const FormAModule: FC<Props> = ({
         img_url: values.img_url,
       };
       let res: any;
+      setIsLoading(true);
       if (module_id != undefined) {
         res = await updateModule(body);
-        onSubmitResource(res);
       } else {
         res = await newModule(body);
-        onSubmitResource(res);
+      }
+      if (res.status == 200) {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "success",
+          title: "Los datos se guardaron",
+        }).then(() => {
+          goBack();
+        });
+      } else {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "No se pudo guardar los datos",
+        }).then(() => {
+          goBack();
+        });
       }
       resetForm();
     },
@@ -129,6 +209,11 @@ export const FormAModule: FC<Props> = ({
           onSubmit={formik.handleSubmit}
           className=" w-100 d-flex flex-column gap-3 mt-2"
         >
+          <Typography component="p" fontSize={22} fontWeight={700}>
+            {" "}
+            Datos del módulo{" "}
+          </Typography>
+
           <TextField
             type="text"
             variant="outlined"
@@ -141,6 +226,47 @@ export const FormAModule: FC<Props> = ({
             error={formik.touched.title && Boolean(formik.errors.title)}
             helperText={formik.touched.title && formik.errors.title}
           />
+          <div>
+            <Typography component="p">Contenido</Typography>
+            <ReactQuill
+              theme="snow"
+              id="content"
+              value={content}
+              onChange={setContent}
+            />
+          </div>
+          <div>
+            <Typography component="p">Imagen</Typography>
+            <TextField
+              type="file"
+              variant="outlined"
+              id="img_file"
+              name="img_file"
+              className="w-100"
+              // value={formik.values.img_file}
+              onChange={onFileInputChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.img_file && Boolean(formik.errors.img_file)}
+              helperText={formik.touched.img_file && formik.errors.img_file}
+              inputProps={{
+                accept: "image/*",
+                multiple: false,
+              }}
+            />
+          </div>
+          {!!module_id ? (
+            <>
+              <Typography component="p">Imagen actual</Typography>
+              <Image
+                src={formik.values.img_url}
+                width={300}
+                height={300}
+                alt=""
+              />
+            </>
+          ) : (
+            <></>
+          )}
           <TextField
             id="teacher_id"
             select
@@ -155,9 +281,9 @@ export const FormAModule: FC<Props> = ({
             }
           >
             <MenuItem value={0}>No seleccionado</MenuItem>
-            {teachers.map((teacher) => (
-              <MenuItem key={teacher.id} value={teacher.id}>
-                {teacher.names}
+            {usersTeachers.map((usrtch, index) => (
+              <MenuItem key={index} value={usrtch.teacher.id}>
+                {usrtch.user.names} {usrtch.user.last_names}
               </MenuItem>
             ))}
           </TextField>
@@ -169,7 +295,7 @@ export const FormAModule: FC<Props> = ({
             <Button
               variant="contained"
               className={styles.black_button + " ms-2"}
-              onClick={onCancel}
+              onClick={goBack}
             >
               {" "}
               Cancelar

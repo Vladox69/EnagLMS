@@ -1,5 +1,6 @@
 import { prisma } from "@/apis";
 import { UserModel } from "@/models";
+import { deleteFile } from "@/utils/deleteFiles";
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
@@ -91,7 +92,19 @@ const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
         const {id}=req.query
         const user_id=id?.toString().substring('user_id='.length)
-        const {username,password,email,rol,photo_url}=req.body
+        const {username,password,email,rol,photo_url,names,last_names,ID_card_url}=req.body
+        const user_temp=await prisma.user.findFirst({
+            where:{
+                id:Number(user_id)
+            }
+        })
+        if (user_temp?.ID_card_url != ID_card_url) {
+            await deleteFile(user_temp?.ID_card_url || "");
+        }
+        if(user_temp?.photo_url != photo_url){
+            await deleteFile(user_temp?.photo_url|| "")
+        }
+
         const user=await prisma.user.update({
             where:{
                 id:Number(user_id)
@@ -101,7 +114,10 @@ const updateUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
                 password,
                 email,
                 rol,
-                photo_url
+                photo_url,
+                names,
+                last_names,
+                ID_card_url
             }
         })
         return res.status(200).json(user)

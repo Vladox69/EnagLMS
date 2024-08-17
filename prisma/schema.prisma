@@ -14,6 +14,9 @@ datasource db {
 
 model user{
   id        Int @id @default(autoincrement())
+  names              String
+  last_names         String
+  ID_card_url        String
   username  String   @unique
   password  String 
   email     String
@@ -32,15 +35,11 @@ enum Role{
 
 model student{
   id                    Int @id @default(autoincrement())
-  names                 String
-  last_names            String
-  ID_card_url           String
   study_certificate_url String
   activities            submission[]
   submission_interns    submission_intern[]
   inscriptions          inscription[]
   intern_inscription    intern_inscription[]
-  // asistances            asistance[]
   asistances_register   asistance_register[]
   user                  user @relation(fields: [user_id],references: [id])
   user_id               Int 
@@ -48,9 +47,6 @@ model student{
 
 model teacher{
   id                 Int @id @default(autoincrement())
-  names              String
-  last_names         String
-  ID_card_url        String
   cv_url             String
   third_level_degree String
   modules            module[]
@@ -61,6 +57,7 @@ model teacher{
 
 model inscription{
   id         Int @id @default(autoincrement())
+  date       DateTime
   student    student @relation(fields: [student_id],references: [id])
   student_id Int
   course     course @relation(fields: [course_id],references: [id])     
@@ -149,6 +146,7 @@ model activity_resource{
 
 model submission{
   id          Int @id @default(autoincrement())
+  date        DateTime
   grade       Float
   comment     String
   state_sub   String
@@ -170,12 +168,9 @@ model submission_resource{
 
 model asistance{
   id         Int @id @default(autoincrement())
-  // status      StatusAsistance  @default(PRESENTE)
   description String
   date        DateTime   
   registers   asistance_register[] 
-  // student    student @relation(fields: [student_id],references: [id])
-  // student_id Int
   module     module @relation(fields: [module_id],references: [id])     
   module_id  Int    
 }
@@ -191,6 +186,7 @@ model asistance_register{
 
 model intern_cv{
   id     Int @id @default(autoincrement())
+  date   DateTime
   name   String
   phone  String
   email  String
@@ -213,6 +209,7 @@ model intern_course{
 
 model intern_inscription{
   id            Int @id @default(autoincrement())
+  date          DateTime
   student       student @relation(fields: [student_id],references: [id])
   student_id    Int
   intern_course intern_course @relation(fields: [course_id],references: [id])
@@ -230,13 +227,13 @@ model activity_intern{
 
 model submission_intern{
   id              Int @id @default(autoincrement())
+  date            DateTime
   url_resource    String
   student         student @relation(fields: [student_id],references: [id])
   student_id      Int
   activity_intern activity_intern @relation(fields: [activity_id],references: [id])
   activity_id     Int
 }
-
 
 model resources{
   id              Int @id @default(autoincrement())

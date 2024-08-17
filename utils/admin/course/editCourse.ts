@@ -6,7 +6,9 @@ export const editCourse = async (course: any) => {
     let res_img = course.img_url;
     if (course.img_file != null) {
       const data = await uploadFile(course.img_file);
-      res_img = data.url;
+      if(data.url){
+        res_img = data.url;
+      }
     }
     const body = {
       id: course.id,

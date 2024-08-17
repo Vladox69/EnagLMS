@@ -1,5 +1,6 @@
 import { enagApi } from "@/apis";
 import {
+  InternInscriptionUserStudent,
   StudentInscriptionCourse,
   StudentInscriptionIntern,
 } from "@/interface/models_combine";
@@ -9,6 +10,7 @@ import {
   InternCourseModel,
   InternInscriptionModel,
   StudentModel,
+  UserModel,
 } from "@/models";
 import {
   Box,
@@ -23,13 +25,24 @@ import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-
-const getStudentName = (student: any) => {
-  return student === undefined ? "N/A" : student.names;
+const transformDate = (dateString: string) => {
+  return dateString.split("T")[0];
 };
 
-const getStudentLasName = (student: any) => {
-  return student === undefined ? "N/A" : student.last_names;
+const getUserNames = (user: any) => {
+  return user === undefined ? "N/A" : user.names;
+};
+
+const getUserLastNames = (user: any) => {
+  return user === undefined ? "N/A" : user.last_names;
+};
+
+const getUserIdCard = (user: any) => {
+  return user === undefined ? "N/A" : user.ID_card_url;
+};
+
+const getUserName = (user: any) => {
+  return user === undefined ? "N/A" : user.username;
 };
 
 const getCourseName = (course: any) => {
@@ -47,16 +60,22 @@ const columnInscriptionCourse: GridColDef[] = [
     width: 50,
   },
   {
+    field: "date",
+    headerName: "Fecha de inscripción",
+    width: 200,
+    valueGetter: (value, row) => transformDate(row.inscription.date.toString()),
+  },
+  {
     field: "names",
     headerName: "Nombres",
     width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
+    valueGetter: (value, row) => getUserNames(row.user),
   },
   {
     field: "lastnames",
     headerName: "Apellidos",
     width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
+    valueGetter: (value, row) => getUserLastNames(row.user),
   },
   {
     field: "coursename",
@@ -73,16 +92,22 @@ const columnInscriptionIntern: GridColDef[] = [
     width: 50,
   },
   {
+    field: "date",
+    headerName: "Fecha de inscripción",
+    width: 200,
+    valueGetter: (value, row) => transformDate(row.inscription.date.toString()),
+  },
+  {
     field: "names",
     headerName: "Nombres",
     width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
+    valueGetter: (value, row) => getUserNames(row.user),
   },
   {
     field: "lastnames",
     headerName: "Apellidos",
     width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
+    valueGetter: (value, row) => getUserLastNames(row.user),
   },
   {
     field: "coursename",
@@ -106,6 +131,7 @@ export default function ReportInscriptions() {
   const [selectedIntern, setSelectedIntern] = useState<number>(0);
   const [option, setOption] = useState<number>(0);
   //Data
+  const [users, setUsers] = useState<UserModel[]>([]);
   const [courses, setCourses] = useState<CourseModel[]>([]);
   const [interns, setInterns] = useState<InternCourseModel[]>([]);
   const [students, setStudents] = useState<StudentModel[]>([]);
@@ -169,6 +195,8 @@ export default function ReportInscriptions() {
 
   const getData = async () => {
     try {
+      const { data: usr } = await enagApi.get(`/users/user_rol=STUDENT`);
+      setUsers(usr);
       const { data: crs } = await enagApi.get(`/courses`);
       setCourses(crs);
       const { data: intcrs } = await enagApi.get(`/intern_course`);
@@ -189,11 +217,13 @@ export default function ReportInscriptions() {
     inscriptionsCourses.map((inscription) => {
       const course = courses.find((cr) => cr.id == inscription.course_id);
       const student = students.find((st) => st.id == inscription.student_id);
-      if (course != undefined && student != undefined) {
+      const user = users.find((usr) => usr.id == student?.user_id);
+      if (course != undefined && student != undefined && user != undefined) {
         const studentInscriptionCourseTemp: StudentInscriptionCourse = {
           course,
           inscription,
           student,
+          user,
         };
         studentsInscriptionsCourseTemp = [
           ...studentsInscriptionsCourseTemp,
@@ -206,11 +236,13 @@ export default function ReportInscriptions() {
     inscriptionsInterns.map((inscription) => {
       const intern = interns.find((intr) => intr.id == inscription.course_id);
       const student = students.find((st) => st.id == inscription.student_id);
-      if (intern != undefined && student != undefined) {
+      const user = users.find((usr) => usr.id == student?.user_id);
+      if (intern != undefined && student != undefined && user != undefined) {
         const studentInscriptionInternTemp: StudentInscriptionIntern = {
           intern,
           inscription,
           student,
+          user,
         };
         studentsInscriptionsInternsTemp = [
           ...studentsInscriptionsInternsTemp,
@@ -222,7 +254,7 @@ export default function ReportInscriptions() {
   };
 
   const inscriptionByCourse = () => {
-    setRows(columnInscriptionCourse);
+    setColumns(columnInscriptionCourse);
     let auxData: StudentInscriptionCourse[] = [];
     let rowsIndex: any[] = [];
     if (selectedCourse == -1) {
@@ -241,13 +273,13 @@ export default function ReportInscriptions() {
 
   const inscriptionByIntern = () => {
     setColumns(columnInscriptionIntern);
-    let auxData: StudentInscriptionIntern[] = [];
+    let auxData: InternInscriptionUserStudent[] = [];
     let rowsIndex: any[] = [];
     if (selectedIntern == -1) {
       auxData = studentsIncriptionsInterns;
     } else if (selectedIntern > 0) {
       auxData = studentsIncriptionsInterns.filter(
-        (stinsint) => stinsint.intern.id == selectedIntern
+        (stinsint) => stinsint.inscription.id == selectedIntern
       );
     }
     rowsIndex = auxData.map((data, index) => ({
@@ -350,6 +382,7 @@ export default function ReportInscriptions() {
           rows={rows}
           columns={columns}
           // slots={{toolbar:GridToolbar}}
+          disableRowSelectionOnClick
           initialState={{
             pagination: {
               paginationModel: {

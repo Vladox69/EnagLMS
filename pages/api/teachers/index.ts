@@ -34,15 +34,12 @@ const getTeachers = async ( res: NextApiResponse<Data>) => {
 
 const createTeacher = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const {ID_card_url,cv_url,third_level_degree,user_id,names,last_names } = req.body
+        const {cv_url,third_level_degree,user_id } = req.body
         const teacher= await prisma.teacher.create({
             data:{
-                ID_card_url,
                 cv_url,
                 third_level_degree,
                 user_id,
-                names,
-                last_names
             }
         })
         return res.status(200).json(teacher)

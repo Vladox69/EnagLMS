@@ -4,18 +4,21 @@ import { uploadFile } from "@/utils"
 export const newTeacher=async(teacher:any)=>{
     try {
         
-        const resID = await uploadFile(teacher.id_card_file)
-        const resCV= await uploadFile(teacher.cv_file)        
+        const resCV= await uploadFile(teacher.cv_file)     
+        let cv_url="";
+        if(resCV.status==200){
+            cv_url=resCV.url
+        }   
         const resTLD = await uploadFile(teacher.third_level_degree_file)
-        
+        let third_level_degree="";
+        if(resTLD.status==200){
+            third_level_degree=resTLD.url
+        }
         const body={
             id: teacher.id,
-            ID_card_url: resID.url,
-            cv_url: resCV.url,
-            third_level_degree: resTLD.url,
+            cv_url,
+            third_level_degree,
             user_id: teacher.user_id,
-            names: teacher.names,
-            last_names: teacher.last_names,
         }
 
         const res = await enagApi.post(`/teachers`,body)

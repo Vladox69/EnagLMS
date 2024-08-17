@@ -3,15 +3,14 @@ import { uploadFile } from "@/utils"
 
 export const newStudent = async (student: any) => {
     try {
-        const resID = await uploadFile(student.id_card_file)
         const resSC = await uploadFile(student.study_certificate_file)
-
+        let study_certificate_url;
+        if(resSC.status==200){
+            study_certificate_url=resSC.url 
+        }
         const body={
-            ID_card_url:resID.url,
-            study_certificate_url:resSC.url,
+            study_certificate_url,
             user_id:student.user_id, 
-            names:student.names,
-            last_names:student.last_names
         }
 
         const res = await enagApi.post(`/students`,body)

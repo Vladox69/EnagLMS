@@ -10,6 +10,7 @@ import { CustomDialog } from "@/components/my/CustomDialog";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { GridColDef, DataGrid } from "@mui/x-data-grid";
 import teachers from "@/pages/api/teachers";
+import { UserStudent } from "@/interface/models_combine";
 
 interface Props {
   students: StudentModel[];
@@ -40,7 +41,7 @@ const DocumentDialog = (title: string, url: string) => {
 export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
   const router = useRouter();
   const [students, setStudents] = useState<StudentModel[]>([]);
-
+  const [usersStudents, setUsersStudents] = useState<UserStudent[]>([])
   useEffect(() => {
     setStudents(stdnts);
   }, [stdnts]);
@@ -145,6 +146,8 @@ export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
       filterable: false,
     },
   ];
+
+ 
 
   return (
     <div className="mt-2">

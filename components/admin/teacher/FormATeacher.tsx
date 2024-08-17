@@ -5,7 +5,6 @@ import {
   CircularProgress,
   Container,
   MenuItem,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -39,37 +38,21 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
   }, [teacher_id]);
 
   const goBack = () => {
-    router.back();
+    router.push("/admin/teachers");
   };
   const [isLoading, setIsLoading] = useState(false);
   const [validationSchema, setValidationSchema] = useState<any>();
   const [initialValues, setInitialValues] = useState({
     id: 0,
-    ID_card_url: "",
-    id_card_file: null,
     cv_url: "",
     cv_file: null,
     third_level_degree: "",
     third_level_degree_file: null,
     user_id: 0,
-    names: "",
-    last_names: "",
   });
   const validateMessage = "Campo obligatorio";
   const allValidation = yup.object({
-    names: yup.string().required(validateMessage),
-    last_names: yup.string().required(validateMessage),
     user_id: yup.number().required(validateMessage).notOneOf([0]),
-    id_card_file: yup
-      .mixed()
-      .required("Se requiere un archivo")
-      .test(
-        "fileFormat",
-        "Formato de archivo no soportado, solo se permiten: pdf",
-        (value: any) => {
-          return value && ["application/pdf"].includes(value.type);
-        }
-      ),
     cv_file: yup
       .mixed()
       .required("Se requiere un archivo")
@@ -92,22 +75,13 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
       ),
   });
   const someValidation = yup.object({
-    names: yup.string().required(validateMessage),
-    last_names: yup.string().required(validateMessage),
     user_id: yup.number().required(validateMessage).notOneOf([0]),
   });
 
-  const [ID, setID] = useState(false);
   const [CV, setCV] = useState(false);
-  const [TLD, setTLD] = useState(false);
   const [users, setUsers] = useState<UserModel[]>([]);
-
-  const onIdCardInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    if (target.files && target.files.length === 0) return;
-    formik.setFieldValue("id_card_file", target.files?.[0]);
-  };
-
+  //user
+  const [userSelected, setUserSelected] = useState<UserModel>();
   const onCVInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
     if (target.files && target.files.length === 0) return;
@@ -120,32 +94,45 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
     formik.setFieldValue("third_level_degree_file", target.files?.[0]);
   };
 
+  const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedUserId = parseInt(event.target.value, 10);
+    formik.setFieldValue("user_id", selectedUserId);
+
+    // Buscar el usuario seleccionado en la lista de usuarios
+    const selectedUser = users.find((user) => user.id === selectedUserId);
+    setUserSelected(selectedUser);
+  };
+
   const getData = async () => {
-    if (teacher_id != undefined) {
-      const { data: teacher } = await enagApi.get<TeacherModel>(
-        `/teachers/teacher_id=${teacher_id}`
-      );
-      setInitialValues({
-        id: teacher.id,
-        ID_card_url: teacher.ID_card_url,
-        id_card_file: null,
-        cv_url: teacher.cv_url,
-        cv_file: null,
-        third_level_degree: teacher.third_level_degree,
-        third_level_degree_file: null,
-        user_id: teacher.user_id,
-        names: teacher.names,
-        last_names: teacher.last_names,
-      });
-    }
+    try {
+      if (teacher_id != undefined) {
+        const { data: teacher } = await enagApi.get<TeacherModel>(
+          `/teachers/teacher_id=${teacher_id}`
+        );
+        setInitialValues({
+          id: teacher.id,
+          cv_url: teacher.cv_url,
+          cv_file: null,
+          third_level_degree: teacher.third_level_degree,
+          third_level_degree_file: null,
+          user_id: teacher.user_id,
+        });
+        const { data: user } = await enagApi.get<UserModel>(
+          `/users/user_id=${teacher.user_id}`
+        );
+        setUserSelected(user);
+      }
+    } catch (error) {}
   };
 
   const getUsers = async () => {
     const { data: usr } = await enagApi.get(`/users/user_rol=TEACHER`);
     const { data: tch } = await enagApi.get(`/teachers`);
+    
     const uniqueItems = usr.filter(
       (itemA: any) => !tch.some((itemB: any) => itemA.id === itemB.user_id)
     );
+    
     if (teacher_id != undefined) {
       const { data: teacher } = await enagApi.get<TeacherModel>(
         `/teachers/teacher_id=${teacher_id}`
@@ -194,13 +181,9 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
     onSubmit: async (values, { resetForm }) => {
       const body = {
         id: values.id,
-        ID_card_url: values.ID_card_url,
         cv_url: values.cv_url,
         third_level_degree: values.third_level_degree,
         user_id: values.user_id,
-        names: values.names,
-        last_names: values.last_names,
-        id_card_file: values.id_card_file,
         cv_file: values.cv_file,
         third_level_degree_file: values.third_level_degree_file,
       };
@@ -218,7 +201,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
           icon: "success",
           title: "Los datos se guardaron",
         }).then(() => {
-          router.back();
+          goBack()
         });
       } else {
         setIsLoading(false);
@@ -226,7 +209,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
           icon: "error",
           title: "No se pudo guardar los datos",
         }).then(() => {
-          router.back();
+          goBack()
         });
       }
       resetForm();
@@ -257,58 +240,73 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
         <Typography className="" variant="h4">
           Datos del profesor
         </Typography>
-        <TextField
-          type="text"
-          variant="outlined"
-          label="Nombres"
-          id="names"
-          name="names"
-          value={formik.values.names}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.names && Boolean(formik.errors.names)}
-          helperText={formik.touched.names && formik.errors.names}
-        />
-        <TextField
-          type="text"
-          variant="outlined"
-          label="Apellidos"
-          id="last_names"
-          name="last_names"
-          value={formik.values.last_names}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.touched.last_names && Boolean(formik.errors.last_names)}
-          helperText={formik.touched.last_names && formik.errors.last_names}
-        />
-
-        <div>
-          <Typography component="p"> Cédula </Typography>
-          <TextField
-            type="file"
-            variant="outlined"
-            id="id_card_file"
-            name="id_card_file"
-            className="w-100"
-            // value={formik.values.cv_url}
-            inputProps={{
-              accept: "application/pdf",
-            }}
-            onChange={onIdCardInputChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.id_card_file && Boolean(formik.errors.id_card_file)
-            }
-            helperText={
-              formik.touched.id_card_file && formik.errors.id_card_file
-            }
-          />
-          {!!teacher_id ? (
-            renderResource("Cédula.pdf", formik.values.ID_card_url, ID, setID)
+        {teacher_id == undefined && users.length == 0 ? (
+            <Typography
+              component="p"
+              className="text-secondary"
+              fontWeight={700}
+            >
+              No existen usuarios disponibles
+            </Typography>
           ) : (
             <></>
           )}
-        </div>
+        {teacher_id == undefined && users.length > 0 ? (
+          <TextField
+            id="user_id"
+            select
+            name="user_id"
+            label="Usuarios"
+            variant="outlined"
+            value={formik.values.user_id}
+            onChange={handleUserChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.user_id && Boolean(formik.errors.user_id)}
+          >
+            <MenuItem value={0}>No seleccionado</MenuItem>
+            {users.map((user) => (
+              <MenuItem key={user.id} value={user.id}>
+                {user.username}
+              </MenuItem>
+            ))}
+          </TextField>
+        ) : (
+          <></>
+        )}
+        {userSelected != undefined ? (
+          <>
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Nombres"
+              id="names"
+              name="names"
+              contentEditable={false}
+              value={userSelected?.names}
+            />
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Apellidos"
+              id="names"
+              name="lastnames"
+              contentEditable={false}
+              value={userSelected?.last_names}
+            />
+            <TextField
+              type="text"
+              variant="outlined"
+              label="Nombre de usuario"
+              id="user"
+              name="user"
+              contentEditable={false}
+              value={userSelected?.username}
+            />
+          </>
+        ) : (
+          <></>
+        )}
+
         <div>
           <Typography component="p"> Título de tercer grado </Typography>
           <TextField
@@ -319,7 +317,6 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
             inputProps={{
               accept: "application/pdf",
             }}
-            // value={formik.values.third_level_degree_file}
             className="w-100"
             onChange={onCVInputChange}
             onBlur={formik.handleBlur}
@@ -363,7 +360,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
           {!!teacher_id ? (
             renderResource(
               "Hoja de vida.pdf",
-              formik.values.third_level_degree,
+              formik.values.cv_url,
               CV,
               setCV
             )
@@ -371,28 +368,6 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
             <></>
           )}
         </div>
-        {teacher_id == undefined ? (
-          <TextField
-            id="user_id"
-            select
-            name="user_id"
-            label="Usuarios"
-            variant="outlined"
-            value={formik.values.user_id}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.user_id && Boolean(formik.errors.user_id)}
-          >
-            <MenuItem value={0}>No seleccionado</MenuItem>
-            {users.map((user) => (
-              <MenuItem key={user.id} value={user.id}>
-                {user.username}
-              </MenuItem>
-            ))}
-          </TextField>
-        ) : (
-          <></>
-        )}
 
         <div>
           <Button

@@ -23,7 +23,7 @@ import styles from "@/styles/Custom.module.css";
 import * as yup from "yup";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Image from "next/image";
-import DownloadIcon from '@mui/icons-material/Download';
+import DownloadIcon from "@mui/icons-material/Download";
 import { handleDownload } from "@/utils/file/handleDownload";
 interface Props {
   user_id?: number;
@@ -33,13 +33,13 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
   const router = useRouter();
 
   const goBack = () => {
-    router.back();
+    router.push("/admin/users");
   };
 
   const [validationSchema, setValidationSchema] = useState<any>();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [photo, setPhoto] = useState(false);
+  const [ID, setID] = useState(false);
   const [initialValues, setInitialValues] = useState({
     id: 0,
     username: "",
@@ -48,10 +48,26 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     rol: "no",
     photo_url: "",
     photo_file: null,
+    names: "",
+    last_names: "",
+    ID_card_url: "",
+    id_card_file: null,
   });
-  
+
   const validateMessage = "Campo obligatorio";
   const allValidation = yup.object({
+    names: yup.string().required(validateMessage),
+    last_names: yup.string().required(validateMessage),
+    id_card_file: yup
+      .mixed()
+      .required("Se requiere un archivo")
+      .test(
+        "fileFormat",
+        "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
+        (value: any) => {
+          return value && ["application/pdf"].includes(value.type);
+        }
+      ),
     username: yup
       .string()
       .required(validateMessage)
@@ -119,35 +135,14 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     formik.setFieldValue("photo_file", target.files?.[0]);
   };
 
-  const downloadImage=()=>{
-    handleDownload(initialValues.photo_url,`${initialValues.username}.png`)
-  }
-
-  useEffect(() => {
-    if (user_id != undefined) {
-      getData();
-      setValidationSchema(someValidation);
-    } else {
-      setValidationSchema(allValidation);
-    }
-  }, [user_id]);
-
-  const getData = async () => {
-    const { data } = await enagApi.get<UserModel>(`/users/user_id=${user_id}`);
-    setInitialValues({
-      id: data.id,
-      username: data.username,
-      password: data.password,
-      email: data.email,
-      rol: data.rol,
-      photo_url: data.photo_url,
-      photo_file: null,
-    });
+  const downloadImage = () => {
+    handleDownload(initialValues.photo_url, `${initialValues.username}.png`);
   };
 
-  const checkUsernameExists = async (username: string) => {
-    const response = await enagApi.get(`users/username=${username}`);
-    return response.data;
+  const onIdCardInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    if (target.files && target.files.length === 0) return;
+    formik.setFieldValue("id_card_file", target.files?.[0]);
   };
 
   const renderResource = (
@@ -178,6 +173,41 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     );
   };
 
+  useEffect(() => {
+    if (user_id != undefined) {
+      getData();
+      setValidationSchema(someValidation);
+    } else {
+      setValidationSchema(allValidation);
+    }
+  }, [user_id]);
+
+  const getData = async () => {
+    try {
+      const { data } = await enagApi.get<UserModel>(
+        `/users/user_id=${user_id}`
+      );
+      setInitialValues({
+        id: data.id,
+        username: data.username,
+        password: data.password,
+        email: data.email,
+        rol: data.rol,
+        photo_url: data.photo_url,
+        photo_file: null,
+        last_names: data.last_names,
+        names: data.names,
+        id_card_file: null,
+        ID_card_url: data.ID_card_url,
+      });
+    } catch (error) {}
+  };
+
+  const checkUsernameExists = async (username: string) => {
+    const response = await enagApi.get(`users/username=${username}`);
+    return response.data;
+  };
+
   const formik = useFormik({
     initialValues: initialValues,
     enableReinitialize: true,
@@ -186,9 +216,13 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
       const body = {
         id: values.id,
         username: values.username,
+        last_names: values.last_names,
+        names: values.names,
         password: values.password,
         email: values.email,
         rol: values.rol,
+        id_card_file: values.id_card_file,
+        ID_card_url: values.ID_card_url,
         photo_url: values.photo_url,
         photo_file: values.photo_file,
       };
@@ -206,7 +240,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           icon: "success",
           title: "Los datos se guardaron",
         }).then(() => {
-          router.back();
+          goBack()
         });
       } else {
         setIsLoading(false);
@@ -214,12 +248,59 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           icon: "error",
           title: "No se pudo guardar los datos",
         }).then(() => {
-          router.back();
+          goBack()
         });
       }
       resetForm();
     },
   });
+
+  useEffect(() => {
+    const { names, last_names, username, password } = formik.values;
+
+    // Verifica que no haya un `user_id` y que el campo `username` esté vacío
+    if (!user_id && names && last_names && !username) {
+      const nameParts = names.split(" ");
+      const firstLetter = nameParts[0]?.[0]?.toLowerCase() || "";
+      const secondLetter = nameParts[1]?.[1]?.toLowerCase() || "";
+      const lastName = last_names.split(" ")[0].toLowerCase();
+
+      const suggestedUsername = `${firstLetter}${secondLetter}${lastName}`;
+
+      // Establece el nombre de usuario sugerido solo si está vacío
+      if (!formik.values.username) {
+        formik.setFieldValue("username", suggestedUsername);
+      }
+    }
+
+    if (!user_id && !password) {
+      const generatePassword = () => {
+        const chars =
+          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        let pass = "";
+        pass += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
+        pass += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
+        pass += "0123456789"[Math.floor(Math.random() * 10)];
+        for (let i = 0; i < 5; i++) {
+          pass += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return pass;
+      };
+
+      const suggestedPassword = generatePassword();
+
+      // Establece la contraseña sugerida solo si el campo está vacío
+      if (!formik.values.password) {
+        formik.setFieldValue("password", suggestedPassword);
+      }
+    }
+  }, [
+    formik.values.names,
+    formik.values.last_names,
+    formik.values.password,
+    formik,
+    user_id,
+  ]);
 
   return (
     <>
@@ -242,9 +323,33 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
         onSubmit={formik.handleSubmit}
         className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
       >
-        <Typography className="" variant="h4">
+        <Typography className="" component="p" fontSize={22} fontWeight={700} >
           Formulario de {user_id == null ? "creación " : "edición"} de usuarios
         </Typography>
+        <TextField
+          type="text"
+          variant="outlined"
+          label="Nombres"
+          id="names"
+          name="names"
+          value={formik.values.names}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.names && Boolean(formik.errors.names)}
+          helperText={formik.touched.names && formik.errors.names}
+        />
+        <TextField
+          type="text"
+          variant="outlined"
+          label="Apellidos"
+          id="last_names"
+          name="last_names"
+          value={formik.values.last_names}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.last_names && Boolean(formik.errors.last_names)}
+          helperText={formik.touched.last_names && formik.errors.last_names}
+        />
         <TextField
           type="text"
           variant="outlined"
@@ -296,6 +401,32 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           }}
         />
         <div>
+          <Typography component="p"> Cédula </Typography>
+          <TextField
+            type="file"
+            variant="outlined"
+            id="id_card_file"
+            name="id_card_file"
+            className="w-100"
+            inputProps={{
+              accept: "application/pdf",
+            }}
+            onChange={onIdCardInputChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.id_card_file && Boolean(formik.errors.id_card_file)
+            }
+            helperText={
+              formik.touched.id_card_file && formik.errors.id_card_file
+            }
+          />
+          {!!user_id ? (
+            renderResource("Cédula.pdf", formik.values.ID_card_url, ID, setID)
+          ) : (
+            <></>
+          )}
+        </div>
+        <div>
           <Typography component="p"> Foto de perfil </Typography>
           <TextField
             type="file"
@@ -330,7 +461,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
                   position: "absolute",
                   top: 0,
                   left: 0,
-                  color: "white", 
+                  color: "white",
                 }}
                 onClick={downloadImage}
               >

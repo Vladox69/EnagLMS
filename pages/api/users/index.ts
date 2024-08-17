@@ -32,14 +32,17 @@ const getUsers=async(res:NextApiResponse<Data>)=>{
 const createUser=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
         
-        const {username,password,email,rol,photo_url}=req.body
+        const {username,password,email,rol,photo_url,names,last_names,ID_card_url}=req.body
         const user=await prisma.user.create({
             data:{
                 username,
                 password,
                 email,
                 rol,
-                photo_url
+                photo_url,
+                names,
+                last_names,
+                ID_card_url
             }
         })
         return res.status(200).json(user)

@@ -32,12 +32,13 @@ const createInternInscription= async (
     res: NextApiResponse<Data>
   ) => {
     try {
-        const {student_id, course_id}=req.body
+        const {student_id, course_id,date}=req.body
         console.log(req.body);
         const intern_inscription = await prisma.intern_inscription.create({
             data:{
                 student_id,
-                course_id
+                course_id,
+                date
             }
         })
         return res.status(200).json(intern_inscription)

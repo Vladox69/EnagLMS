@@ -37,7 +37,7 @@ export const FormPlanificacionModule: FC<Props> = ({
     .required("Se requiere un archivo")
     .test(
       "fileFormat",
-      "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
+      "Formato de archivo no soportado, solo se permiten: pdf",
       (value: any) => {
         return (
           value &&

@@ -32,14 +32,11 @@ const getStudents = async (res: NextApiResponse<Data>) => {
 
 const createStudent = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const { ID_card_url, study_certificate_url, user_id, names, last_names } = req.body
+        const {  study_certificate_url, user_id } = req.body
         const student = await prisma.student.create({
            data:{
-            ID_card_url, 
             study_certificate_url, 
             user_id, 
-            names,
-             last_names
            } 
         })
         return res.status(200).json(student)

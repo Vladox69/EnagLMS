@@ -1,5 +1,6 @@
 import { prisma } from '@/apis';
 import { TeacherModel } from '@/models';
+import { deleteFile } from '@/utils/deleteFiles';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data =
@@ -72,18 +73,26 @@ const updateTeacher=async (req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
         const { id } = req.query;
         const teacher_id= id?.toString().substring('teacher_id='.length)
-        const {ID_card_url,cv_url,third_level_degree,user_id,names,last_names}=req.body
+        const {cv_url,third_level_degree,user_id}=req.body
+        const teacher_temp = await prisma.teacher.findFirst({
+            where: {
+              id: Number(teacher_id),
+            },
+          });
+        if (teacher_temp?.cv_url != cv_url) {
+            await deleteFile(teacher_temp?.cv_url || "");
+        }
+        if(teacher_temp?.third_level_degree!=third_level_degree){
+            await deleteFile(teacher_temp?.third_level_degree || "");
+        }
         const teacher= await prisma.teacher.update({
             where:{
                 id:Number(teacher_id)
             },
             data:{
-                ID_card_url,
                 cv_url,
                 third_level_degree,
                 user_id,
-                names,
-                last_names
             }
         }) 
         return res.status(200).json(teacher)
@@ -97,6 +106,13 @@ const deleteTeacher=async (req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
         const { id } = req.query;
         const teacher_id= id?.toString().substring('teacher_id='.length)
+        const teacher_temp = await prisma.teacher.findFirst({
+            where: {
+              id: Number(teacher_id),
+            },
+          });
+        await deleteFile(teacher_temp?.cv_url || "");
+        await deleteFile(teacher_temp?.third_level_degree || "");
         const teacher = await prisma.teacher.delete({
             where:{
                 id:Number(teacher_id)

@@ -1,238 +1,255 @@
 import { enagApi } from "@/apis";
-import { CourseModel, InternCourseModel, StudentModel } from "@/models";
+import { StudentModel, UserModel } from "@/models";
 import React, { useEffect, useState } from "react";
-import { TableAStudent } from "../../../components/admin/student/TableAStudent";
-import {
-  Box,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import SearchIcon from "@mui/icons-material/Search";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
-import { writeFile, utils, WorkSheet, WorkBook } from "xlsx";
+import { Box, Button, IconButton, Typography } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { UserStudent } from "@/interface/models_combine";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useRouter } from "next/router";
+import Swal from "sweetalert2";
+import { deleteStudent } from "@/utils/admin/student/deleteStudent";
+import { CustomDialog } from "@/components/my/CustomDialog";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import Link from "next/link";
 
 const date = new Date();
 const formattedDate = new Intl.DateTimeFormat("es-ES").format(date);
 
+const DocumentDialog = (title: string, url: string) => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  return (
+    <>
+      <p onClick={handleOpen}>
+        <PictureAsPdfIcon />
+        <span>{`${title}.pdf`}</span>
+      </p>
+      <CustomDialog
+        open={open}
+        handleClose={handleClose}
+        title={`${title}.pdf`}
+        url={url}
+      />
+    </>
+  );
+};
+
+const getUserNames = (user: any) => {
+  return user === undefined ? "N/A" : user.names;
+};
+
+const getUserLastNames = (user: any) => {
+  return user === undefined ? "N/A" : user.last_names;
+};
+
+const getUserIdCard = (user: any) => {
+  return user === undefined ? "N/A" : user.ID_card_url;
+};
+
+const getUserName=(user:any)=>{
+  return user===undefined?"N/A":user.username
+}
+
 export default function Teachers() {
   const [students, setStudents] = useState<StudentModel[]>([]);
-  const [courses, setCourses] = useState<CourseModel[]>([]);
-  const [interns, setInterns] = useState<InternCourseModel[]>([]);
-  const [selectedCourse, setSelectedCourse] = useState<number>(0);
-  const [selectedIntern, setSelectedIntern] = useState<number>(0);
-  const [type, setType] = useState<number>(0);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [users, setUsers] = useState<UserModel[]>([]);
+  const [studentsUsers, setStudentsUsers] = useState<UserStudent[]>([]);
+  const router = useRouter();
+  const [rows, setRows] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const handleDelete = async (value: any) => {
+    let res: any;
+    const { row } = value;
+    Swal.fire({
+      icon: "question",
+      title: "¿Está seguro de eliminar?",
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        res = await deleteStudent(row.student);
+        if (res.status == 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Datos eliminados",
+          }).then(() => {
+            setStudentsUsers((studentsUsers) =>
+              studentsUsers.filter((s) => s.student.id !== row.student.id)
+            );
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo eliminar los datos",
+          });
+        }
+      }
+    });
+  };
+  const handleEdit = (value: any) => {
+    const { row } = value;
+    router.push({
+      pathname: "/admin/students/edit",
+      query: { student_id: row.student.id },
+    });
+  };
 
-  const handleChangeCourse = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedIntern(0);
-    setSelectedCourse(Number(event.target.value));
-  };
-  const handleChangeInterCourse = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSelectedCourse(0);
-    setSelectedIntern(Number(event.target.value));
-  };
-  const handleChangeType = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setType(Number(event.target.value));
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const columns: GridColDef[] = [
+    { field: "id", headerName: "ID", width: 90 },
+    {
+      field:"username",headerName:"Usuario",width:150,
+      renderCell: (params) => (
+        <Link href={`/admin/users/edit?user_id=${params.row.user.id}`} passHref target="_blank" className="text-decoration-none">
+            {params.row.user.username}
+        </Link>
+      ),
+      valueGetter:(value,row)=>getUserName(row.user)
+    },
+    {
+      field: "names",
+      headerName: "Nombres",
+      width: 250,
+      valueGetter: (value, row) => getUserNames(row.user),
+    },
+    {
+      field: "last_names",
+      headerName: "Apellidos",
+      width: 250,
+      valueGetter: (value, row) => getUserLastNames(row.user),
+    },
+    {
+      field: "id_card",
+      headerName: "Cédula",
+      width: 250,
+      renderCell: (params) => {
+        const { row } = params;
+        const names = row.user.names.split(" ");
+        const last_names = row.user.last_names.split(" ");
+        const title = `Cedula${names[0]}${last_names[0]}`;
+        return DocumentDialog(title, row.user.ID_card_url);
+      },
+    },
+    {
+      field: "study_certificate_url",
+      headerName: "Certificado de estudio",
+      width: 300,
+      renderCell: (params) => {
+        const { row } = params;
+        const names = row.user.names.split(" ");
+        const last_names = row.user.last_names.split(" ");
+        const title = `CetificadoEstudio${names[0]}${last_names[0]}`;
+        return DocumentDialog(title, row.student.study_certificate_url);
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <div>
+            <IconButton
+              aria-label="edit"
+              size="medium"
+              color="inherit"
+              onClick={() => handleEdit(params)}
+            >
+              <EditIcon fontSize="inherit" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="medium"
+              color="error"
+              onClick={() => handleDelete(params)}
+            >
+              <DeleteIcon fontSize="inherit" />
+            </IconButton>
+          </div>
+        );
+      },
+      sortable: false,
+      filterable: false,
+    },
+  ];
+
+  const goToNewStudent = () => {
+    router.push(`/admin/students/new`);
   };
   useEffect(() => {
     getData();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading) {
+      buildData();
+    }
+  }, [isLoading]);
+
   const getData = async () => {
     try {
+      const { data: usrs } = await enagApi.get<UserModel[]>(
+        `/users/user_rol=STUDENT`
+      );
+      setUsers(usrs);
       const { data: sts } = await enagApi.get<StudentModel[]>(`/students`);
       setStudents(sts);
-      const { data: crs } = await enagApi.get<CourseModel[]>(`/courses`);
-      setCourses(crs);
-      const { data: ints } = await enagApi.get<InternCourseModel[]>(
-        `/intern_course`
-      );
-      setInterns(ints);
+      setIsLoading(false);
     } catch (error) {}
   };
-  const searchData = async () => {
-    try {
-      if (type == 1) {
-        const { data: stds } = await enagApi.get<StudentModel[]>(
-          `/students/course_id=${selectedCourse}`
-        );
-        setStudents(stds);
-      } else if (type == 2) {
-        const { data: stds } = await enagApi.get<StudentModel[]>(
-          `/students/intern_id=${selectedIntern}`
-        );
-        setStudents(stds);
-      } else {
-        const { data: sts } = await enagApi.get<StudentModel[]>(`/students`);
-        setStudents(sts);
+  const buildData = () => {
+    let usersStudentsTemp: UserStudent[] = [];
+    let rowsIndex: any[] = [];
+    students.map((student) => {
+      const user = users.find((usr) => usr.id == student.user_id);
+      if (user != undefined) {
+        const userStudentTemp: UserStudent = {
+          user,
+          student,
+        };
+        usersStudentsTemp = [...usersStudentsTemp, userStudentTemp];
       }
-    } catch (error) {
-      const { data: sts } = await enagApi.get<StudentModel[]>(`/students`);
-      setStudents(sts);
-    }
-  };
-
-  const exportExcel = async () => {
-    // Definir los encabezados y el cuerpo de la tabla
-    const headers = ["Id", "Nombres", "Apellidos"];
-    const body = students.map((student, index) => [
-      index + 1,
-      student.names,
-      student.last_names,
-    ]);
-
-    // Definir el título
-    let title = "Registro de estudiantes";
-    if (selectedCourse !== 0) {
-      const course = courses.find((c) => c.id === selectedCourse);
-      title = `Registro de estudiantes inscritos en ${course?.topic}`;
-    } else if (selectedIntern !== 0) {
-      const intern = interns.find((inter) => inter.id === selectedIntern);
-      title = `Registro de estudiantes inscritos en ${intern?.title}`;
-    }
-
-    // Crear el array de datos con el título, encabezados y cuerpo
-    const data = [[title], headers, ...body];
-
-    // Crear una hoja de trabajo (worksheet)
-    const ws: WorkSheet = utils.aoa_to_sheet(data);
-
-    // Ajustar el ancho de las columnas
-    const columnWidths = [{ wch: 20 }, { wch: 30 }, { wch: 30 }];
-    ws["!cols"] = columnWidths;
-
-    // Fusionar las celdas para el título
-    ws["!merges"] = [
-      { s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }, // Fusionar la primera fila de la columna 0 a la longitud de los encabezados
-    ];
-
-    // Crear un libro de trabajo (workbook)
-    const wb: WorkBook = utils.book_new();
-    utils.book_append_sheet(wb, ws, "Estudiantes");
-
-    // Guardar el archivo Excel
-    writeFile(wb, "registro-inscritos.xlsx");
-    handleClose();
-  };
-
-  const exportPDF = () => {
-    const doc = new jsPDF({
-      orientation: "landscape",
     });
-    if (selectedCourse != 0) {
-      const course = courses.find((c) => (c.id = selectedCourse));
-      doc.text(
-        `Registro de estudiantes inscritos en ${course?.topic} `,
-        10,
-        10
-      );
-    } else if (selectedIntern != 0) {
-      const intern = interns.find((inter) => (inter.id = selectedIntern));
-      doc.text(`Registro de estudiantes inscritos en ${intern?.title}`, 10, 10);
-    } else {
-      doc.text("Registro de estudiantes", 10, 10);
-    }
-    const fecha = formattedDate.replaceAll("/", "-");
-    doc.text(`Fecha:${fecha}`, 10, 17);
-    const head = ["Id", "Nombres", "Apellidos"];
-    const body = students.map((student, index) => [
-      index + 1,
-      student.names,
-      student.last_names,
-    ]);
-    autoTable(doc, {
-      startY: 20,
-      head: [head],
-      body,
-    });
-    doc.save("registro-inscritos.pdf");
-    handleClose();
+    setStudentsUsers(usersStudentsTemp);
+    rowsIndex = usersStudentsTemp.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
   };
-
   return (
     <>
-      <Typography component="p" fontSize={22} fontWeight={700}> Estudiantes </Typography>
-      <Box display="flex" gap={2} alignItems="center">
-        <TextField
-          select
-          variant="outlined"
-          value={type}
-          onChange={handleChangeType}
-        >
-          <MenuItem value={0}>No seleccionado</MenuItem>
-          <MenuItem value={1}>Cursos</MenuItem>
-          <MenuItem value={2}>Pasantías</MenuItem>
-        </TextField>
-        {type == 1 && (
-          <TextField
-            select
-            variant="outlined"
-            value={selectedCourse}
-            onChange={handleChangeCourse}
-          >
-            <MenuItem value={0}>Cursos</MenuItem>
-            {courses.map((course) => (
-              <MenuItem value={course.id} key={course.id}>
-                {course.topic}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-        {type == 2 && (
-          <TextField
-            select
-            variant="outlined"
-            value={selectedIntern}
-            onChange={handleChangeInterCourse}
-          >
-            <MenuItem value={0}>Pasantías</MenuItem>
-            {interns.map((course) => (
-              <MenuItem value={course.id} key={course.id}>
-                {course.title}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-
-        <Box mb={2}>
-          <Button
-            variant="outlined"
-            onClick={handleClick}
-            color="inherit"
-            className="m-0"
-            startIcon={<FileDownloadIcon />}
-          >
-            Exportar
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={exportExcel}>Excel</MenuItem>
-            <MenuItem onClick={exportPDF}>PDF</MenuItem>
-          </Menu>
+      <Typography component="p" fontSize={22} fontWeight={700}>
+        {" "}
+        Estudiantes{" "}
+      </Typography>
+      <div className="mt-2">
+        <Box sx={{ height: 450, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 10,
+                },
+              },
+            }}
+            pageSizeOptions={[10]}
+          />
         </Box>
-
-        <IconButton onClick={searchData}>
-          <SearchIcon />
-        </IconButton>
-      </Box>
-      <TableAStudent students={students!} />
+        <Button
+          variant="contained"
+          className="mt-2"
+          color="error"
+          onClick={goToNewStudent}
+        >
+          Nuevo estudiante
+        </Button>
+      </div>
     </>
   );
 }

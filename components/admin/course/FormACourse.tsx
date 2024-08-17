@@ -266,7 +266,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
           onSubmit={formik.handleSubmit}
           className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
         >
-          <Typography variant="h4"> Datos del curso </Typography>
+          <Typography component="p"  fontSize={24} fontWeight={700}> Datos del curso </Typography>
           <TextField
             type="text"
             variant="outlined"

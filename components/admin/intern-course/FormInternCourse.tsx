@@ -16,11 +16,12 @@ import Swal from "sweetalert2";
 import { editInternCourse } from "@/utils/admin/intern-course/editInternCourse";
 import { newInternCourse } from "@/utils/admin/intern-course/newInternCourse";
 import { enagApi } from "@/apis";
-import { InternCourseModel, TeacherModel } from "@/models";
+import { InternCourseModel, TeacherModel, UserModel } from "@/models";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import styles from "@/styles/Custom.module.css";
 import * as yup from "yup";
 import Image from "next/image";
+import { UserTeacher } from "@/interface/models_combine";
 interface Props {
   course_id?: number;
 }
@@ -28,18 +29,18 @@ interface Props {
 export const FormInternCourse: FC<Props> = ({ course_id }) => {
   const router = useRouter();
   useEffect(() => {
-    if (course_id != undefined&&router.isReady) {
+    if (course_id != undefined && router.isReady) {
       getData();
-      setValidationSchema(someValidation)
-    }else{
-      setValidationSchema(allValidation)
+      setValidationSchema(someValidation);
+    } else {
+      setValidationSchema(allValidation);
     }
     getTeachers();
   }, [router.isReady]);
   const goBack = () => {
     router.back();
   };
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [initialValues, setInitialValues] = useState({
     id: 0,
     title: "",
@@ -53,22 +54,28 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
   });
   const [content, setContent] = useState("");
   const [teachers, setTeachers] = useState<TeacherModel[]>([]);
-  const [validationSchema, setValidationSchema] = useState<any>()
+  const [usersTeachers, setUsersTeachers] = useState<UserTeacher[]>([]);
+  const [validationSchema, setValidationSchema] = useState<any>();
+  const [users, setUsers] = useState<UserModel[]>([]);
   const validateMessage = "Campo obligatorio";
   const allValidation = yup.object({
     title: yup.string().required(validateMessage),
-    start_at:yup.string().required(validateMessage).notOneOf(['00:00:00T00:00:00.000Z'],validateMessage),
-    end_at: yup.string()
-    .required(validateMessage)
-    .notOneOf(['00:00:00T00:00:00.000Z'], validateMessage)
-    .test(
-      'is-greater',
-      'La fecha de fin debe ser mayor o igual a la fecha de inicio',
-      function (value) {
-        const { start_at } = this.parent;
-        return value >= start_at;
-      }
-    ),
+    start_at: yup
+      .string()
+      .required(validateMessage)
+      .notOneOf(["00:00:00T00:00:00.000Z"], validateMessage),
+    end_at: yup
+      .string()
+      .required(validateMessage)
+      .notOneOf(["00:00:00T00:00:00.000Z"], validateMessage)
+      .test(
+        "is-greater",
+        "La fecha de fin debe ser mayor o igual a la fecha de inicio",
+        function (value) {
+          const { start_at } = this.parent;
+          return value >= start_at;
+        }
+      ),
     teacher_id: yup
       .number()
       .required(validateMessage)
@@ -90,59 +97,92 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
 
   const someValidation = yup.object({
     title: yup.string().required(validateMessage),
-    start_at:yup.string().required(validateMessage).notOneOf(['00:00:00T00:00:00.000Z'],validateMessage),
-    end_at: yup.string()
-    .required(validateMessage)
-    .notOneOf(['00:00:00T00:00:00.000Z'], validateMessage)
-    .test(
-      'is-greater',
-      'La fecha de fin debe ser mayor o igual a la fecha de inicio',
-      function (value) {
-        const { start_at } = this.parent;
-        return value >= start_at;
-      }
-    ),
+    start_at: yup
+      .string()
+      .required(validateMessage)
+      .notOneOf(["00:00:00T00:00:00.000Z"], validateMessage),
+    end_at: yup
+      .string()
+      .required(validateMessage)
+      .notOneOf(["00:00:00T00:00:00.000Z"], validateMessage)
+      .test(
+        "is-greater",
+        "La fecha de fin debe ser mayor o igual a la fecha de inicio",
+        function (value) {
+          const { start_at } = this.parent;
+          return value >= start_at;
+        }
+      ),
     teacher_id: yup
       .number()
       .required(validateMessage)
       .notOneOf([0], validateMessage),
   });
 
-  
-
   const today = new Date();
   const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   const minDate = `${year}-${month}-${day}`;
+  useEffect(() => {
+    if (!isLoading) {
+      buildData();
+    }
+  }, [isLoading]);
+
+  const buildData = () => {
+    let usersTeacherTemp: UserTeacher[] = [];
+    teachers.map((teacher) => {
+      const user = users.find((usr) => usr.id == teacher.user_id);
+      if (user != undefined) {
+        const userTeacher: UserTeacher = {
+          user,
+          teacher,
+        };
+        usersTeacherTemp = [...usersTeacherTemp, userTeacher];
+      }
+    });
+    setUsersTeachers(usersTeacherTemp);
+  };
 
   const getTeachers = async () => {
-    const { data: tch } = await enagApi.get<TeacherModel[]>(`/teachers`);
-    setTeachers(tch);
+    try {
+      const { data: usr } = await enagApi.get<UserModel[]>(
+        `/users/user_rol=TEACHER`
+      );
+      setUsers(usr);
+      const { data: tch } = await enagApi.get<TeacherModel[]>(`/teachers`);
+      setTeachers(tch);
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
+    }
   };
 
   const getData = async () => {
-    if (course_id != undefined&&router.isReady) {
-      const { data } = await enagApi.get<InternCourseModel>(
-        `/intern_course/course_id=${course_id}`
-      );
-      setInitialValues({
-        id: data.id,
-        title: data.title,
-        content: data.content,
-        start_at: data.start_at
-          .toString()
-          .slice(0, data.start_at.toString().lastIndexOf("T")),
-        end_at: data.end_at
-          .toString()
-          .slice(0, data.end_at.toString().lastIndexOf("T")),
-        img_file: null,
-        img_url: data.img_url,
-        teacher_id: data.teacher_id,
-        is_start: data.is_start,
-      });
-      setContent(data.content);
-    }
+    try {
+      if (course_id != undefined && router.isReady) {
+        const { data } = await enagApi.get<InternCourseModel>(
+          `/intern_course/course_id=${course_id}`
+        );
+        setInitialValues({
+          id: data.id,
+          title: data.title,
+          content: data.content,
+          start_at: data.start_at
+            .toString()
+            .slice(0, data.start_at.toString().lastIndexOf("T")),
+          end_at: data.end_at
+            .toString()
+            .slice(0, data.end_at.toString().lastIndexOf("T")),
+          img_file: null,
+          img_url: data.img_url,
+          teacher_id: data.teacher_id,
+          is_start: data.is_start,
+        });
+        setContent(data.content);
+      }
+    } catch (error) {}
   };
 
   const onFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +277,7 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
             id="start_at"
             name="start_at"
             InputProps={{
-              inputProps: { min: minDate }
+              inputProps: { min: minDate },
             }}
             value={formik.values.start_at}
             onChange={formik.handleChange}
@@ -251,7 +291,7 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
             id="end_at"
             name="end_at"
             InputProps={{
-              inputProps: { min: formik.values.start_at || minDate }
+              inputProps: { min: formik.values.start_at || minDate },
             }}
             value={formik.values.end_at}
             onChange={formik.handleChange}
@@ -272,9 +312,9 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
             }
           >
             <MenuItem value={0}>No seleccionado</MenuItem>
-            {teachers.map((teacher) => (
-              <MenuItem key={teacher.id} value={teacher.id}>
-                {teacher.names} {teacher.last_names}
+            {usersTeachers.map((usrtch,index) => (
+              <MenuItem key={index} value={usrtch.teacher.id}>
+                {usrtch.user.names} {usrtch.user.last_names}
               </MenuItem>
             ))}
           </TextField>
@@ -293,16 +333,19 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
               helperText={formik.touched.img_file && formik.errors.img_file}
             />
           </div>
-          {
-            !!course_id?(
-              <>
+          {!!course_id ? (
+            <>
               <Typography component="p">Imagen actual</Typography>
-              <Image src={formik.values.img_url} width={300} height={300} alt="" />
-              </>
-            ):(
-              <></>
-            )
-          }
+              <Image
+                src={formik.values.img_url}
+                width={300}
+                height={300}
+                alt=""
+              />
+            </>
+          ) : (
+            <></>
+          )}
           <div>
             <Typography component="p">Contenido</Typography>
             <ReactQuill

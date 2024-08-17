@@ -10,6 +10,8 @@ import {
   SectionModel,
   StudentModel,
   SubmissionModel,
+  TeacherModel,
+  UserModel,
 } from "@/models";
 
 export interface StudentCourse {
@@ -145,57 +147,94 @@ export interface StudentAsistance {
   student: StudentModel;
   asistance: AsistanceModel;
   register: AsistanceRegisterModel;
+  user:UserModel;
 }
 
-export interface StudentActivitySubmission{
-  student:StudentModel;
-  activity:ActivityModel;
-  submission:SubmissionModel;
+export interface StudentActivitySubmission {
+  student: StudentModel;
+  activity: ActivityModel;
+  submission: SubmissionModel;
 }
 
-export interface StudentModuleActivitySubmission{
-  student:StudentModel;
-  activity:ActivityModel;
-  submission:SubmissionModel;
-  module:ModuleModel;
+export interface StudentModuleActivitySubmission {
+  student: StudentModel;
+  activity: ActivityModel;
+  submission: SubmissionModel;
+  module: ModuleModel;
 }
 
-export interface SectionSubmissionsActivities{
-  section:SectionModel;
-  activities_submissions:StudentActivitySubmission[]
+export interface SectionSubmissionsActivities {
+  section: SectionModel;
+  activities_submissions: StudentActivitySubmission[];
 }
 
-export interface StudentModuleSections{
-  student:StudentModel;
-  module:ModuleModel;
-  sections:SectionSubmissionsActivities[];
+export interface StudentModuleSections {
+  student: StudentModel;
+  module: ModuleModel;
+  sections: SectionSubmissionsActivities[];
 }
 
-export interface StudentActivitySubmission{
-  student:StudentModel;
-  activity:ActivityModel;
-  submission:SubmissionModel;
+export interface StudentActivitySubmission {
+  student: StudentModel;
+  activity: ActivityModel;
+  submission: SubmissionModel;
 }
 
-export interface SectionActivitySubmission{
-  section:SectionModel;
-  activity:ActivityModel;
-  submission:SubmissionModel;
+export interface SectionActivitySubmission {
+  section: SectionModel;
+  activity: ActivityModel;
+  submission: SubmissionModel;
 }
 
-export interface AsistanceRegister{
-  asistance:AsistanceModel;
-  register:AsistanceRegisterModel;
-} 
-
-export interface StudentInscriptionCourse{
-  inscription:InscriptionModel;
-  course:CourseModel;
-  student:StudentModel;
+export interface AsistanceRegister {
+  asistance: AsistanceModel;
+  register: AsistanceRegisterModel;
 }
 
-export interface StudentInscriptionIntern{
+export interface StudentInscriptionCourse {
+  inscription: InscriptionModel;
+  course: CourseModel;
+  student: StudentModel;
+  user:UserModel;
+}
+
+export interface StudentInscriptionIntern {
+  inscription: InternInscriptionModel;
+  intern: InternCourseModel;
+  student: StudentModel;
+  user:UserModel;
+}
+
+export interface InternTeacherUser{
+  intern: InternCourseModel;
+  teacher:TeacherModel;
+  user:UserModel;
+}
+
+export interface UserStudent {
+  user: UserModel;
+  student: StudentModel;
+}
+
+export interface UserTeacher {
+  user: UserModel;
+  teacher: TeacherModel;
+}
+
+export interface InscriptionUserStudent {
+  user: UserModel;
+  student: StudentModel;
+  inscription: InscriptionModel;
+}
+
+export interface ModuleUserTeacher {
+  user: UserModel;
+  teacher: TeacherModel;
+  module: ModuleModel;
+}
+
+export interface InternInscriptionUserStudent{
+  user: UserModel;
+  student: StudentModel;
   inscription:InternInscriptionModel;
-  intern:InternCourseModel;
-  student:StudentModel;
 }

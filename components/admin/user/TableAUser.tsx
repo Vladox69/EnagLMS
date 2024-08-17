@@ -14,6 +14,14 @@ interface Props {
   users: UserModel[];
 }
 
+const getNames = (user: any) => {
+  return user === undefined ? "N/A" : user.names;
+};
+
+const getLastNames = (user: any) => {
+  return user === undefined ? "N/A" : user.names;
+};
+
 export const TableAUser: FC<Props> = ({ users: usr }) => {
   const router = useRouter();
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -69,9 +77,19 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
       width: 90,
     },
     {
+      field:"names",
+      headerName:"Nombres",
+      width:150
+    },
+    {
+      field:"last_names",
+      headerName:"Apellidos",
+      width:150,
+    },
+    {
       field: "username",
       headerName: "Nombre de usuario",
-      width: 250,
+      width: 150,
     },
     {
       field: "email",
@@ -81,7 +99,7 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
     {
       field: "rol",
       headerName: "Rol",
-      width: 200,
+      width: 150,
     },
     {
       field: "photo_url",

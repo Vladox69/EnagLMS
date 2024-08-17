@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import {
-    Box,
+  Box,
   Button,
   CircularProgress,
   Container,
@@ -28,12 +28,12 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
   const router = useRouter();
 
   useEffect(() => {
-    getUsers()
-    if (student_id!=undefined) {
+    getUsers();
+    if (student_id != undefined) {
       getData();
-      setvalidationSchema(someValidation)
-    }else{
-      setvalidationSchema(allValidation)
+      setvalidationSchema(someValidation);
+    } else {
+      setvalidationSchema(allValidation);
     }
   }, [student_id]);
 
@@ -43,62 +43,31 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [initialValues, setInitialValues] = useState({
     id: 0,
-    ID_card_url: "",
-    id_card_file: null,
     study_certificate_url: "",
     study_certificate_file: null,
     user_id: 0,
-    names: "",
-    last_names: "",
   });
   const [users, setUsers] = useState<UserModel[]>([]);
-  const [ID, setID] = useState(false);
+  const [userSelected, setUserSelected] = useState<UserModel>();
   const [CS, setCS] = useState(false);
-  const [validationSchema, setvalidationSchema] = useState<any>()
+  const [validationSchema, setvalidationSchema] = useState<any>();
   const validateMessage = "Campo obligatorio";
   const allValidation = yup.object({
-    names: yup.string().required(validateMessage),
-    last_names: yup.string().required(validateMessage),
     user_id: yup.number().required(validateMessage).notOneOf([0]),
-    id_card_file: yup
-    .mixed()
-    .required("Se requiere un archivo")
-    .test(
-      "fileFormat",
-      "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
-      (value: any) => {
-        return (
-          value &&
-          ["application/pdf"].includes(value.type)
-        );
-      }
-    ),
     study_certificate_file: yup
-    .mixed()
-    .required("Se requiere un archivo")
-    .test(
-      "fileFormat",
-      "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
-      (value: any) => {
-        return (
-          value &&
-          ["application/pdf"].includes(value.type)
-        );
-      }
-    ),
+      .mixed()
+      .required("Se requiere un archivo")
+      .test(
+        "fileFormat",
+        "Formato de archivo no soportado, solo se permiten: jpeg, png, gif",
+        (value: any) => {
+          return value && ["application/pdf"].includes(value.type);
+        }
+      ),
   });
   const someValidation = yup.object({
-    names: yup.string().required(validateMessage),
-    last_names: yup.string().required(validateMessage),
     user_id: yup.number().required(validateMessage).notOneOf([0]),
   });
-
-
-  const onIdCardInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const target = event.target;
-    if (target.files && target.files.length === 0) return;
-    formik.setFieldValue("id_card_file", target.files?.[0]);
-  };
 
   const onStudyCertificateInputChange = (
     event: ChangeEvent<HTMLInputElement>
@@ -137,40 +106,54 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
   };
 
   const getData = async () => {
-
     if (student_id != undefined) {
       const { data: student } = await enagApi.get<StudentModel>(
         `/students/student_id=${student_id}`
       );
       setInitialValues({
         id: student.id,
-        ID_card_url: student.ID_card_url,
-        id_card_file: null,
         study_certificate_url: student.study_certificate_url,
         study_certificate_file: null,
         user_id: student.user_id,
-        names: student.names,
-        last_names: student.last_names,
       });
-    }
-  };
-
-  const getUsers=async()=>{
-    const { data: usr } = await enagApi.get(`/users/user_rol=STUDENT`);
-    const { data: sts } = await enagApi.get(`/students`);
-    const uniqueItems = usr.filter(
-      (itemA: any) => !sts.some((itemB: any) => itemA.id === itemB.user_id)
-    );
-    if(student_id!=undefined){
-      const {data:student}=await enagApi.get<StudentModel>(`/students/student_id=${student_id}`)
       const { data: user } = await enagApi.get(
         `/users/user_id=${student.user_id}`
       );
-      setUsers([user]);
-    }else{
-      setUsers(uniqueItems)
+      setUserSelected(user);
     }
-  }
+  };
+
+  const getUsers = async () => {
+    try {
+      const { data: usr } = await enagApi.get(`/users/user_rol=STUDENT`);
+      const { data: sts } = await enagApi.get(`/students`);
+      const uniqueItems = usr.filter(
+        (itemA: any) => !sts.some((itemB: any) => itemA.id === itemB.user_id)
+      );
+      if (student_id != undefined) {
+        const { data: student } = await enagApi.get<StudentModel>(
+          `/students/student_id=${student_id}`
+        );
+        const { data: user } = await enagApi.get(
+          `/users/user_id=${student.user_id}`
+        );
+        setUsers([user]);
+      } else {
+        setUsers(uniqueItems);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUserChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedUserId = parseInt(event.target.value, 10);
+    formik.setFieldValue("user_id", selectedUserId);
+
+    // Buscar el usuario seleccionado en la lista de usuarios
+    const selectedUser = users.find((user) => user.id === selectedUserId);
+    setUserSelected(selectedUser);
+  };
 
   const formik = useFormik({
     initialValues: initialValues,
@@ -179,17 +162,13 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
     onSubmit: async (values, { resetForm }) => {
       const body = {
         id: values.id,
-        ID_card_url: values.ID_card_url,
-        id_card_file: values.id_card_file,
         study_certificate_url: values.study_certificate_url,
         study_certificate_file: values.study_certificate_file,
         user_id: values.user_id,
-        names: values.names,
-        last_names: values.last_names,
       };
 
       let res: any;
-      setIsLoading(true)
+      setIsLoading(true);
       if (student_id != undefined) {
         res = await updateStudent(body);
       } else {
@@ -216,8 +195,7 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
 
   return (
     <>
-          {
-        isLoading&&
+      {isLoading && (
         <Box
           position="absolute"
           display="flex"
@@ -230,66 +208,84 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
         >
           <CircularProgress size={100} color="error" />
         </Box>
-      }
+      )}
       <Container>
         <form
           action=""
           onSubmit={formik.handleSubmit}
           className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
         >
-          <Typography variant="h4"> Datos del estudiante</Typography>
-          <TextField
-            type="text"
-            variant="outlined"
-            label="Nombres"
-            id="names"
-            name="names"
-            value={formik.values.names}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.names && Boolean(formik.errors.names)}
-            helperText={formik.touched.names && formik.errors.names}
-          />
-          <TextField
-            type="text"
-            variant="outlined"
-            label="Apellidos"
-            id="last_names"
-            name="last_names"
-            value={formik.values.last_names}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={
-              formik.touched.last_names && Boolean(formik.errors.last_names)
-            }
-            helperText={formik.touched.last_names && formik.errors.last_names}
-          />
-          <div>
-            <Typography component="p"> Cédula </Typography>
+          <Typography component="p" fontSize={22} fontWeight={700}>
+            {" "}
+            Datos del estudiante
+          </Typography>
+          {student_id == undefined && users.length == 0 ? (
+            <Typography
+              component="p"
+              className="text-secondary"
+              fontWeight={700}
+            >
+              No existen usuarios disponibles
+            </Typography>
+          ) : (
+            <></>
+          )}
+          {student_id == undefined && users.length > 0 ? (
             <TextField
-              type="file"
+              id="user_id"
+              select
+              name="user_id"
+              label="Estudiantes"
               variant="outlined"
-              id="id_card_file"
-              name="id_card_file"
-              className="w-100"
-              inputProps={{
-                accept: "application/pdf",
-              }}
-              onChange={onIdCardInputChange}
+              value={formik.values.user_id}
+              onChange={handleUserChange}
               onBlur={formik.handleBlur}
-              error={
-                formik.touched.id_card_file && Boolean(formik.errors.id_card_file)
-              }
-              helperText={
-                formik.touched.id_card_file && formik.errors.id_card_file
-              }
-            />
-            {!!student_id ? (
-              renderResource("Cédula.pdf", formik.values.ID_card_url, ID, setID)
-            ) : (
-              <></>
-            )}
-          </div>
+              error={formik.touched.user_id && Boolean(formik.errors.user_id)}
+            >
+              <MenuItem value={0}>No seleccionado</MenuItem>
+              {users.map((user) => (
+                <MenuItem key={user.id} value={user.id}>
+                  {user.names} {user.last_names}
+                </MenuItem>
+              ))}
+            </TextField>
+          ) : (
+            <></>
+          )}
+          {userSelected != undefined ? (
+            <>
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Nombres"
+                id="names"
+                name="names"
+                contentEditable={false}
+                value={userSelected?.names}
+              />
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Apellidos"
+                id="names"
+                name="lastnames"
+                contentEditable={false}
+                value={userSelected?.last_names}
+              />
+              <TextField
+                type="text"
+                variant="outlined"
+                label="Nombre de usuario"
+                id="user"
+                name="user"
+                contentEditable={false}
+                value={userSelected?.username}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+
           <div>
             <Typography component="p"> Certificado de estudios </Typography>
             <TextField
@@ -323,29 +319,6 @@ export const FormAStudent: FC<Props> = ({ student_id }) => {
               <></>
             )}
           </div>
-            {
-              student_id==undefined?(
-                <TextField
-                id="user_id"
-                select
-                name="user_id"
-                label="Usuarios"
-                variant="outlined"
-                value={formik.values.user_id}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.user_id && Boolean(formik.errors.user_id)}
-              >
-                <MenuItem value={0}>No seleccionado</MenuItem>
-                {users.map((user) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.username}
-                  </MenuItem>
-                ))}
-              </TextField>
-              ):(<></>)
-            }
-        
           <div>
             <Button color="error" variant="contained" type="submit">
               {" "}
