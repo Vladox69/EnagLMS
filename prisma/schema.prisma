@@ -7,9 +7,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = "postgresql://postgres:password@localhost:5432/enag"
-  //url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  //directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  // url = "postgresql://postgres:password@localhost:5432/enag"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model user{
