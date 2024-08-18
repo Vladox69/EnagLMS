@@ -35,12 +35,13 @@ const createInternSubmission = async (
   res: NextApiResponse<Data>
 ) => {
   try {
-    const { url_resource, activity_id, student_id } = req.body;
+    const { url_resource, activity_id, student_id,date } = req.body;
     const submission_intern = await prisma.submission_intern.create({
         data:{
             url_resource,
             activity_id,
-            student_id
+            student_id,
+            date
         }
     })
     return res.status(200).json(submission_intern)
