@@ -7,65 +7,65 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url = "postgresql://postgres:password@localhost:5432/enag"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  url      = "postgresql://postgres:password@localhost:5432/enag"
+  // url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model user{
-  id        Int @id @default(autoincrement())
-  names              String
-  last_names         String
-  ID_card_url        String
-  username  String   @unique
-  password  String 
-  email     String
-  rol       Role     @default(USER)
-  photo_url String
-  students  student[] 
-  teacher   teacher[]
+model user {
+  id          Int       @id @default(autoincrement())
+  names       String
+  last_names  String
+  ID_card_url String
+  username    String    @unique
+  password    String
+  email       String
+  rol         Role      @default(USER)
+  photo_url   String
+  students    student[]
+  teacher     teacher[]
 }
 
-enum Role{
+enum Role {
   ADMIN
   USER
   TEACHER
   STUDENT
 }
 
-model student{
-  id                    Int @id @default(autoincrement())
+model student {
+  id                    Int                  @id @default(autoincrement())
   study_certificate_url String
   activities            submission[]
   submission_interns    submission_intern[]
   inscriptions          inscription[]
   intern_inscription    intern_inscription[]
   asistances_register   asistance_register[]
-  user                  user @relation(fields: [user_id],references: [id])
-  user_id               Int 
+  user                  user                 @relation(fields: [user_id], references: [id])
+  user_id               Int
 }
 
-model teacher{
-  id                 Int @id @default(autoincrement())
+model teacher {
+  id                 Int             @id @default(autoincrement())
   cv_url             String
   third_level_degree String
   modules            module[]
-  intern_course      intern_course[]  
-  user               user @relation(fields: [user_id],references: [id])
-  user_id            Int 
+  intern_course      intern_course[]
+  user               user            @relation(fields: [user_id], references: [id])
+  user_id            Int
 }
 
-model inscription{
-  id         Int @id @default(autoincrement())
+model inscription {
+  id         Int      @id @default(autoincrement())
   date       DateTime
-  student    student @relation(fields: [student_id],references: [id])
+  student    student  @relation(fields: [student_id], references: [id])
   student_id Int
-  course     course @relation(fields: [course_id],references: [id])     
+  course     course   @relation(fields: [course_id], references: [id])
   course_id  Int
 }
 
-model course{
-  id            Int @id @default(autoincrement())
+model course {
+  id            Int           @id @default(autoincrement())
   topic         String
   content       String
   start_at      DateTime
@@ -78,114 +78,115 @@ model course{
   type          String
   visible       Boolean
   is_start      Boolean
-  img_url       String     
+  img_url       String
   modules       module[]
   inscriptions  inscription[]
 }
 
-model module{
-  id           Int @id @default(autoincrement())
+model module {
+  id         Int               @id @default(autoincrement())
+  title      String
+  content    String
+  sections   section[]
+  resources  module_resource[]
+  asistances asistance[]
+  hours      Int
+  img_url    String
+  planif     String
+  teacher    teacher           @relation(fields: [teacher_id], references: [id])
+  teacher_id Int
+  course     course            @relation(fields: [course_id], references: [id])
+  course_id  Int
+}
+
+model module_resource {
+  id           Int    @id @default(autoincrement())
+  url_resource String
+  module       module @relation(fields: [module_id], references: [id])
+  module_id    Int
   title        String
-  content      String
-  sections     section[]
-  resources    module_resource[]
-  asistances   asistance[]
-  hours        Int
-  img_url      String
-  teacher      teacher @relation(fields: [teacher_id],references: [id])
-  teacher_id   Int
-  course       course @relation(fields: [course_id],references: [id])
-  course_id    Int
 }
 
-model module_resource{
-    id           Int @id @default(autoincrement())
-    url_resource String
-    module       module @relation(fields: [module_id],references: [id])
-    module_id    Int
-    title        String
-}
-
-model section{
-  id         Int @id @default(autoincrement())
+model section {
+  id         Int                @id @default(autoincrement())
   title      String
   content    String
   activities activity[]
   resources  section_resource[]
-  module     module @relation(fields: [module_id],references: [id])
+  module     module             @relation(fields: [module_id], references: [id])
   module_id  Int
 }
 
-model section_resource{
-  id            Int            @id @default(autoincrement())
-  url_resource  String
-  section       section @relation(fields: [section_id],references: [id])
-  section_id    Int
-  title         String
+model section_resource {
+  id           Int     @id @default(autoincrement())
+  url_resource String
+  section      section @relation(fields: [section_id], references: [id])
+  section_id   Int
+  title        String
 }
 
-model activity{
-  id         Int @id @default(autoincrement())
-  title      String
-  content    String
-  time_due   DateTime
+model activity {
+  id          Int                 @id @default(autoincrement())
+  title       String
+  content     String
+  time_due    DateTime
   ponderation Float
-  submission submission[]
-  resources  activity_resource[]
-  section    section @relation(fields: [section_id],references: [id])
-  section_id Int
+  submission  submission[]
+  resources   activity_resource[]
+  section     section             @relation(fields: [section_id], references: [id])
+  section_id  Int
 }
 
-model activity_resource{
-  id            Int @id @default(autoincrement())
-  url_resource  String
-  activity      activity @relation(fields: [activity_id],references: [id])
-  activity_id   Int
-  title         String
+model activity_resource {
+  id           Int      @id @default(autoincrement())
+  url_resource String
+  activity     activity @relation(fields: [activity_id], references: [id])
+  activity_id  Int
+  title        String
 }
 
-model submission{
-  id          Int @id @default(autoincrement())
+model submission {
+  id          Int                   @id @default(autoincrement())
   date        DateTime
   grade       Float
   comment     String
   state_sub   String
   state_gra   String
-  resources   submission_resource[] 
-  student     student @relation(fields: [student_id],references: [id])
+  resources   submission_resource[]
+  student     student               @relation(fields: [student_id], references: [id])
   student_id  Int
-  activity    activity @relation(fields: [activity_id],references: [id])
+  activity    activity              @relation(fields: [activity_id], references: [id])
   activity_id Int
 }
 
-model submission_resource{
-  id            Int @id @default(autoincrement())
+model submission_resource {
+  id            Int        @id @default(autoincrement())
   url_resource  String
-  submission    submission @relation(fields: [submission_id],references: [id])
-  submission_id   Int
-  title           String
+  submission    submission @relation(fields: [submission_id], references: [id])
+  submission_id Int
+  title         String
 }
 
-model asistance{
-  id         Int @id @default(autoincrement())
+model asistance {
+  id          Int                  @id @default(autoincrement())
   description String
-  date        DateTime   
-  registers   asistance_register[] 
-  module     module @relation(fields: [module_id],references: [id])     
-  module_id  Int    
+  date        DateTime
+  registers   asistance_register[]
+  module      module               @relation(fields: [module_id], references: [id])
+  module_id   Int
 }
 
-model asistance_register{
-  id            Int @id @default(autoincrement())
-  status        StatusAsistance  @default(PRESENTE)
-  student       student @relation(fields: [student_id],references: [id])
-  student_id    Int
-  asistance     asistance @relation(fields: [asistance_id],references: [id])
-  asistance_id  Int  
+model asistance_register {
+  id           Int             @id @default(autoincrement())
+  status       StatusAsistance @default(PRESENTE)
+  student      student         @relation(fields: [student_id], references: [id])
+  student_id   Int
+  asistance    asistance       @relation(fields: [asistance_id], references: [id])
+  asistance_id Int
 }
 
-model intern_cv{
-  id     Int @id @default(autoincrement())
+model intern_cv {
+  id     Int      @id @default(autoincrement())
   date   DateTime
   name   String
   phone  String
@@ -193,57 +194,58 @@ model intern_cv{
   cv_url String
 }
 
-model intern_course{
-  id            Int @id @default(autoincrement())
-  title         String
-  content       String
-  start_at      DateTime
-  end_at        DateTime
-  is_start      Boolean
-  img_url       String
-  teacher       teacher @relation(fields: [teacher_id],references: [id])
-  teacher_id    Int
-  inscriptions  intern_inscription[]
-  activities    activity_intern[]
+model intern_course {
+  id           Int                  @id @default(autoincrement())
+  title        String
+  content      String
+  start_at     DateTime
+  end_at       DateTime
+  is_start     Boolean
+  img_url      String
+  teacher      teacher              @relation(fields: [teacher_id], references: [id])
+  teacher_id   Int
+  inscriptions intern_inscription[]
+  activities   activity_intern[]
 }
 
-model intern_inscription{
-  id            Int @id @default(autoincrement())
+model intern_inscription {
+  id            Int           @id @default(autoincrement())
   date          DateTime
-  student       student @relation(fields: [student_id],references: [id])
+  student       student       @relation(fields: [student_id], references: [id])
   student_id    Int
-  intern_course intern_course @relation(fields: [course_id],references: [id])
+  intern_course intern_course @relation(fields: [course_id], references: [id])
   course_id     Int
 }
 
-model activity_intern{
-  id            Int @id @default(autoincrement())
+model activity_intern {
+  id            Int                 @id @default(autoincrement())
   title         String
   content       String
-  intern_course intern_course @relation(fields: [course_id],references: [id])
+  date          DateTime
+  intern_course intern_course       @relation(fields: [course_id], references: [id])
   course_id     Int
   submissions   submission_intern[]
 }
 
-model submission_intern{
-  id              Int @id @default(autoincrement())
+model submission_intern {
+  id              Int             @id @default(autoincrement())
   date            DateTime
   url_resource    String
-  student         student @relation(fields: [student_id],references: [id])
+  student         student         @relation(fields: [student_id], references: [id])
   student_id      Int
-  activity_intern activity_intern @relation(fields: [activity_id],references: [id])
+  activity_intern activity_intern @relation(fields: [activity_id], references: [id])
   activity_id     Int
 }
 
-model resources{
-  id              Int @id @default(autoincrement())
-  url_resource    String
-  title           String
-  description     String
-  type            String
+model resources {
+  id           Int    @id @default(autoincrement())
+  url_resource String
+  title        String
+  description  String
+  type         String
 }
 
-enum StatusAsistance{
+enum StatusAsistance {
   PRESENTE
   ATRASO
   FALTA

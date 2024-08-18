@@ -237,7 +237,7 @@ export const FormATeacher: FC<Props> = ({ teacher_id }) => {
         onSubmit={formik.handleSubmit}
         className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
       >
-        <Typography className="" variant="h4">
+        <Typography component="p" fontSize={22} fontWeight={700} >
           Datos del profesor
         </Typography>
         {teacher_id == undefined && users.length == 0 ? (

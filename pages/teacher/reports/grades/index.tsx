@@ -31,6 +31,7 @@ import { gradeByModuleNoAPI } from "@/utils/grades/gradeByModuleNoAPI";
 import autoTable from "jspdf-autotable";
 import jsPDF from "jspdf";
 import { utils, WorkSheet, writeFile } from "xlsx";
+import Link from "next/link";
 
 export default function ReportGrades() {
   const checkGrade = (grade: any) => {
@@ -89,6 +90,21 @@ export default function ReportGrades() {
     return submission == undefined ? "N/A" : submission.state_sub;
   };
   
+  const checkDate = (date: string) => {
+    try {
+      const fechaReferencia = new Date("2000-08-18T00:00:00.000z");
+      const fechaObj = new Date(date);
+      if (fechaObj.getTime() === fechaReferencia.getTime()) {
+        return "Sin entrega";
+      } else {
+        const fechaFormateada = fechaObj.toISOString().slice(0, 10);
+        return fechaFormateada;
+      }
+    } catch (error) {
+      return "Sin entrega";
+    }
+    };
+
   const columnActivity: GridColDef[] = [
     {
       field: "id",
@@ -112,6 +128,26 @@ export default function ReportGrades() {
       headerName: "Nombre de actividad",
       width: 200,
       valueGetter: (value, row) => getActivityName(row.activity),
+      renderCell:(params)=>{
+        return(
+          <div>
+                <Link
+          href={`/teacher/module/section/activity/${params.row.activity.id}`}
+          passHref
+          target="_blank"
+          className="text-decoration-none"
+        >
+          {params.row.activity.title}
+        </Link>
+          </div>
+        )
+      }
+    },
+    {
+      field:"date",
+      headerName:"Fecha de entrega",
+      width:200,
+      valueGetter:(value,row)=>checkDate(row.submission.date.toString())
     },
     {
       field: "ponderation",

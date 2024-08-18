@@ -30,10 +30,7 @@ export const MyActivityById: NextPage<Props> = ({}) => {
       setActivity(act);
       setIsLoading(false);
     } catch (error) {
-      Swal.fire({
-        icon: "info",
-        title: "Tenemos porblemas al cargar los datos",
-      });
+
       setIsLoading(false);
     }
   };

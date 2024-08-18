@@ -102,40 +102,42 @@ export const Dropzone: FC<Props> = ({
   const router = useRouter();
 
   const onSave = async () => {
-    setIsLoading(true)
-    const fileUploadPromises = [];
+    try {
+      setIsLoading(true);
+      const fileUploadPromises = [];
 
-    if (resourceRemoved.length > 0) {
-      const deletedResourcesPromises = [];
-      for (const sub_res of resourceRemoved) {
-        deletedResourcesPromises.push(deleteSubmissionResource(sub_res));
-      }
-      await Promise.all(deletedResourcesPromises);
-    }
-
-    if (files.length > 0) {
-      for (const file of files) {
-        fileUploadPromises.push(uploadFile(file.file));
-      }
-      const responses = await Promise.all(fileUploadPromises);
-
-      const resourcePromises = [];
-
-      for (const res of responses) {
-        if (res.status === 200) {
-          const body = {
-            url_resource: res.url,
-            submission_id: submission.id,
-            title: res.title,
-          };
-          resourcePromises.push(enagApi.post(`/submissions/resources`, body));
+      if (resourceRemoved.length > 0) {
+        const deletedResourcesPromises = [];
+        for (const sub_res of resourceRemoved) {
+          deletedResourcesPromises.push(deleteSubmissionResource(sub_res));
         }
+        await Promise.all(deletedResourcesPromises);
       }
-      await Promise.all(resourcePromises);
-      setIsLoading(false)
-    }
 
-    router.back();
+      if (files.length > 0) {
+        for (const file of files) {
+          fileUploadPromises.push(uploadFile(file.file));
+        }
+        const responses = await Promise.all(fileUploadPromises);
+
+        const resourcePromises = [];
+
+        for (const res of responses) {
+          if (res.status === 200) {
+            const body = {
+              url_resource: res.url,
+              submission_id: submission.id,
+              title: res.title,
+            };
+            resourcePromises.push(enagApi.post(`/submissions/resources`, body));
+          }
+        }
+        await Promise.all(resourcePromises);
+        setIsLoading(false);
+      }
+
+      router.back();
+    } catch (error) {}
   };
 
   // Quitar archivos
@@ -217,7 +219,15 @@ export const Dropzone: FC<Props> = ({
           <CircularProgress size={100} color="error" />
         </Box>
       )}
-      <Typography variant="h4"> Agregar entrega </Typography>
+      <Typography component="p" fontSize={20} fontWeight={700}>
+        {activity?.title}
+      </Typography>
+      <Typography
+        component="p"
+        dangerouslySetInnerHTML={{
+          __html: activity?.content,
+        }}
+      />
       <form className="border rounded my-2">
         <div
           {...getRootProps()}

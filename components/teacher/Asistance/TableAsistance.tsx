@@ -1,19 +1,10 @@
 import { AsistanceModel } from "@/models";
-import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Container,
-} from "@mui/material";
-import React, { FC, useEffect, useState } from "react";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { IconButton, Container, Paper } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Swal from "sweetalert2";
 import { deleteAsistance } from "@/utils/asistance/deleteAsistance";
@@ -24,7 +15,6 @@ interface Props {
 
 export const TableAsistance: FC<Props> = ({ asistances: ast }) => {
   const router = useRouter();
-
   const [asistances, setAsistances] = useState<AsistanceModel[]>([]);
 
   useEffect(() => {
@@ -42,6 +32,10 @@ export const TableAsistance: FC<Props> = ({ asistances: ast }) => {
       pathname: "/teacher/module/asistance/edit",
       query: { asistance_id },
     });
+  };
+
+  const transformDate = (dateString: string) => {
+    return dateString.split("T")[0];
   };
 
   const onDeleteAsistance = async (asistance: AsistanceModel) => {
@@ -70,49 +64,53 @@ export const TableAsistance: FC<Props> = ({ asistances: ast }) => {
     });
   };
 
+  const columns: GridColDef[] = [
+    {
+      field: "date",
+      headerName: "Fecha",
+      width: 200,
+      valueGetter: (params) => transformDate(params),
+    },
+    { field: "description", headerName: "Descripción", width: 300 },
+    {
+      field: "actions",
+      headerName: "Opciones",
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Container className="p-0 m-0">
+          <IconButton
+            onClick={() =>
+              goToRegisterAsistance(params.row.id, params.row.module_id)
+            }
+          >
+            <PlayArrowIcon />
+          </IconButton>
+          <IconButton onClick={() => goToEditRegister(params.row.id)} color="inherit" >
+            <EditIcon />
+          </IconButton>
+          <IconButton onClick={() => onDeleteAsistance(params.row)} color="error">
+            <DeleteIcon />
+          </IconButton>
+        </Container>
+      ),
+    },
+  ];
+
   return (
-    <TableContainer component={Paper} className="border rounded">
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Descripcion</TableCell>
-            <TableCell>Opciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {asistances.map((asistance) => (
-            <TableRow
-              key={asistance.id}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {asistance.date
-                  .toString()
-                  .slice(0, asistance.date.toString().lastIndexOf("T"))}
-              </TableCell>
-              <TableCell>{asistance.description}</TableCell>
-              <TableCell align="left">
-                <Container className="p-0">
-                  <IconButton
-                    onClick={() =>
-                      goToRegisterAsistance(asistance.id, asistance.module_id)
-                    }
-                  >
-                    <PlayArrowIcon />
-                  </IconButton>
-                  <IconButton onClick={() => goToEditRegister(asistance.id)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => onDeleteAsistance(asistance)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Container>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Paper style={{ height: 400, width: "100%" }}>
+      <DataGrid
+        rows={asistances}
+        columns={columns}
+        disableRowSelectionOnClick
+        pageSizeOptions={[10]}
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            },
+          },
+        }}
+      />
+    </Paper>
   );
 };

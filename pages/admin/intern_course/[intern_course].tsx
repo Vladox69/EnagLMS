@@ -344,7 +344,7 @@ export const InternCourseById = () => {
               onClick={reset}
               variant="contained"
               color="error"
-              className="mb-2"
+              className="my-2"
             >
               {" "}
               Reiniciar curso{" "}

@@ -54,9 +54,10 @@ export default function Teacher() {
   }, [searchQuery, modules, interns]);
 
   const getData = async () => {
-    setIsLoading(true);
     try {
       const { data: p } = await enagApi.get(`/auth/profile`);
+      console.log(p.user_id);
+      
       const { data: t } = await enagApi.get<TeacherModel>(
         `/teachers/user_id=${p.user_id}`
       );

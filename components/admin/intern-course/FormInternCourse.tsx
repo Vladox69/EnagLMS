@@ -327,6 +327,10 @@ export const FormInternCourse: FC<Props> = ({ course_id }) => {
               id="img_file"
               name="img_file"
               className="w-100"
+              inputProps={{
+                accept: "image/*",
+                multiple:false
+              }}
               onChange={onFileInputChange}
               onBlur={formik.handleBlur}
               error={formik.touched.img_file && Boolean(formik.errors.img_file)}

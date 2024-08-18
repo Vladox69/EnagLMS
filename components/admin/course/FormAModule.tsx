@@ -22,6 +22,8 @@ import { UserTeacher } from "@/interface/models_combine";
 import dynamic from "next/dynamic";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import Image from "next/image";
+import { CustomDialog } from "@/components/my/CustomDialog";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 interface Props {
   module_id?: number;
   course_id?: number;
@@ -52,6 +54,8 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
     hours: 0,
     img_file: null,
     img_url: "",
+    planif_file: null,
+    planif: "",
   });
   const [teachers, setTeachers] = useState<TeacherModel[]>([]);
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -90,6 +94,12 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
     formik.setFieldValue("img_file", target.files?.[0]);
   };
 
+  const [CV, setCV] = useState(false);
+  const onFilePlanifInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const target = event.target;
+    if (target.files && target.files.length === 0) return;
+    formik.setFieldValue("planif_file", target.files?.[0]);
+  };
   const goBack = () => {
     router.back();
   };
@@ -98,7 +108,7 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
     try {
       const { data: u } = await enagApi.get(`/users/user_rol=TEACHER`);
       setUsers(u);
-      
+
       const { data: t } = await enagApi.get(`/teachers`);
       setTeachers(t);
       setIsLoading(false);
@@ -122,8 +132,10 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
           hours: m.hours,
           img_file: null,
           img_url: m.img_url,
+          planif: m.planif,
+          planif_file: null,
         });
-        setContent(m.content)
+        setContent(m.content);
       }
     } catch (error) {}
   };
@@ -133,7 +145,34 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
       buildData();
     }
   }, [isLoading]);
+  const renderResource = (
+    title: string,
+    url: string,
+    state: boolean,
+    setState: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    const handleOpen = () => {
+      setState(!state);
+    };
 
+    const handleClose = () => {
+      setState(!state);
+    };
+
+    return (
+      <p onClick={handleOpen}>
+        <PictureAsPdfIcon />
+        <span>{title}</span>
+        <CustomDialog
+          open={state}
+          handleClose={handleClose}
+          title={title}
+          url={url}
+        />
+      </p>
+    );
+  };
+  
   const buildData = () => {
     let usersTeacherTemp: UserTeacher[] = [];
     teachers.map((teacher) => {
@@ -267,6 +306,40 @@ export const FormAModule: FC<Props> = ({ module_id, course_id }) => {
           ) : (
             <></>
           )}
+
+          <div>
+            <Typography component="p">Planificación del módulo</Typography>
+            <TextField
+              type="file"
+              variant="outlined"
+              id="planif_file"
+              name="planif_file"
+              className="w-100"
+              // value={formik.values.planif_file}
+              onChange={onFilePlanifInputChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.planif_file && Boolean(formik.errors.planif_file)
+              }
+              helperText={
+                formik.touched.planif_file && formik.errors.planif_file
+              }
+              inputProps={{
+                accept: "application/pdf",
+              }}
+            />
+            {!!module_id ? (
+              renderResource(
+                "Planificación.pdf",
+                formik.values.planif,
+                CV,
+                setCV
+              )
+            ) : (
+              <></>
+            )}
+          </div>
+
           <TextField
             id="teacher_id"
             select

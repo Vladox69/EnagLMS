@@ -46,22 +46,18 @@ const getModulesByIdCourse = async (
       },
     });
     if (!modules) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to retrieve resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to retrieve resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(modules);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to retrieve resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to retrieve resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -81,22 +77,18 @@ const getModulesByIdTeacher = async (
       },
     });
     if (!modules) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to retrieve resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to retrieve resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(modules);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to retrieve resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to retrieve resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -113,22 +105,18 @@ const getModuleById = async (
       },
     });
     if (!mod) {
-      return res
-        .status(200)
-        .json({
-          message:
-            "Failed to retrieve resource. The requested data is missing or inaccessible.",
-        });
+      return res.status(200).json({
+        message:
+          "Failed to retrieve resource. The requested data is missing or inaccessible.",
+      });
     }
     return res.status(200).json(mod);
   } catch (error) {
     console.log(error);
-    return res
-      .status(400)
-      .json({
-        message:
-          "Failed to retrieve resource. The requested data is missing or inaccessible.",
-      });
+    return res.status(400).json({
+      message:
+        "Failed to retrieve resource. The requested data is missing or inaccessible.",
+    });
   }
 };
 
@@ -139,7 +127,8 @@ const updateModule = async (
   try {
     const { id } = req.query;
     const module_id = id?.toString().substring("module_id=".length);
-    const { title, content, course_id, teacher_id, hours, img_url } = req.body;
+    const { title, content, course_id, teacher_id, hours, img_url, planif } =
+      req.body;
     const module_temp = await prisma.module.findFirst({
       where: {
         id: Number(module_id),
@@ -147,6 +136,10 @@ const updateModule = async (
     });
     if (module_temp?.img_url != img_url) {
       await deleteFile(module_temp?.img_url || "");
+    }
+
+    if (module_temp?.planif != planif) {
+      await deleteFile(module_temp?.planif || "");
     }
 
     const mod = await prisma.module.update({
@@ -160,6 +153,7 @@ const updateModule = async (
         teacher_id,
         hours,
         img_url,
+        planif,
       },
     });
     return res.status(200).json(mod);

@@ -11,7 +11,6 @@ import {
 } from "@/models";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { gradeBySection } from "@/utils/grades/gradeBySection";
 import {
   Box,
   Button,
@@ -25,15 +24,7 @@ import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import {
   CourseStudentActivity,
-  StudenSection,
-  StudenSectionActivity,
-  StudentActivity,
-  StudentCourse,
-  StudentCourseActivity,
-  StudentModule,
-  StudentModuleActivity,
 } from "@/interface/models_combine";
-import { gradeByActivity } from "@/utils/grades/gradeByActivity";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { utils, WorkSheet, writeFile } from "xlsx";
@@ -44,6 +35,21 @@ export default function ReportCourse() {
   const checkGrade = (grade: any) => {
     return grade === undefined || isNaN(grade) || grade == -1 ? "N/A" : grade;
   };
+
+  const checkDate = (date: string) => {
+    try {
+      const fechaReferencia = new Date("2000-08-18T00:00:00.000z");
+      const fechaObj = new Date(date);
+      if (fechaObj.getTime() === fechaReferencia.getTime()) {
+        return "Sin entrega";
+      } else {
+        const fechaFormateada = fechaObj.toISOString().slice(0, 10);
+        return  fechaFormateada;
+      }
+    } catch (error) {
+      return "Sin entrega";
+    }
+    };
 
   const getStudentName = (student: any) => {
     try {
@@ -86,8 +92,6 @@ export default function ReportCourse() {
   };
 
   const getStateGradeActivity = (submission: any) => {
-    console.log(submission);
-
     return submission == undefined ? "N/A" : submission.state_gra;
   };
 
@@ -184,6 +188,12 @@ export default function ReportCourse() {
       valueGetter: (value, row) => getActivityName(row.activity),
     },
     {
+      field:"date",
+      headerName:"Fecha de entrega",
+      width:200,
+      valueGetter:(value,row)=>checkDate(row.submission.date.toString())
+    },
+    {
       field: "ponderation",
       headerName: "Ponderación",
       width: 100,
@@ -231,7 +241,6 @@ export default function ReportCourse() {
   const [activities, setActivities] = useState<ActivityModel[]>([]);
   const [users, setUsers] = useState<UserModel[]>([]);
   //Data aux
-  const [auxCourses, setAuxCourses] = useState<CourseModel[]>([]);
   const [auxModules, setAuxModules] = useState<ModuleModel[]>([]);
   const [auxSections, setAuxSections] = useState<SectionModel[]>([]);
   const [auxActivities, setAuxActivities] = useState<ActivityModel[]>([]);
@@ -240,20 +249,6 @@ export default function ReportCourse() {
   const [coursesStudentsActivities, setCoursesStudentsActivities] = useState<
     CourseStudentActivity[]
   >([]);
-  const [studentCourse, setStudentCourse] = useState<StudentCourse[]>([]);
-  const [studentCourseActivity, setStudentCourseActivity] = useState<
-    StudentCourseActivity[]
-  >([]);
-  const [studentModule, setStudentModule] = useState<StudentModule[]>([]);
-  const [studentModuleActivity, setStudentModuleActivity] = useState<
-    StudentModuleActivity[]
-  >([]);
-  const [studentSection, setStudentSection] = useState<StudenSection[]>([]);
-  const [studentSectionActivity, setStudentSectionActivity] = useState<
-    StudenSectionActivity[]
-  >([]);
-  const [studentActivity, setStudentActivity] = useState<StudentActivity[]>([]);
-
   useEffect(() => {
     getData();
   }, []);
@@ -539,7 +534,7 @@ export default function ReportCourse() {
       } else if (
         selectedCourse > 0 &&
         selectedModule > 0 &&
-        selectedActivity == -1
+        selectedActivity >0
       ) {
         getGradeActivity();
       }

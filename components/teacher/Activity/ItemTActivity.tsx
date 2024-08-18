@@ -67,10 +67,10 @@ export const ItemTActivity: FC<Props> = ({ activity, onDeleteActivity }) => {
         <Typography component='p' onClick={goToActivity} > {activity.title} </Typography>
       </div>
       <div className='d-flex align-items-center'>
-        <IconButton onClick={() => goToEditActivity(activity.id)} >
+        <IconButton onClick={() => goToEditActivity(activity.id)} color='inherit'>
           <EditIcon />
         </IconButton>
-        <IconButton onClick={handleDelete} >
+        <IconButton onClick={handleDelete} color='error' >
           <DeleteIcon />
         </IconButton>
       </div>

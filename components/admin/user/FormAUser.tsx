@@ -262,7 +262,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
     if (!user_id && names && last_names && !username) {
       const nameParts = names.split(" ");
       const firstLetter = nameParts[0]?.[0]?.toLowerCase() || "";
-      const secondLetter = nameParts[1]?.[1]?.toLowerCase() || "";
+      const secondLetter = nameParts[1]?.[0]?.toLowerCase() || "";
       const lastName = last_names.split(" ")[0].toLowerCase();
 
       const suggestedUsername = `${firstLetter}${secondLetter}${lastName}`;

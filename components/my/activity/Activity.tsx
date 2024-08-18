@@ -1,6 +1,4 @@
 import { enagApi } from "@/apis";
-import { MyContext } from "@/context/my";
-import { SubmissionStudentI } from "@/interface/submission_student";
 import {
   ActivityModel,
   ActivityResourceModel,
@@ -24,7 +22,6 @@ import {
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
 import { GridRActivity } from "./GridRActivity";
-import Swal from "sweetalert2";
 
 interface Props {
   activity: ActivityModel;
@@ -37,7 +34,7 @@ export const Activity: FC<Props> = ({ activity }) => {
     router.push(`/my/course/module/activity/submission/${submission?.id}`);
   };
 
-  const comparteDate=()=>{
+  const comparteDate = () => {
     const dateToCompare = new Date(activity.time_due);
     const currentDate = new Date();
     if (dateToCompare >= currentDate) {
@@ -45,7 +42,7 @@ export const Activity: FC<Props> = ({ activity }) => {
     } else {
       setIsFutureDate(false);
     }
-  }
+  };
 
   useEffect(() => {
     if (router.isReady) {
@@ -54,12 +51,12 @@ export const Activity: FC<Props> = ({ activity }) => {
   }, [router.isReady]);
 
   const [submission, setSubmission] = useState<SubmissionModel>();
-  const [resources, setResources] = useState<SubmissionResourceModel[]>();
-  const [act_res, setAct_res] = useState<ActivityResourceModel[]>()
-  const [isFutureDate, setIsFutureDate] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [resources, setResources] = useState<SubmissionResourceModel[]>([]);
+  const [act_res, setAct_res] = useState<ActivityResourceModel[]>();
+  const [isFutureDate, setIsFutureDate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const getDataSubmission = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const { data: p } = await enagApi.get(`/auth/profile`);
       const { data: s } = await enagApi.get<StudentModel>(
@@ -77,46 +74,55 @@ export const Activity: FC<Props> = ({ activity }) => {
       setAct_res(res_act);
       setSubmission(sub);
       setResources(reso);
-      comparteDate()
-      setIsLoading(false)
+      comparteDate();
+      setIsLoading(false);
     } catch (error) {
       // Swal.fire({
       //   icon: "info",
       //   title: "Tenemos porblemas al cargar los datos",
       // });
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
+  const checkDate = (date: string) => {
+    try {
+      const fechaReferencia = new Date("2000-08-18T00:00:00.000z");
+      const fechaObj = new Date(date);
+      if (fechaObj.getTime() === fechaReferencia.getTime()) {
+        return "Sin entrega";
+      } else {
+        const fechaFormateada = fechaObj.toISOString().slice(0, 10);
+        return fechaFormateada;
+      }
+    } catch (error) {
+      return "Sin entrega";
+    }
+    };
+
   return (
     <Container className="container">
-      {(submission == undefined || resources == undefined||act_res==undefined) ? (
+      {isLoading ? (
         <Box
           display="flex"
           justifyContent="center"
           alignItems="center"
-          minHeight="80vh" 
+          minHeight="80vh"
         >
           <CircularProgress size={100} color="error" />
         </Box>
       ) : (
         <>
-          <Typography component="p" fontWeight={700} fontSize={20}>{activity.title}</Typography>
+          <Typography component="p" fontWeight={700} fontSize={20}>
+            {activity?.title}
+          </Typography>
           <Typography
             component="p"
             dangerouslySetInnerHTML={{
-              __html: activity.content,
+              __html: activity?.content,
             }}
           />
-          <GridRActivity activities_resources={act_res} />
-          <Button
-            variant="contained"
-            color="error"
-            onClick={goToSubmissionById}
-            className={isFutureDate?'visible my-3':'invisible'}
-          >
-            Agregar entrega
-          </Button>
+          <GridRActivity activities_resources={act_res||[]} />
           <TableContainer component={Paper} className="border rounded">
             <Table aria-label="caption table">
               <TableBody>
@@ -135,6 +141,10 @@ export const Activity: FC<Props> = ({ activity }) => {
                       ? submission.grade
                       : submission?.state_gra}
                   </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell width={300}>Fecha de entrega</TableCell>
+                  <TableCell className="text-start"> {checkDate(submission?.date.toString()||"")} </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell width={300}>Archivos enviados</TableCell>
@@ -162,6 +172,14 @@ export const Activity: FC<Props> = ({ activity }) => {
           </TableContainer>
         </>
       )}
+      <Button
+        variant="contained"
+        color="error"
+        onClick={goToSubmissionById}
+        className={isFutureDate ? "visible my-3" : "invisible"}
+      >
+        Agregar entrega
+      </Button>
     </Container>
   );
 };

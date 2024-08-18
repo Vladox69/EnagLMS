@@ -472,7 +472,7 @@ export default function ReportAsistances() {
     let head: any = [];
     const newDate = new Date().toLocaleDateString();
     const date = newDate.replaceAll("/", "_");
-    let startY = 0;
+    let startY = 20;
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
     doc.text("Registro de asistencias", 14, 15);

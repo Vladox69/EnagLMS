@@ -22,7 +22,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
 
 const createModule=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
     try {
-        const {title,content,course_id,teacher_id,hours,img_url}=req.body
+        const {title,content,course_id,teacher_id,hours,img_url,planif}=req.body
         const mod = await prisma.module.create({
             data:{
                 title,
@@ -30,7 +30,8 @@ const createModule=async(req: NextApiRequest, res: NextApiResponse<Data>)=>{
                 course_id,
                 teacher_id,
                 hours,
-                img_url
+                img_url,
+                planif
             }
         })       
         return res.status(200).json(mod) 

@@ -72,10 +72,10 @@ export const ItemTSection: FC<Props> = ({ section, onDeleteSection }) => {
         <Typography component="p"> {section.title} </Typography>
       </div>
       <div className="d-flex align-items-center">
-        <IconButton onClick={() => goToEditSection(section.id)}>
+        <IconButton onClick={() => goToEditSection(section.id)} color="inherit" >
           <EditIcon />
         </IconButton>
-        <IconButton onClick={() => handleDelete()}>
+        <IconButton onClick={() => handleDelete()} color="error">
           <DeleteIcon />
         </IconButton>
       </div>

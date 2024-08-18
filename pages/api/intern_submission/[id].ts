@@ -148,11 +148,15 @@ const createSubmissionsByIdStudents = async (
     const { id } = req.query;
     const activity_id = id?.toString().substring("activity_id=".length);
     const { inscription_ids } = req.body;
+    const currentDate = new Date();
+    currentDate.setUTCHours(0, 0, 0, 0);
+    const date = currentDate.toISOString();
     const data = inscription_ids.map((inscription: number) => {
       return {
         activity_id: Number(activity_id),
         student_id: inscription,
         url_resource: "",
+        date
       };
     });
     const submission_count = await prisma.submission_intern.createMany({
