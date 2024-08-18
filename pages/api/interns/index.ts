@@ -34,13 +34,14 @@ const getInterns = async (res: NextApiResponse<Data>) => {
 
 const createInternCV = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     try {
-        const { name, phone, email, cv_url } = req.body
+        const { name, phone, email, cv_url ,date} = req.body
         const intern_cv = await prisma.intern_cv.create({
             data: {
                 name,
                 phone,
                 email,
-                cv_url
+                cv_url,
+                date
             }
         })
 
