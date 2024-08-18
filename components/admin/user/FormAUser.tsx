@@ -485,6 +485,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
             error={formik.touched.rol && Boolean(formik.errors.rol)}
           >
             <MenuItem value="no">No seleccionado</MenuItem>
+            <MenuItem value="ADMIN">ADMIN</MenuItem>
             <MenuItem value="TEACHER">PROFESOR</MenuItem>
             <MenuItem value="STUDENT">ESTUDIANTE</MenuItem>
           </TextField>
