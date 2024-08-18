@@ -30,6 +30,7 @@ export const gradeByCourseActivity = async (
       state_gra: "",
       state_sub: "",
       student_id: 0,
+      date:new Date()
     };
     return {
       activity,
