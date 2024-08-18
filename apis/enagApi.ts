@@ -6,7 +6,7 @@ import axios from 'axios';
   */
 
 const enagApi=axios.create({
-    baseURL:'http://localhost:3000/api',
+    baseURL:'https://www.enag.es/api',
 })
 
 export default enagApi;
