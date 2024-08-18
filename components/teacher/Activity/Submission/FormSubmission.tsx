@@ -26,7 +26,8 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
         student_id: 0,
         activity_id: 0,
         state_gra: '',
-        state_sub: ''
+        state_sub: '',
+        date:'00:00:00T00:00:00.000Z'
     })
     const [content, setContent] = useState('')
 
@@ -37,7 +38,7 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
     }, [submission])
 
     const goBack = () => {
-        router.back()
+        router.push(`/teacher/module/section/activity/${submission.activity_id}`)
     }
 
     const getDataSubmission = async () => {
@@ -50,7 +51,8 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 student_id: submission.student_id,
                 activity_id: submission.activity_id,
                 state_gra: submission.state_gra,
-                state_sub: submission.state_sub
+                state_sub: submission.state_sub,
+                date:submission.date.toString()
             })
             setContent(submission.comment);
         }
@@ -67,7 +69,8 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                 student_id: values.student_id,
                 activity_id: values.activity_id,
                 state_gra: 'Calificado',
-                state_sub: 'Revisado'
+                state_sub: 'Revisado',
+                date:values.date
             }
 
             let res: any;
@@ -81,14 +84,14 @@ export const FormSubmission: FC<Props> = ({ submission }) => {
                     icon: 'success',
                     title: 'Los datos se guardaron',
                 }).then(() => {
-                    router.back()
+                    goBack()
                 })
             } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'No se pudo guardar los datos',
                 }).then(() => {
-                    router.back()
+                    goBack()
                 })
             }
 

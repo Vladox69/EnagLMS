@@ -6,4 +6,5 @@ export interface SubmissionModel {
     state_gra:string;
     state_sub:string;
     activity_id: number;
+    date:Date;
 }

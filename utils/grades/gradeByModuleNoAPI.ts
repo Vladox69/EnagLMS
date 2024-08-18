@@ -17,8 +17,6 @@ export const gradeByModuleNoAPI = (
   const sectionsTemp: SectionModel[] = sections.filter(
     (sect) => sect.module_id == module.id
   );
-  console.log(sectionsTemp);
-  
   let sectionsGrades: any[] = [];
   let subTotal = 0;
   let total = 0;

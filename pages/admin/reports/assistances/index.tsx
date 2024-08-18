@@ -15,38 +15,50 @@ import {
   InscriptionModel,
   ModuleModel,
   StudentModel,
+  UserModel,
 } from "@/models";
-import { Box, Button, IconButton, Menu, MenuItem, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
+import { utils, WorkSheet, writeFile } from "xlsx";
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
 
-const getStudentName = (student: any) => {
-  return student === undefined ? "N/A" : student.names;
+const getDescriptionAsistance = (asistance: any) => {
+  return asistance === undefined ? "N/A" : asistance.description;
 };
 
-const getStudentLasName = (student: any) => {
-  return student === undefined ? "N/A" : student.last_names;
+const getDateAsistance = (asistance: any) => {
+  return asistance === undefined ? "N/A" : asistance.date.split("T")[0];
 };
 
-const getDescriptionAsistance=(asistance:any)=>{
-    return asistance === undefined ? "N/A" : asistance.description;
-}
+const getRegisterState = (register: any) => {
+  return register === undefined ? "N/A" : register.status;
+};
 
-const getDateAsistance=(asistance:any)=>{
-    return asistance === undefined ? "N/A" : asistance.date.split("T")[0];
-}
+const getCourseName = (course: any) => {
+  return course === undefined ? "N/A" : course.topic;
+};
 
-const getRegisterState=(register:any)=>{
-    return register === undefined ? "N/A" : register.status;
-}
+const getModuleName = (module: any) => {
+  return module === undefined ? "N/A" : module.title;
+};
 
-const getCourseName=(course:any)=>{
-    return course===undefined?"N/A":course.topic
-}
-  
-const getModuleName=(module:any)=>{
-    return module===undefined?"N/A":module.title
-}
+const getUserNames = (user: any) => {
+  return user === undefined ? "N/A" : user.names;
+};
+
+const getUserLastNames = (user: any) => {
+  return user === undefined ? "N/A" : user.last_names;
+};
 
 const columnCourseAsistance: GridColDef[] = [
   {
@@ -58,83 +70,83 @@ const columnCourseAsistance: GridColDef[] = [
     field: "names",
     headerName: "Nombres",
     width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
+    valueGetter: (value, row) => getUserNames(row.user),
   },
   {
     field: "lastnames",
     headerName: "Apellidos",
     width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
+    valueGetter: (value, row) => getUserLastNames(row.user),
   },
   {
-    field:"course",
-    headerName:"Curso",
-    width:200,
-    valueGetter:(value,row)=>getCourseName(row.course)
+    field: "course",
+    headerName: "Curso",
+    width: 200,
+    valueGetter: (value, row) => getCourseName(row.course),
   },
   {
-    field:"description",
-    headerName:"Descripción",
-    width:200,
-    valueGetter:(value,row)=>getDescriptionAsistance(row.asistance)
+    field: "description",
+    headerName: "Descripción",
+    width: 200,
+    valueGetter: (value, row) => getDescriptionAsistance(row.asistance),
   },
   {
-    field:"date",
-    headerName:"Fecha",
-    width:150,
-    valueGetter:(value,row)=>getDateAsistance(row.asistance)
+    field: "date",
+    headerName: "Fecha",
+    width: 150,
+    valueGetter: (value, row) => getDateAsistance(row.asistance),
   },
   {
-    field:"status",
-    headerName:"Estado",
-    width:150,
-    valueGetter:(value,row)=>getRegisterState(row.register)
-  }
+    field: "status",
+    headerName: "Estado",
+    width: 150,
+    valueGetter: (value, row) => getRegisterState(row.register),
+  },
 ];
 
 const columnModuleAsistance: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "ID",
-      width: 50,
-    },
-    {
-      field: "names",
-      headerName: "Nombres",
-      width: 200,
-      valueGetter: (value, row) => getStudentName(row.student),
-    },
-    {
-      field: "lastnames",
-      headerName: "Apellidos",
-      width: 200,
-      valueGetter: (value, row) => getStudentLasName(row.student),
-    },
-    {
-      field:"module",
-      headerName:"Módulo",
-      width:200,
-      valueGetter:(value,row)=>getModuleName(row.module)
-    },
-    {
-      field:"description",
-      headerName:"Descripción",
-      width:200,
-      valueGetter:(value,row)=>getDescriptionAsistance(row.asistance)
-    },
-    {
-      field:"date",
-      headerName:"Fecha",
-      width:150,
-      valueGetter:(value,row)=>getDateAsistance(row.asistance)
-    },
-    {
-      field:"status",
-      headerName:"Estado",
-      width:150,
-      valueGetter:(value,row)=>getRegisterState(row.register)
-    }
-  ];
+  {
+    field: "id",
+    headerName: "ID",
+    width: 50,
+  },
+  {
+    field: "names",
+    headerName: "Nombres",
+    width: 200,
+    valueGetter: (value, row) => getUserNames(row.user),
+  },
+  {
+    field: "lastnames",
+    headerName: "Apellidos",
+    width: 200,
+    valueGetter: (value, row) => getUserLastNames(row.user),
+  },
+  {
+    field: "module",
+    headerName: "Módulo",
+    width: 200,
+    valueGetter: (value, row) => getModuleName(row.module),
+  },
+  {
+    field: "description",
+    headerName: "Descripción",
+    width: 200,
+    valueGetter: (value, row) => getDescriptionAsistance(row.asistance),
+  },
+  {
+    field: "date",
+    headerName: "Fecha",
+    width: 150,
+    valueGetter: (value, row) => getDateAsistance(row.asistance),
+  },
+  {
+    field: "status",
+    headerName: "Estado",
+    width: 150,
+    valueGetter: (value, row) => getRegisterState(row.register),
+  },
+];
 
 export default function ReportAsistances() {
   const apiRef = useGridApiRef();
@@ -158,6 +170,7 @@ export default function ReportAsistances() {
   const [registersAsistances, setRegistersAsistances] = useState<
     AsistanceRegisterModel[]
   >([]);
+  const [users, setUsers] = useState<UserModel[]>([]);
   //Data aux
   const [auxModules, setAuxModules] = useState<ModuleModel[]>([]);
   const [auxAsistances, setAuxAsistances] = useState<AsistanceModel[]>([]);
@@ -287,6 +300,7 @@ export default function ReportAsistances() {
     let studentsCoursesAsistancesRegisters: StudentCourseAsistance[] = [];
     auxRegistersAsistances.map((regsasis) => {
       const student = students.find((sts) => sts.id == regsasis.student_id);
+      const user = users.find((usr) => usr.id == student?.user_id);
       const asistance = auxAsistances.find(
         (asts) => asts.id == regsasis.asistance_id
       );
@@ -295,13 +309,15 @@ export default function ReportAsistances() {
       if (
         course != undefined &&
         student != undefined &&
-        asistance != undefined
+        asistance != undefined &&
+        user != undefined
       ) {
         const studentCourseAsistanceTemp: StudentCourseAsistance = {
           student,
           asistance,
           course,
           register: regsasis,
+          user,
         };
         studentsCoursesAsistancesRegisters = [
           ...studentsCoursesAsistancesRegisters,
@@ -318,12 +334,14 @@ export default function ReportAsistances() {
         (asts) => asts.id == regsasis.asistance_id
       );
       const modul = auxModules.find((md) => md.id == asistance?.module_id);
+      const user = users.find((usr) => usr.id == student?.user_id);
       const course = courses.find((crs) => crs.id == modul?.course_id);
       if (
         course != undefined &&
         student != undefined &&
         asistance != undefined &&
-        modul != undefined
+        modul != undefined &&
+        user != undefined
       ) {
         const studentCourseModuleAsistanceTemp: StudentCourseModuleAsistance = {
           student,
@@ -331,6 +349,7 @@ export default function ReportAsistances() {
           course,
           register: regsasis,
           module: modul,
+          user,
         };
         studentsCoursesModulesAsistance = [
           ...studentsCoursesModulesAsistance,
@@ -347,16 +366,19 @@ export default function ReportAsistances() {
         (asts) => asts.id == regsasis.asistance_id
       );
       const modul = auxModules.find((md) => md.id == asistance?.module_id);
+      const user = users.find((usr) => usr.id == student?.user_id);
       if (
         student != undefined &&
         asistance != undefined &&
-        modul != undefined
+        modul != undefined &&
+        user != undefined
       ) {
         const studentModuleAsistanceTemp: StudentModuleAsistance = {
           student,
           asistance,
           register: regsasis,
           module: modul,
+          user,
         };
         studentsModulesAsistances = [
           ...studentsModulesAsistances,
@@ -372,11 +394,13 @@ export default function ReportAsistances() {
       const asistance = auxAsistances.find(
         (asts) => asts.id == regsasis.asistance_id
       );
-      if (student != undefined && asistance != undefined) {
+      const user = users.find((usr) => usr.id == student?.user_id);
+      if (student != undefined && asistance != undefined && user != undefined) {
         const studentAsistanceTemp: StudentAsistance = {
           student,
           asistance,
           register: regsasis,
+          user,
         };
         studentsAsistances = [...studentsAsistances, studentAsistanceTemp];
       }
@@ -386,6 +410,9 @@ export default function ReportAsistances() {
 
   const getData = async () => {
     try {
+      const { data: usrs } = await enagApi.get<UserModel[]>(`/users`);
+      setUsers(usrs);
+
       const { data: sts } = await enagApi.get<StudentModel[]>(`/students`);
       setStudents(sts);
 
@@ -414,121 +441,292 @@ export default function ReportAsistances() {
     }
   };
 
-  const getAsistanceByCourse=()=>{
-    setColumns(columnCourseAsistance)
-    let auxStudentCourseAsistances:StudentCourseAsistance[]=[]
-    let rowsIndex: any[] = [];
-    if(selectedCourse==-1&&selectedAsistance==0){
-        auxStudentCourseAsistances=studentCourseAsistance
-    }else if(selectedCourse==-1&&selectedAsistance==-1){
-        auxStudentCourseAsistances=studentCourseAsistance
-    }else if(selectedCourse>0&&selectedAsistance==-1){
-        auxStudentCourseAsistances=studentCourseAsistance.filter((stcras)=>stcras.course.id==selectedCourse)
-    }else if(selectedCourse>0&&selectedAsistance==0){
-        auxStudentCourseAsistances=studentCourseAsistance.filter((stcras)=>stcras.course.id==selectedCourse)
-    }else if(selectedCourse>0&&selectedAsistance>0){
-        auxStudentCourseAsistances=studentCourseAsistance.filter((stcras)=>stcras.asistance.id==selectedAsistance)
+  const exportExcel = () => {
+    const newDate = new Date().toLocaleDateString();
+    const date = newDate.replaceAll("/", "_");
+    let head: any = [];
+    const asCSV = apiRef.current.getDataAsCsv();
+    const rowsArray = asCSV.split(/\r?\n/);
+    head = rowsArray
+      .shift()
+      ?.split(",")
+      .map((header) => header.trim());
+    const body = rowsArray.map((row) =>
+      row.split(",").map((cell) => cell.trim())
+    );
+    const data = [head, ...body];
+    const ws: WorkSheet = utils.aoa_to_sheet(data);
+    ws["!cols"] = head.map(() => ({ wch: 22 }));
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, `${date}`);
+    writeFile(wb, `registro-de-asistencias${date}.xlsx`);
+    handleClose();
+  };
+
+  const exportPDF = () => {
+    const doc = new jsPDF({
+      orientation: "landscape",
+    });
+    let title = "";
+    let ast;
+    let head: any = [];
+    const newDate = new Date().toLocaleDateString();
+    const date = newDate.replaceAll("/", "_");
+    let startY = 0;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Registro de asistencias", 14, 15);
+
+    if (selectedCourse == -1) {
+      doc.setFont("helvetica", "normal");
+      doc.text(`Curso: Todos`, 14, 20);
+      doc.text(`Fecha: ${newDate}`, 14, 25);
+      startY=30
+    } else if (selectedCourse > 0 && selectedModule == -1) {
+      const crs=courses.find((cr)=>cr.id==selectedCourse)
+      doc.setFont("helvetica", "normal");
+      doc.text(`Curso: ${crs?.topic}`, 14, 20);
+      doc.text(`Módulo: Todos`, 14, 25);
+      doc.text(`Fecha: ${newDate}`, 14, 30);
+      startY=35
+    } else if (selectedCourse > 0 && selectedModule > 0) {
+      const crs=courses.find((cr)=>cr.id==selectedCourse)
+      const modl = modules.find((md) => md.id == selectedModule);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Curso: ${crs?.topic}`, 14, 20);
+      doc.text(`Módulo: ${modl?.title}`, 14, 25);
+      doc.text(`Fecha: ${newDate}`, 14, 30);
+      startY=35
     }
-    rowsIndex=auxStudentCourseAsistances.map((data,index)=>({
-        ...data,
-        id: index + 1,
-    }))
-    setRows(rowsIndex)
-  }
+    const asCSV = apiRef.current.getDataAsCsv();
+    const rowsArray = asCSV.split(/\r?\n/);
+    head = rowsArray
+      .shift()
+      ?.split(",")
+      .map((header) => header.trim());
+    const body = rowsArray.map((row) =>
+      row.split(",").map((cell) => cell.trim())
+    );
+    autoTable(doc, {
+      startY,
+      head: [head],
+      body: body,
+    });
+    doc.save(`registro-de-asistencias${date}.pdf`);
+    handleClose();
+  };
 
-  const getAsistanceByModule=()=>{
-    setColumns(columnModuleAsistance)
-    let auxStudentModuleAsistance:StudentModuleAsistance[]=[]
+  const getAsistanceByCourse = () => {
+    setColumns(columnCourseAsistance);
+    let auxStudentCourseAsistances: StudentCourseAsistance[] = [];
+    let rowsIndex: any[] = [];
+    if (selectedCourse == -1 && selectedAsistance == 0) {
+      auxStudentCourseAsistances = studentCourseAsistance;
+    } else if (selectedCourse == -1 && selectedAsistance == -1) {
+      auxStudentCourseAsistances = studentCourseAsistance;
+    } else if (selectedCourse > 0 && selectedAsistance == -1) {
+      auxStudentCourseAsistances = studentCourseAsistance.filter(
+        (stcras) => stcras.course.id == selectedCourse
+      );
+    } else if (selectedCourse > 0 && selectedAsistance == 0) {
+      auxStudentCourseAsistances = studentCourseAsistance.filter(
+        (stcras) => stcras.course.id == selectedCourse
+      );
+    } else if (selectedCourse > 0 && selectedAsistance > 0) {
+      auxStudentCourseAsistances = studentCourseAsistance.filter(
+        (stcras) => stcras.asistance.id == selectedAsistance
+      );
+    }
+    rowsIndex = auxStudentCourseAsistances.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
+  };
+
+  const getAsistanceByModule = () => {
+    setColumns(columnModuleAsistance);
+    let auxStudentModuleAsistance: StudentModuleAsistance[] = [];
     let rowsIndex: any[] = [];
 
-    if(selectedCourse==0&&selectedModule==-1&&selectedAsistance==0){
-        auxStudentModuleAsistance=studentModuleAsistance
-    }else if(selectedCourse==0&&selectedModule==-1&&selectedAsistance==-1){
-        auxStudentModuleAsistance=studentModuleAsistance
-    }else if(selectedCourse==-1&&selectedModule==-1&&selectedAsistance==0){
-        auxStudentModuleAsistance=studentModuleAsistance
-    }else if(selectedCourse==-1&&selectedModule==-1&&selectedAsistance==-1){
-        auxStudentModuleAsistance=studentModuleAsistance
-    }else if(selectedCourse>0&&selectedModule==-1&&selectedAsistance==0){
-        auxStudentModuleAsistance=studentModuleAsistance.filter((stmdact)=>stmdact.module.course_id==selectedCourse)
-    }else if(selectedCourse>0&&selectedModule==-1&&selectedAsistance==-1){
-        auxStudentModuleAsistance=studentModuleAsistance.filter((stmdact)=>stmdact.module.course_id==selectedCourse)
-    }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance==-1){
-        auxStudentModuleAsistance=studentModuleAsistance.filter((stmdact)=>stmdact.module.id==selectedModule)
-    }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance==0){
-        auxStudentModuleAsistance=studentModuleAsistance.filter((stmdact)=>stmdact.module.id==selectedModule)
-    }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance>0){
-        auxStudentModuleAsistance=studentModuleAsistance.filter((stmdact)=>stmdact.asistance.id==selectedAsistance)
+    if (selectedCourse == 0 && selectedModule == -1 && selectedAsistance == 0) {
+      auxStudentModuleAsistance = studentModuleAsistance;
+    } else if (
+      selectedCourse == 0 &&
+      selectedModule == -1 &&
+      selectedAsistance == -1
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance;
+    } else if (
+      selectedCourse == -1 &&
+      selectedModule == -1 &&
+      selectedAsistance == 0
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance;
+    } else if (
+      selectedCourse == -1 &&
+      selectedModule == -1 &&
+      selectedAsistance == -1
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance;
+    } else if (
+      selectedCourse > 0 &&
+      selectedModule == -1 &&
+      selectedAsistance == 0
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance.filter(
+        (stmdact) => stmdact.module.course_id == selectedCourse
+      );
+    } else if (
+      selectedCourse > 0 &&
+      selectedModule == -1 &&
+      selectedAsistance == -1
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance.filter(
+        (stmdact) => stmdact.module.course_id == selectedCourse
+      );
+    } else if (
+      selectedCourse > 0 &&
+      selectedModule > 0 &&
+      selectedAsistance == -1
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance.filter(
+        (stmdact) => stmdact.module.id == selectedModule
+      );
+    } else if (
+      selectedCourse > 0 &&
+      selectedModule > 0 &&
+      selectedAsistance == 0
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance.filter(
+        (stmdact) => stmdact.module.id == selectedModule
+      );
+    } else if (
+      selectedCourse > 0 &&
+      selectedModule > 0 &&
+      selectedAsistance > 0
+    ) {
+      auxStudentModuleAsistance = studentModuleAsistance.filter(
+        (stmdact) => stmdact.asistance.id == selectedAsistance
+      );
     }
 
-    rowsIndex=auxStudentModuleAsistance.map((data,index)=>({
-        ...data,
-        id: index + 1,
-    }))
-    setRows(rowsIndex)
-  }
+    rowsIndex = auxStudentModuleAsistance.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
+  };
 
-  const searchData=()=>{
+  const searchData = () => {
     try {
-        //asistencias por curso
-        if(selectedCourse==-1&&selectedModule==0&&selectedAsistance==0){
-            console.log("1.asistencias por curso");
-            getAsistanceByCourse()
-        //asistencias de todos los modulos de todos los cursos 
-        }else if(selectedCourse==-1&&selectedModule==-1&&selectedAsistance==0){
-            console.log("2.asistencias de todos los modulos de todos los cursos");
-            getAsistanceByModule()
+      //asistencias por curso
+      if (
+        selectedCourse == -1 &&
+        selectedModule == 0 &&
+        selectedAsistance == 0
+      ) {
+        console.log("1.asistencias por curso");
+        getAsistanceByCourse();
+        //asistencias de todos los modulos de todos los cursos
+      } else if (
+        selectedCourse == -1 &&
+        selectedModule == -1 &&
+        selectedAsistance == 0
+      ) {
+        console.log("2.asistencias de todos los modulos de todos los cursos");
+        getAsistanceByModule();
         //asistencias de todos los cursos todos los modulos
-        }else if(selectedCourse==-1&&selectedModule==-1&&selectedAsistance==-1){
-            console.log("3.asistencias de todos los cursos todos los modulos");
-            getAsistanceByModule()
+      } else if (
+        selectedCourse == -1 &&
+        selectedModule == -1 &&
+        selectedAsistance == -1
+      ) {
+        console.log("3.asistencias de todos los cursos todos los modulos");
+        getAsistanceByModule();
         //asistencias de todos los cursos
-        }else if(selectedCourse==-1&&selectedModule==0&&selectedAsistance==-1){
-            console.log("4.asistencias de todos los cursos");
-            getAsistanceByCourse()
+      } else if (
+        selectedCourse == -1 &&
+        selectedModule == 0 &&
+        selectedAsistance == -1
+      ) {
+        console.log("4.asistencias de todos los cursos");
+        getAsistanceByCourse();
         //asistencias por curso
-        }else if(selectedCourse>0&&selectedModule==0&&selectedAsistance==0){
-            console.log("5.asistencias por curso");
-            getAsistanceByCourse()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule == 0 &&
+        selectedAsistance == 0
+      ) {
+        console.log("5.asistencias por curso");
+        getAsistanceByCourse();
         //asistencias por curso
-        }else if(selectedCourse>0&&selectedModule==0&&selectedAsistance==-1){
-            console.log("6.asistencias por curso");
-            getAsistanceByCourse()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule == 0 &&
+        selectedAsistance == -1
+      ) {
+        console.log("6.asistencias por curso");
+        getAsistanceByCourse();
         //asistencia por curso
-        }else if(selectedCourse>0&&selectedModule==0&&selectedAsistance>0){
-            console.log("7.asistencia por curso");
-            getAsistanceByCourse()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule == 0 &&
+        selectedAsistance > 0
+      ) {
+        console.log("7.asistencia por curso");
+        getAsistanceByCourse();
         //asistencias por curso de todos los modulos
-        }else if(selectedCourse>0&&selectedModule==-1&&selectedAsistance==0){
-            console.log("8.asistencias por curso de todos los modulos");
-            getAsistanceByModule()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule == -1 &&
+        selectedAsistance == 0
+      ) {
+        console.log("8.asistencias por curso de todos los modulos");
+        getAsistanceByModule();
         //asistencias por curso de todos los modulos
-        }else if(selectedCourse>0&&selectedModule==-1&&selectedAsistance==-1){
-            console.log("9.asistencias por curso de todos los modulos");
-            getAsistanceByModule()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule == -1 &&
+        selectedAsistance == -1
+      ) {
+        console.log("9.asistencias por curso de todos los modulos");
+        getAsistanceByModule();
         //asistencias por curso por modulo
-        }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance==0){
-            console.log("10.asistencias por curso por modulo");
-            getAsistanceByModule()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule > 0 &&
+        selectedAsistance == 0
+      ) {
+        console.log("10.asistencias por curso por modulo");
+        getAsistanceByModule();
         //asistencias por curso por modulo
-        }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance==-1){
-            console.log("11.asistencias por curso por modulo");
-            getAsistanceByModule()
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule > 0 &&
+        selectedAsistance == -1
+      ) {
+        console.log("11.asistencias por curso por modulo");
+        getAsistanceByModule();
         //asistencia por curso por modulo
-        }else if(selectedCourse>0&&selectedModule>0&&selectedAsistance>0){
-            console.log("12.asistencia por curso por modulo");
-            getAsistanceByModule()
-        }else{
-
-        }
-    } catch (error) {
-        
-    }
-  }
+      } else if (
+        selectedCourse > 0 &&
+        selectedModule > 0 &&
+        selectedAsistance > 0
+      ) {
+        console.log("12.asistencia por curso por modulo");
+        getAsistanceByModule();
+      } else {
+      }
+    } catch (error) {}
+  };
 
   return (
     <>
-      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2" > Asistencias </Typography>
+      <Typography component="p" fontSize={22} fontWeight={700} className="mb-2">
+        {" "}
+        Asistencias{" "}
+      </Typography>
       <Box display="flex" gap={2} alignItems="center">
         <TextField
           select
@@ -590,8 +788,8 @@ export default function ReportAsistances() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem >Excel</MenuItem>
-            <MenuItem >PDF</MenuItem>
+            <MenuItem onClick={exportExcel}>Excel</MenuItem>
+            <MenuItem onClick={exportPDF}>PDF</MenuItem>
           </Menu>
         </Box>
         <IconButton onClick={searchData}>
@@ -611,6 +809,7 @@ export default function ReportAsistances() {
               },
             },
           }}
+          disableRowSelectionOnClick
           pageSizeOptions={[10]}
         />
       </Box>

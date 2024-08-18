@@ -1,62 +1,95 @@
-import { SubmissionStudentI } from '@/interface/submission_student'
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
-import React, { FC } from 'react'
-import { useRouter } from 'next/router';
-import { handleDownload } from '@/utils/file/handleDownload';
+import { SubmissionStudentI } from "@/interface/submission_student";
+import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import { Button, Box } from "@mui/material";
+import React, { FC, useState } from "react";
+import { useRouter } from "next/router";
+import { handleDownload } from "@/utils/file/handleDownload";
+import { UserModel } from "@/models";
+import Link from "next/link";
 
 interface Props {
-    submissions: SubmissionStudentI[]
+  submissions: SubmissionStudentI[];
+  users: UserModel[];
 }
 
-export const TableSubmission: FC<Props> = ({ submissions }) => {
+export const TableSubmission: FC<Props> = ({ submissions, users }) => {
+  const router = useRouter();
 
-    const router = useRouter()
+  const getStudent = (value: any) => {
+    const user = users.find((usr) => usr.id == value.user_id);
+    return `${user?.names} ${user?.last_names}`;
+  };
 
-    const goToQualify = (id: number) => {
-        router.push(`/teacher/module/section/activity/submission/${id}`)
-    }
+  const getGrade = (value: any) => {
+    return value.state_gra == "Sin calificar" ? value.state_gra : value.grade;
+  };
 
-    return (
-        <TableContainer component={Paper} className='border'>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell >Estudiante</TableCell>
-                        <TableCell >Calificación</TableCell>
-                        <TableCell >Entrega</TableCell>
-                        <TableCell > - </TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {submissions.map((submission) => (
-                        <TableRow
-                            key={submission.id_submission}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row">
-                                {submission.student.names} {submission.student.last_names}
-                            </TableCell>
-                            <TableCell >{  submission.submission.state_gra=='Sin calificar' ? submission.submission.state_gra : submission.submission.grade }</TableCell>
-                            <TableCell >
-                                {
-                                    submission.resources.length == 0 ?
-                                        (<span>No entregado</span>)
-                                        :
-                                        (submission.resources.map((resource:any) => (
-                                            <li key={resource.id} onClick={() => handleDownload(resource.url_resource, resource.title)} >
-                                                <span  >
-                                                    {resource.title}
-                                                </span>
-                                                <br />
-                                            </li>
-                                        )))
-                                }
-                            </TableCell>
-                            <TableCell > <Button variant='contained' color='error' onClick={() => goToQualify(submission.id_submission)} > Calificar </Button> </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )
-}
+  const columns: GridColDef[] = [
+    {
+      field: "student",
+      headerName: "Estudiante",
+      width: 250,
+      valueGetter: (value, row) => getStudent(row.student),
+    },
+    {
+      field: "grade",
+      headerName: "Calificación",
+      width: 150,
+      valueGetter: (value, row) => getGrade(row.submission),
+    },
+    {
+      field: "submission",
+      headerName: "Entrega",
+      width: 300,
+      renderCell: (params: GridRenderCellParams) =>
+        params.row.resources.length === 0 ? (
+          <span>No entregado</span>
+        ) : (
+          <ul>
+            {params.row.resources.map((resource: any) => (
+              <li
+                key={resource.id}
+                onClick={() =>
+                  handleDownload(resource.url_resource, resource.title)
+                }
+              >
+                <span>{resource.title}</span>
+              </li>
+            ))}
+          </ul>
+        ),
+    },
+    {
+      field: "actions",
+      headerName: " - ",
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => (
+        <Link
+          href={`/teacher/module/section/activity/submission/${params.row.id_submission}`}
+          passHref
+          target="_blank"
+        >
+          <Button variant="contained" color="error">
+            Calificar
+          </Button>
+        </Link>
+      ),
+    },
+  ];
+
+  const rows = submissions.map((submission, index) => ({
+    id: index,
+    ...submission,
+  }));
+
+  return (
+    <Box sx={{ height: 400, width: "100%" }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSizeOptions={[5, 10, 25]}
+        disableRowSelectionOnClick
+      />
+    </Box>
+  );
+};

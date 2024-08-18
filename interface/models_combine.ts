@@ -14,6 +14,17 @@ import {
   UserModel,
 } from "@/models";
 
+export interface CourseStudentActivity{
+  student:StudentModel;
+  user:UserModel;
+  module:ModuleModel;
+  activity:ActivityModel;
+  submission:SubmissionModel;
+  course:CourseModel;
+  section:SectionModel;
+}
+
+
 export interface StudentCourse {
   student: StudentModel;
   course: CourseModel;
@@ -126,6 +137,7 @@ export interface StudentCourseAsistance {
   course: CourseModel;
   asistance: AsistanceModel;
   register: AsistanceRegisterModel;
+  user:UserModel;
 }
 
 export interface StudentCourseModuleAsistance {
@@ -134,6 +146,7 @@ export interface StudentCourseModuleAsistance {
   asistance: AsistanceModel;
   register: AsistanceRegisterModel;
   module: ModuleModel;
+  user:UserModel;
 }
 
 export interface StudentModuleAsistance {
@@ -141,6 +154,7 @@ export interface StudentModuleAsistance {
   asistance: AsistanceModel;
   register: AsistanceRegisterModel;
   module: ModuleModel;
+  user:UserModel;
 }
 
 export interface StudentAsistance {

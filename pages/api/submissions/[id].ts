@@ -260,7 +260,7 @@ const updateSubmission = async (
 ) => {
   try {
     const { id } = req.query;
-    const { grade, comment, state_gra, state_sub } = req.body;
+    const { grade, comment, state_gra, state_sub,date } = req.body;
 
     const submission_id = id?.toString().substring("submission_id=".length);
     const submission = await prisma.submission.update({
@@ -272,6 +272,7 @@ const updateSubmission = async (
         comment,
         state_gra,
         state_sub,
+        date
       },
     });
     if (!submission) {

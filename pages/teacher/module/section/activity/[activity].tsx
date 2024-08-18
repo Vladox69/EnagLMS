@@ -4,6 +4,7 @@ import {
   ActivityResourceModel,
   StudentModel,
   SubmissionModel,
+  UserModel,
 } from "@/models";
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
@@ -40,6 +41,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   }, [router.isReady]);
 
   const [activity, setActivity] = useState<ActivityModel>();
+  const [users, setUsers] = useState<UserModel[]>([]);
   const [submission_students, setSubmission_student] = useState<
     SubmissionStudentI[]
   >([]);
@@ -48,13 +50,17 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
   >([]);
 
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   const getData = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       if (router.isReady) {
         const { activity: id } = router.query;
+        const { data: usr } = await enagApi.get<UserModel[]>(
+          `/users/user_rol=STUDENT`
+        );
+        setUsers(usr);
         const { data: actv } = await enagApi.get<ActivityModel>(
           `/activities/activity_id=${id}`
         );
@@ -95,14 +101,14 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
           `/activities/resources/activity_id=${id}`
         );
         setActivity_resources(actv_res);
-        setIsLoading(false)
+        setIsLoading(false);
       }
     } catch (error) {
       Swal.fire({
         icon: "info",
         title: "Tenemos porblemas al cargar los datos",
       });
-      setIsLoading(false)
+      setIsLoading(false);
     }
   };
 
@@ -120,10 +126,8 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
     }
   };
 
-  
-
   return (
-    < >
+    <>
       <Container className="container">
         {isLoading ? (
           <Box
@@ -136,11 +140,14 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
           </Box>
         ) : (
           <Container className="container">
-            <Typography component="p" fontSize={22} fontWeight={700} > {activity?.title} </Typography>
+            <Typography component="p" fontSize={22} fontWeight={700}>
+              {" "}
+              {activity?.title}{" "}
+            </Typography>
             <Typography
               component="p"
               dangerouslySetInnerHTML={{
-                __html: activity?.content||'',
+                __html: activity?.content || "",
               }}
             />
             <Typography component="p" className="fw-bold">
@@ -153,8 +160,23 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
                 .toString()
                 .substring(0, activity.time_due.toString().indexOf("T"))}{" "}
             </Typography>
-            <Typography component="p"> Recursos </Typography>
-            <GridTActivityResource resources={activity_resources} />
+            <Typography component="p" fontWeight={700}>
+              {" "}
+              Recursos{" "}
+            </Typography>
+            {activity_resources.length == 0 ? (
+              <Typography
+                component="p"
+                className="text-secondary"
+                fontWeight={700}
+              >
+                {" "}
+                No existen recursos{" "}
+              </Typography>
+            ) : (
+              <GridTActivityResource resources={activity_resources} />
+            )}
+
             <Dialog
               open={open}
               onClose={handleClose}
@@ -165,7 +187,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
               </DialogTitle>
               <DialogContent>
                 <FormActivityResource
-                  activity_id={activity?.id||0}
+                  activity_id={activity?.id || 0}
                   onSubmitResource={handleFormSubmit}
                   onCancel={handleClose}
                 />
@@ -180,7 +202,7 @@ export const TeacherActivityById: NextPage<Props> = ({}) => {
               {" "}
               Añadir recurso{" "}
             </Button>
-            <TableSubmission submissions={submission_students} />
+            <TableSubmission submissions={submission_students} users={users} />
           </Container>
         )}
       </Container>

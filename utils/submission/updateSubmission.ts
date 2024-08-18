@@ -1,7 +1,6 @@
 import { enagApi } from "@/apis";
-import { SubmissionModel } from "@/models";
 
-export const updateSubmission=async(submission:SubmissionModel)=>{
+export const updateSubmission=async(submission:any)=>{
     try {
 
         const body={
@@ -12,6 +11,7 @@ export const updateSubmission=async(submission:SubmissionModel)=>{
             activity_id: submission.activity_id,
             state_gra:submission.state_gra,
             state_sub:submission.state_sub,
+            date:submission.date
         }
 
         const res = await enagApi.put(`/submissions/submission_id=${submission.id}`,body)

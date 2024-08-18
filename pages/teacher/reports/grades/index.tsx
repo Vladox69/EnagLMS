@@ -7,6 +7,7 @@ import {
   StudentModel,
   SubmissionModel,
   TeacherModel,
+  UserModel,
 } from "@/models";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import {
@@ -31,134 +32,143 @@ import autoTable from "jspdf-autotable";
 import jsPDF from "jspdf";
 import { utils, WorkSheet, writeFile } from "xlsx";
 
-const checkGrade = (grade: any) => {
-  return grade === undefined || isNaN(grade) || grade == -1 ? "N/A" : grade;
-};
-
-const getStudentName = (student: any) => {
-  return student === undefined ? "N/A" : student.names;
-};
-
-const getStudentLasName = (student: any) => {
-  return student === undefined ? "N/A" : student.last_names;
-};
-
-const getCourseName = (course: any) => {
-  return course === undefined ? "N/A" : course.topic;
-};
-
-const getActivityName = (activity: any) => {
-  return activity === undefined ? "N/A" : activity.title;
-};
-
-const getPonderation = (activity: any) => {
-  return activity === undefined ? "N/A" : activity.ponderation;
-};
-
-const getGradeSubmission = (submission: any) => {
-  return submission === undefined || submission.grade == -1
-    ? "N/A"
-    : submission.grade;
-};
-
-const getSectionName = (section: any) => {
-  return section == undefined ? "N/A" : section.title;
-};
-
-const getModuleName = (module: any) => {
-  return module == undefined ? "N/A" : module.title;
-};
-
-const getStateGradeActivity = (submission: any) => {
-  return submission == undefined ? "N/A" : submission.state_gra;
-};
-
-const getStateSubmissionActivity = (submission: any) => {
-  return submission == undefined ? "N/A" : submission.state_sub;
-};
-
-const columnActivity: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 50,
-  },
-  {
-    field: "names",
-    headerName: "Nombres",
-    width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
-  },
-  {
-    field: "lastnames",
-    headerName: "Apellidos",
-    width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
-  },
-  {
-    field: "activityname",
-    headerName: "Nombre de actividad",
-    width: 200,
-    valueGetter: (value, row) => getActivityName(row.activity),
-  },
-  {
-    field: "ponderation",
-    headerName: "Ponderación",
-    width: 100,
-    valueGetter: (value, row) => getPonderation(row.activity),
-  },
-  {
-    field: "stategrade",
-    headerName: "Calificado",
-    width: 150,
-    valueGetter: (value, row) => getStateGradeActivity(row.submission),
-  },
-  {
-    field: "statesubmission",
-    headerName: "Entregado",
-    width: 150,
-    valueGetter: (value, row) => getStateSubmissionActivity(row.submission),
-  },
-  {
-    field: "grade",
-    headerName: "Calificación",
-    width: 100,
-    valueGetter: (value, row) => getGradeSubmission(row.submission),
-  },
-];
-const columnModule: GridColDef[] = [
-  {
-    field: "id",
-    headerName: "ID",
-    width: 50,
-  },
-  {
-    field: "names",
-    headerName: "Nombres",
-    width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
-  },
-  {
-    field: "lastnames",
-    headerName: "Apellidos",
-    width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
-  },
-  {
-    field: "modulename",
-    headerName: "Módulo",
-    width: 200,
-    valueGetter: (value, row) => getModuleName(row.module),
-  },
-  {
-    field: "total",
-    headerName: "Calificación",
-    width: 100,
-    valueGetter: (params) => checkGrade(params),
-  },
-];
-
 export default function ReportGrades() {
+  const checkGrade = (grade: any) => {
+    return grade === undefined || isNaN(grade) || grade == -1 ? "N/A" : grade;
+  };
+  
+  const getStudentName = (student: any) => {
+    try {
+      const user=users.find((usr)=>usr.id==student.user_id)
+      return user === undefined ? "N/A" : user.names;
+    } catch (error) {
+      return "N/A"
+    }
+  };
+  
+  const getStudentLasName = (student: any) => {
+    try {
+      const user=users.find((usr)=>usr.id==student.user_id)
+      return user === undefined ? "N/A" : user.last_names;
+    } catch (error) {
+      return "N/A"
+    }
+  };
+  
+  const getCourseName = (course: any) => {
+    return course === undefined ? "N/A" : course.topic;
+  };
+  
+  const getActivityName = (activity: any) => {
+    return activity === undefined ? "N/A" : activity.title;
+  };
+  
+  const getPonderation = (activity: any) => {
+    return activity === undefined ? "N/A" : activity.ponderation;
+  };
+  
+  const getGradeSubmission = (submission: any) => {
+    return submission === undefined || submission.grade == -1
+      ? "N/A"
+      : submission.grade;
+  };
+  
+  const getSectionName = (section: any) => {
+    return section == undefined ? "N/A" : section.title;
+  };
+  
+  const getModuleName = (module: any) => {
+    return module == undefined ? "N/A" : module.title;
+  };
+  
+  const getStateGradeActivity = (submission: any) => {
+    return submission == undefined ? "N/A" : submission.state_gra;
+  };
+  
+  const getStateSubmissionActivity = (submission: any) => {
+    return submission == undefined ? "N/A" : submission.state_sub;
+  };
+  
+  const columnActivity: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+    },
+    {
+      field: "names",
+      headerName: "Nombres",
+      width: 200,
+      valueGetter: (value, row) => getStudentName(row.student),
+    },
+    {
+      field: "lastnames",
+      headerName: "Apellidos",
+      width: 200,
+      valueGetter: (value, row) => getStudentLasName(row.student),
+    },
+    {
+      field: "activityname",
+      headerName: "Nombre de actividad",
+      width: 200,
+      valueGetter: (value, row) => getActivityName(row.activity),
+    },
+    {
+      field: "ponderation",
+      headerName: "Ponderación",
+      width: 100,
+      valueGetter: (value, row) => getPonderation(row.activity),
+    },
+    {
+      field: "stategrade",
+      headerName: "Calificado",
+      width: 150,
+      valueGetter: (value, row) => getStateGradeActivity(row.submission),
+    },
+    {
+      field: "statesubmission",
+      headerName: "Entregado",
+      width: 150,
+      valueGetter: (value, row) => getStateSubmissionActivity(row.submission),
+    },
+    {
+      field: "grade",
+      headerName: "Calificación",
+      width: 100,
+      valueGetter: (value, row) => getGradeSubmission(row.submission),
+    },
+  ];
+  const columnModule: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 50,
+    },
+    {
+      field: "names",
+      headerName: "Nombres",
+      width: 200,
+      valueGetter: (value, row) => getStudentName(row.student),
+    },
+    {
+      field: "lastnames",
+      headerName: "Apellidos",
+      width: 200,
+      valueGetter: (value, row) => getStudentLasName(row.student),
+    },
+    {
+      field: "modulename",
+      headerName: "Módulo",
+      width: 200,
+      valueGetter: (value, row) => getModuleName(row.module),
+    },
+    {
+      field: "total",
+      headerName: "Calificación",
+      width: 100,
+      valueGetter: (params) => checkGrade(params),
+    },
+  ];
   const apiRef = useGridApiRef();
   //Datagrid
   const [columns, setColumns] = useState<GridColDef[]>(columnModule);
@@ -177,6 +187,7 @@ export default function ReportGrades() {
   const [sections, setSections] = useState<SectionModel[]>([]);
   const [activities, setActivities] = useState<ActivityModel[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionModel[]>([]);
+  const [users, setUsers] = useState<UserModel[]>([])
 
   //Auxiliar data
   const [auxActivities, setAuxActivities] = useState<ActivityModel[]>([]);
@@ -190,6 +201,8 @@ export default function ReportGrades() {
   const getData = async () => {
     try {
       const { data: p } = await enagApi.get(`/auth/profile`);
+      const {data:usr}=await enagApi.get<UserModel[]>(`/users/user_rol=STUDENT`)
+      setUsers(usr)
       const { data: t } = await enagApi.get<TeacherModel>(
         `/teachers/user_id=${p.user_id}`
       );
@@ -211,6 +224,7 @@ export default function ReportGrades() {
         `/submissions`
       );
       setSubmissions(sbs);
+      
       setIsLoaded(true);
     } catch (error) {}
   };

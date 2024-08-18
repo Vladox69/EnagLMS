@@ -27,7 +27,8 @@ export const newActivity = async (activity: ActivityModel) => {
       `/inscriptions/course_id=${module.course_id}`
     );
     const res = await enagApi.post<ActivityModel>(`/activities`, body);
-    const student_submission:any[]=[]
+    const student_submission: any[] = [];
+    
     students.map((student) => {
       const body = {
         grade: 0,
@@ -36,8 +37,9 @@ export const newActivity = async (activity: ActivityModel) => {
         activity_id: res.data.id,
         state_gra: "Sin calificar",
         state_sub: "No entregado",
+        date: "2000-08-18T00:00:00.000z",
       };
-     student_submission.push(enagApi.post(`/submissions`, body))      
+      student_submission.push(enagApi.post(`/submissions`, body));
     });
     await Promise.all(student_submission);
     return res;

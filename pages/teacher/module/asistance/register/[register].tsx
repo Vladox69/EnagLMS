@@ -33,10 +33,6 @@ const getUserLastNames = (user: any) => {
   return user === undefined ? "N/A" : user.last_names;
 };
 
-const getUserIdCard = (user: any) => {
-  return user === undefined ? "N/A" : user.ID_card_url;
-};
-
 const getUserName = (user: any) => {
   return user === undefined ? "N/A" : user.username;
 };

@@ -8,6 +8,7 @@ import {
   ModuleModel,
   StudentModel,
   TeacherModel,
+  UserModel,
 } from "@/models";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
@@ -63,13 +64,13 @@ const columnModule: GridColDef[] = [
     field: "names",
     headerName: "Nombres",
     width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
+    valueGetter: (value, row) => getStudentName(row.user),
   },
   {
     field: "lastnames",
     headerName: "Apellidos",
     width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
+    valueGetter: (value, row) => getStudentLasName(row.user),
   },
   {
     field: "module",
@@ -107,13 +108,13 @@ const columnAsistance: GridColDef[] = [
     field: "names",
     headerName: "Nombres",
     width: 200,
-    valueGetter: (value, row) => getStudentName(row.student),
+    valueGetter: (value, row) => getStudentName(row.user),
   },
   {
     field: "lastnames",
     headerName: "Apellidos",
     width: 200,
-    valueGetter: (value, row) => getStudentLasName(row.student),
+    valueGetter: (value, row) => getStudentLasName(row.user),
   },
   {
     field: "description",
@@ -154,6 +155,7 @@ export default function ReportAsistances() {
   const [courses, setCourses] = useState<CourseModel[]>([]);
   const [modules, setModules] = useState<ModuleModel[]>([]);
   const [asistances, setAsistances] = useState<AsistanceModel[]>([]);
+  const [users, setUsers] = useState<UserModel[]>([])
   const [registersAsistances, setRegistersAsistances] = useState<
     AsistanceRegisterModel[]
   >([]);
@@ -256,16 +258,19 @@ export default function ReportAsistances() {
       );
       const student = students.find((st) => st.id == rgas.student_id);
       const modul = modules.find((md) => md.id == asistance?.module_id);
+      const user=users.find((usr)=>usr.id==student?.user_id)
       if (
         modul != undefined &&
         asistance != undefined &&
-        student != undefined
+        student != undefined &&
+        user!=undefined
       ) {
         const studentModuleAsistanceTemp: StudentModuleAsistance = {
           asistance,
           module: modul,
           register: rgas,
           student,
+          user
         };
         studentModuleAsistancesTemp = [
           ...studentModuleAsistancesTemp,
@@ -290,6 +295,8 @@ export default function ReportAsistances() {
   const getData = async () => {
     try {
       const { data: p } = await enagApi.get(`/auth/profile`);
+      const {data:usrs}=await enagApi.get<UserModel[]>(`/users/user_rol=STUDENT`)
+      setUsers(usrs)
       const { data: t } = await enagApi.get<TeacherModel>(
         `/teachers/user_id=${p.user_id}`
       );

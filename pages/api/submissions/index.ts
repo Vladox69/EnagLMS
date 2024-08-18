@@ -36,7 +36,7 @@ const getSubmissions = async (res: NextApiResponse<Data>) => {
 const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
     try {
-        const { grade, comment, student_id, activity_id, state_gra, state_sub } = req.body
+        const { grade, comment, student_id, activity_id, state_gra, state_sub,date } = req.body
         console.log(req.body);
         const submission=await prisma.submission.create({
             data:{
@@ -45,7 +45,8 @@ const createSubmission = async (req: NextApiRequest, res: NextApiResponse<Data>)
                 student_id,
                 state_gra,
                 state_sub,
-                activity_id
+                activity_id,
+                date
             }
         })
         return res.status(200).json(submission)

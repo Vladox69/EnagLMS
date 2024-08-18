@@ -4,6 +4,7 @@ import {
   StudentModel,
   SubmissionModel,
   SubmissionResourceModel,
+  UserModel,
 } from "@/models";
 import { NextPage } from "next";
 import { enagApi } from "@/apis";
@@ -22,8 +23,24 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
   const router = useRouter();
   const [submission, setSubmission] = useState<SubmissionModel>();
   const [student, setStudent] = useState<StudentModel>();
+  const [user, setUser] = useState<UserModel>();
   const [resources, setResources] = useState<SubmissionResourceModel[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const checkDate = (date: string) => {
+  try {
+    const fechaReferencia = new Date("2000-08-18T00:00:00.000z");
+    const fechaObj = new Date(date);
+    if (fechaObj.getTime() === fechaReferencia.getTime()) {
+      return "Sin entrega";
+    } else {
+      const fechaFormateada = fechaObj.toISOString().slice(0, 10);
+      return "Fecha de entrega: " + fechaFormateada;
+    }
+  } catch (error) {
+    return "Sin entrega";
+  }
+  };
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -42,22 +59,22 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
         `/students/student_id=${sbm.student_id}`
       );
       setStudent(st);
+      const { data: usr } = await enagApi.get<UserModel>(
+        `/users/user_id=${st.user_id}`
+      );
+      setUser(usr);
       const { data: rsc } = await enagApi.get<SubmissionResourceModel[]>(
         `/submissions/resources/submission_id=${sbm.id}`
       );
       setResources(rsc);
       setIsLoading(false);
     } catch (error) {
-      Swal.fire({
-        icon: "info",
-        title: "Tenemos porblemas al cargar los datos",
-      });
       setIsLoading(false);
     }
   };
 
   return (
-    < >
+    <>
       <Container className="container ">
         {isLoading ? (
           <Box
@@ -72,13 +89,29 @@ export const TeacherSubmissionById: NextPage<Props> = ({}) => {
           <>
             <Container className="container ">
               <Container className="w-75">
-                <Typography component="p" fontSize={22} fontWeight={700} className="mb-1">
+                <Typography
+                  component="p"
+                  fontSize={20}
+                  fontWeight={700}
+                  className="mb-1"
+                >
                   {" "}
                   Formulario de revisión de tareas{" "}
                 </Typography>
+                <Typography
+                  component="p"
+                  className="mb-1"
+                >
+                  {" "}
+                  Actividad de {user?.names} {user?.last_names}
+                </Typography>
+                <Typography component="p"
+                  className="mb-1">
+                  {checkDate(submission?.date.toString() || "")}
+                </Typography>
                 <Typography component="p" className="mb-1">
                   {" "}
-                  Estado de la entrega{" "}
+                  Estado de la actividad{" "}
                 </Typography>
                 {submission?.state_gra ? (
                   <Typography
