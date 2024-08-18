@@ -126,7 +126,7 @@ export const StudentsModuleById = () => {
                 expandIcon={<ExpandMoreIcon />}
 
               >
-                <h5 > {student.names} </h5>
+                {/* <h5 > {student.names} </h5> */}
               </AccordionSummary>
               <TableStudentGrade student={student} />
             </Accordion>

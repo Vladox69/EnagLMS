@@ -76,7 +76,7 @@ export const ItemAModule: FC<Props> = ({ module, onUpdateModule, onDelteModule,i
         <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" >
           <DialogTitle id="form-dialog-title">Datos del módulo</DialogTitle>
           <DialogContent>
-            <FormAModule module_id={module.id} onSubmitResource={handleFormSubmit} onCancel={handleClose} />
+            {/* <FormAModule module_id={module.id} onSubmitResource={handleFormSubmit} onCancel={handleClose} /> */}
           </DialogContent>
         </Dialog>
         <IconButton onClick={handleDelete} className={!is_start?'visible':'invisible'} >

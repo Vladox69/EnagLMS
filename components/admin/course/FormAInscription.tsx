@@ -104,7 +104,7 @@ export const FormAInscription: FC<Props> = ({
             <MenuItem value={0}>No seleccionado</MenuItem>
             {students.map((student) => (
               <MenuItem key={student.id} value={student.id}>
-                {student.names} {student.last_names}
+                {/* {student.names} {student.last_names} */}
               </MenuItem>
             ))}
           </TextField>

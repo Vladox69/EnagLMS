@@ -64,9 +64,9 @@ export const ItemInternStudent: FC<Props> = ({
       }
     >
       <Typography component="p" className="ms-2">
-        {" "}
+        {/* {" "}
         {student?.names}{" "}
-        {student?.last_names}
+        {student?.last_names} */}
       </Typography>
       <Box>
         <IconButton className={!is_start?'visible':'invisible'} onClick={handleDelete}>

@@ -95,7 +95,7 @@ export const TableRegister: FC<Props> = ({ asistance_students: as, asistance }) 
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    {regis.student.names} {regis.student.last_names}
+                                    {/* {regis.student.names} {regis.student.last_names} */}
                                 </TableCell>
                                 <TableCell >{asistance.description}</TableCell>
                                 <TableCell >

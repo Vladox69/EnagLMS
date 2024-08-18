@@ -1,5 +1,5 @@
 import { enagApi } from "@/apis";
-import { StudentModel, SubmissionInternModel } from "@/models";
+import { StudentModel, SubmissionInternModel, UserModel } from "@/models";
 import {
   Paper,
   Table,
@@ -32,12 +32,13 @@ const InternDialog = ({ intern }: { intern: StudentSubmission }) => {
     <>
       <p onClick={handleOpen}>
         <PictureAsPdfIcon />
-        <span>{`${intern.names}${intern.last_names}.pdf`}</span>
+        {/* <span>{`${intern.names}${intern.last_names}.pdf`}</span> */}
       </p>
       <CustomDialog
         open={open}
         handleClose={handleClose}
-        title={`${intern.names}${intern.last_names}.pdf`}
+        // title={`${intern.names}${intern.last_names}.pdf`}
+        title=""
         url={intern.submission.url_resource}
       />
     </>
@@ -46,40 +47,45 @@ const InternDialog = ({ intern }: { intern: StudentSubmission }) => {
 
 export const TableInternSubmission: FC<Props> = ({ submissions }) => {
   const [students, setStudents] = useState<StudentSubmission[]>([]);
+  const [user, setUser] = useState<UserModel>()
   useEffect(() => {
     getData();
   }, [submissions]);
 
   const getData = async () => {
-    const inscription_ids = submissions.map((submission) => {
-      return submission.student_id;
-    });
-    const { data } = await enagApi.post<StudentModel[]>(
-      `/students/student_ids`,
-      { inscription_ids }
-    );
-    const sts: StudentSubmission[] = data.map((student) => {
-      let submission: SubmissionInternModel | undefined = submissions.find(
-        (subm) => subm.student_id == student.id
+    try {
+      const inscription_ids = submissions.map((submission) => {
+        return submission.student_id;
+      });
+      const { data } = await enagApi.post<StudentModel[]>(
+        `/students/student_ids`,
+        { inscription_ids }
       );
-      if (submission != undefined) {
-        return {
-          ...student,
-          submission,
-        };
-      } else {
-        return {
-          ...student,
-          submission: {
-            activity_id: submission!.activity_id,
-            id: 0,
-            student_id: student.id,
-            url_resource: "",
-          },
-        };
-      }
-    });
-    setStudents(sts);
+      const sts: StudentSubmission[] = data.map((student) => {
+        let submission: SubmissionInternModel | undefined = submissions.find(
+          (subm) => subm.student_id == student.id
+        );
+        if (submission != undefined) {
+          return {
+            ...student,
+            submission,
+          };
+        } else {
+          return {
+            ...student,
+            submission: {
+              activity_id: submission!.activity_id,
+              id: 0,
+              student_id: student.id,
+              url_resource: "",
+            },
+          };
+        }
+      });
+      setStudents(sts);
+    } catch (error) {
+      
+    }
   };
 
   return (
@@ -101,7 +107,7 @@ export const TableInternSubmission: FC<Props> = ({ submissions }) => {
               <TableRow key={student.id}>
                 <TableCell>
                   {" "}
-                  {student.names} {student.last_names}{" "}
+                  {/* {student.names} {student.last_names}{" "} */}
                 </TableCell>
                 <TableCell>
                   {student.submission.url_resource != "" ? (

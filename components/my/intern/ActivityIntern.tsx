@@ -135,7 +135,7 @@ const PDFDocument = (data: PDFData) => (
           <Image style={stylesTable.image} src="/assets/logosf.png" />
         </View>
         <Text>
-          Nombre: {data.student.names} {data.student.last_names}{" "}
+          Nombre: {"data.student.names"} {"data.student.last_names"}{" "}
         </Text>
         <Text>Fecha: {formattedDate}</Text>
         <Text>Tema: {data.title}</Text>
@@ -188,6 +188,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [option, setOption] = useState("file");
+  const [user, setUser] = useState<UserModel>()
   const [submission, setSubmission] = useState<SubmissionInternModel>({
     activity_id: 0,
     id: 0,
@@ -196,9 +197,6 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
   });
   const [student, setStudent] = useState<StudentModel>({
     id: 0,
-    ID_card_url: "",
-    last_names: "",
-    names: "",
     study_certificate_url: "",
     user_id: 0,
   });
@@ -226,6 +224,8 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
   const getData = async () => {
     try {
       const { data: usr } = await enagApi.get(`/auth/profile`);
+      const {data:us}=await enagApi.get<UserModel>(`/users/user_id=${usr.user_id}`)
+      setUser(us)
       const { data: std } = await enagApi.get<StudentModel>(
         `/students/user_id=${usr.user_id}`
       );
@@ -243,7 +243,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
     if (submission.url_resource.includes(".pdf")) {
       setOpen(true);
     } else {
-      const titleRes = `${student.last_names}`;
+      const titleRes = `${user?.last_names}`;
       handleDownload(submission.url_resource, titleRes);
     }
   };
@@ -322,7 +322,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
       const newDate = formattedDate.replaceAll("/", "-");
       const file = new File(
         [asBlob],
-        `${student.last_names} ${student.names} ${newDate}.pdf`,
+        `${user?.last_names} ${user?.names} ${newDate}.pdf`,
         {
           type: "application/pdf",
           lastModified: new Date().getTime(),
@@ -425,12 +425,12 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
                 }}
               />
               <Typography component="p" className="" onClick={handleOpen}>
-                {`${student.last_names}.pdf`}{" "}
+                {`${user?.last_names}.pdf`}{" "}
               </Typography>
               <CustomDialog
                 open={open}
                 handleClose={handleClose}
-                title={`${student.last_names}.pdf`}
+                title={`${user?.last_names}.pdf`}
                 url={submission.url_resource}
               />
             </Container>

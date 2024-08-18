@@ -65,11 +65,11 @@ export const ItemAStudent: FC<Props> = ({
         " d-flex justify-content-between border rounded py-1 mb-2"
       }
     >
-      <Typography component="p" className="ms-2">
+      {/* <Typography component="p" className="ms-2">
         {" "}
         {student?.names}{" "}
         {student?.last_names}
-      </Typography>
+      </Typography> */}
       <Box>
           <IconButton className={!is_start?'visible':'invisible'} onClick={handleDelete}>
             <DeleteIcon />

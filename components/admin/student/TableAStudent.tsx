@@ -92,30 +92,30 @@ export const TableAStudent: FC<Props> = ({ students: stdnts }) => {
     { field: "id", headerName: "ID", width: 90 },
     { field: "names", headerName: "Nombres", width: 250 },
     { field: "last_names", headerName: "Apellidos", width: 250 },
-    {
-      field: "ID_card_url",
-      headerName: "Cédula",
-      width: 250,
-      renderCell: (params) => {
-        const { row } = params;
-        const names = row.names.split(" ");
-        const last_names = row.last_names.split(" ");
-        const title = `Cedula${names[0]}${last_names[0]}`;
-        return DocumentDialog(title, row.ID_card_url);
-      },
-    },
-    {
-      field: "study_certificate_url",
-      headerName: "Certificado de estudio",
-      width: 300,
-      renderCell: (params) => {
-        const { row } = params;
-        const names = row.names.split(" ");
-        const last_names = row.last_names.split(" ");
-        const title = `CetificadoEstudio${names[0]}${last_names[0]}`;
-        return DocumentDialog(title, row.study_certificate_url);
-      },
-    },
+    // {
+    //   field: "ID_card_url",
+    //   headerName: "Cédula",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     const { row } = params;
+    //     const names = row.names.split(" ");
+    //     const last_names = row.last_names.split(" ");
+    //     const title = `Cedula${names[0]}${last_names[0]}`;
+    //     return DocumentDialog(title, row.ID_card_url);
+    //   },
+    // },
+    // {
+    //   field: "study_certificate_url",
+    //   headerName: "Certificado de estudio",
+    //   width: 300,
+    //   renderCell: (params) => {
+    //     const { row } = params;
+    //     const names = row.names.split(" ");
+    //     const last_names = row.last_names.split(" ");
+    //     const title = `CetificadoEstudio${names[0]}${last_names[0]}`;
+    //     return DocumentDialog(title, row.study_certificate_url);
+    //   },
+    // },
     {
       field: "actions",
       headerName: "Acciones",

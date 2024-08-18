@@ -89,42 +89,42 @@ export const TableATeachers: FC<Props> = ({ teachers: tchrs }) => {
     { field: "id", headerName: "ID", width: 90 },
     { field: "names", headerName: "Nombres", width: 250 },
     { field: "last_names", headerName: "Apellidos", width: 250 },
-    {
-      field: "ID_card_url",
-      headerName: "Cédula",
-      width: 250,
-      renderCell: (params) => {
-        const { row } = params;
-        const names = row.names.split(" ");
-        const last_names = row.last_names.split(" ");
-        const title=`Cedula${names[0]}${last_names[0]}`
-        return DocumentDialog(title,row.ID_card_url);
-      },
-    },
-    {
-      field: "cv_url",
-      headerName: "Hoja de vida",
-      width: 250,
-      renderCell: (params) => {
-        const { row } = params;
-        const names = row.names.split(" ");
-        const last_names = row.last_names.split(" ");
-        const title=`CV${names[0]}${last_names[0]}`
-        return DocumentDialog(title,row.cv_url);
-      },
-    },
-    {
-      field: "third_level_degree",
-      headerName: "Título de tercer nivel",
-      width: 250,
-      renderCell: (params) => {
-        const { row } = params;
-        const names = row.names.split(" ");
-        const last_names = row.last_names.split(" ");
-        const title=`Titulo${names[0]}${last_names[0]}.pdf`
-        return DocumentDialog(title,row.third_level_degree);
-      },
-    },
+    // {
+    //   field: "ID_card_url",
+    //   headerName: "Cédula",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     const { row } = params;
+    //     const names = row.names.split(" ");
+    //     const last_names = row.last_names.split(" ");
+    //     const title=`Cedula${names[0]}${last_names[0]}`
+    //     return DocumentDialog(title,row.ID_card_url);
+    //   },
+    // },
+    // {
+    //   field: "cv_url",
+    //   headerName: "Hoja de vida",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     const { row } = params;
+    //     const names = row.names.split(" ");
+    //     const last_names = row.last_names.split(" ");
+    //     const title=`CV${names[0]}${last_names[0]}`
+    //     return DocumentDialog(title,row.cv_url);
+    //   },
+    // },
+    // {
+    //   field: "third_level_degree",
+    //   headerName: "Título de tercer nivel",
+    //   width: 250,
+    //   renderCell: (params) => {
+    //     const { row } = params;
+    //     const names = row.names.split(" ");
+    //     const last_names = row.last_names.split(" ");
+    //     const title=`Titulo${names[0]}${last_names[0]}.pdf`
+    //     return DocumentDialog(title,row.third_level_degree);
+    //   },
+    // },
     {
       field: "actions",
       headerName: "Acciones",
