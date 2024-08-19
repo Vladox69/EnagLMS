@@ -159,7 +159,6 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
 
   const onLogout = async () => {
     await enagApi.get(`/auth/logout`);
-    router.push("/");
   };
 
   const onClickGoTo = (path: string) => {
