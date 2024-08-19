@@ -90,7 +90,7 @@ export default function Interns() {
       email: value.email,
     };
     emailjs
-      .send("service_g36pyuj","template_cjgex0o", body)
+      .send("service_g36pyuj","template_j89xm69", body)
       .then(() => {
         setIsLoading(false);
         Swal.fire({
@@ -117,7 +117,7 @@ Te animamos a postularte nuevamente en el futuro y te deseamos mucho éxito en t
       email: value.email,
     };
     emailjs
-      .send("service_g36pyuj","template_cjgex0o", body)
+      .send("service_g36pyuj","template_j89xm69", body)
       .then(() => {
         setIsLoading(false);
         Swal.fire({

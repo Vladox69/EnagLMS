@@ -259,7 +259,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           };
           emailjs.init('fUTA2N40QEofT2dXW');
           emailjs
-            .send("service_g36pyuj","template_j89xm69", template)
+            .send("service_g36pyuj","template_cjgex0o", template)
             .then(() => {
               setIsLoading(false);
               Swal.fire({

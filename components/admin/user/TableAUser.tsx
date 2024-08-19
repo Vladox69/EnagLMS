@@ -98,7 +98,7 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
     }).then(async (result) => {
       if(result.isConfirmed){
         try {
-          setIsLoading(false);
+          setIsLoading(true);
           const generatePassword = () => {
             const chars =
               "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -128,7 +128,7 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
             };
             emailjs.init('fUTA2N40QEofT2dXW');
             emailjs
-              .send("service_g36pyuj","template_j89xm69", template)
+              .send("service_g36pyuj","template_cjgex0o", template)
               .then(() => {
                 setIsLoading(false);
                 Swal.fire({

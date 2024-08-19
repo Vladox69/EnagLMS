@@ -37,6 +37,71 @@ export default function Profile() {
       setIsLoading(false);
     }
   };
+  const resetPassword = async (value: any) => {
+    Swal.fire({
+      icon: "question",
+      title: "¿Está seguro de eliminar?",
+      showConfirmButton: true,
+      showDenyButton: true,
+    }).then(async (result) => {
+      if(result.isConfirmed){
+        try {
+          setIsLoading(false);
+          const generatePassword = () => {
+            const chars =
+              "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            let pass = "";
+            pass += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
+            pass += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
+            pass += "0123456789"[Math.floor(Math.random() * 10)];
+            for (let i = 0; i < 5; i++) {
+              pass += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return pass;
+          };
+          const suggestedPassword = generatePassword();
+          const body = {
+            password: suggestedPassword,
+          };
+          const response = await enagApi.put<UserModel>(
+            `/users/reset=${value.id}`,
+            body
+          );
+          if (response.status == 200) {
+            value;
+            const template = {
+              usuario: value.username,
+              email: value.email,
+              password: suggestedPassword,
+            };
+            emailjs.init('fUTA2N40QEofT2dXW');
+            emailjs
+              .send("service_g36pyuj","template_cjgex0o", template)
+              .then(() => {
+                setIsLoading(false);
+                Swal.fire({
+                  icon: "success",
+                  title: "Los datos se guardaron",
+                });
+              })
+              .catch((err) => {
+                setIsLoading(false);
+                Swal.fire({
+                  icon: "success",
+                  title: "No se pudo hacer el reinicio",
+                });
+              });
+          }
+        } catch (error) {
+          setIsLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo hacer el reinicio",
+          });
+        }
+      }
+    });
+  };
   const renderResource = (
     title: string,
     url: string,
@@ -50,71 +115,7 @@ export default function Profile() {
     const handleClose = () => {
       setState(!state);
     };
-    const resetPassword = async (value: any) => {
-      Swal.fire({
-        icon: "question",
-        title: "¿Está seguro de eliminar?",
-        showConfirmButton: true,
-        showDenyButton: true,
-      }).then(async (result) => {
-        if(result.isConfirmed){
-          try {
-            setIsLoading(false);
-            const generatePassword = () => {
-              const chars =
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-              let pass = "";
-              pass += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[Math.floor(Math.random() * 26)];
-              pass += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
-              pass += "0123456789"[Math.floor(Math.random() * 10)];
-              for (let i = 0; i < 5; i++) {
-                pass += chars[Math.floor(Math.random() * chars.length)];
-              }
-              return pass;
-            };
-            const suggestedPassword = generatePassword();
-            const body = {
-              password: suggestedPassword,
-            };
-            const response = await enagApi.put<UserModel>(
-              `/users/reset=${value.id}`,
-              body
-            );
-            if (response.status == 200) {
-              value;
-              const template = {
-                usuario: value.username,
-                email: value.email,
-                password: suggestedPassword,
-              };
-              emailjs.init('fUTA2N40QEofT2dXW');
-              emailjs
-                .send("service_g36pyuj","template_j89xm69", template)
-                .then(() => {
-                  setIsLoading(false);
-                  Swal.fire({
-                    icon: "success",
-                    title: "Los datos se guardaron",
-                  });
-                })
-                .catch((err) => {
-                  setIsLoading(false);
-                  Swal.fire({
-                    icon: "success",
-                    title: "No se pudo hacer el reinicio",
-                  });
-                });
-            }
-          } catch (error) {
-            setIsLoading(false);
-            Swal.fire({
-              icon: "error",
-              title: "No se pudo hacer el reinicio",
-            });
-          }
-        }
-      });
-    };
+ 
     return (
       <Container
         className={
@@ -232,6 +233,7 @@ export default function Profile() {
               variant="contained"
               type="submit"
               className="me-2"
+              onClick={resetPassword}
             >
               Reiniciar contraseña
             </Button>
