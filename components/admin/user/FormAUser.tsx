@@ -413,7 +413,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           helperText={formik.touched.email && formik.errors.email}
         />
 
-        <TextField
+        {/* <TextField
           type={showPassword ? "text" : "password"}
           variant="outlined"
           label="Contraseña"
@@ -438,8 +438,8 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
               </InputAdornment>
             ),
           }}
-        />
-        {/* 
+        /> */}
+        
         {user_id == undefined ? (
           <TextField
             type={showPassword ? "text" : "password"}
@@ -469,7 +469,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           />
         ) : (
           <></>
-        )} */}
+        )}
 
         <div>
           <Typography component="p"> Cédula </Typography>
