@@ -36,8 +36,6 @@ const createInternSubmission = async (
 ) => {
   try {
     const { url_resource, activity_id, student_id, date } = req.body;
-    console.log(req.body);
-    
     const submission_intern = await prisma.submission_intern.create({
         data:{
             url_resource,

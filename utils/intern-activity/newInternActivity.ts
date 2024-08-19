@@ -7,6 +7,7 @@ export const newInternActivity = async (activity: any) => {
       title: activity.title,
       content: activity.content,
       course_id: activity.course_id,
+      date:activity.date
     };
     const { data: intern_inscriptions } = await enagApi.get<
       InternInscriptionModel[]

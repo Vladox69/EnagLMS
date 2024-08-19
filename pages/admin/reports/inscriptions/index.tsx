@@ -25,6 +25,9 @@ import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { utils, WorkSheet, writeFile } from "xlsx";
+import autoTable from "jspdf-autotable";
+import jsPDF from "jspdf";
 const transformDate = (dateString: string) => {
   return dateString.split("T")[0];
 };
@@ -279,7 +282,7 @@ export default function ReportInscriptions() {
       auxData = studentsIncriptionsInterns;
     } else if (selectedIntern > 0) {
       auxData = studentsIncriptionsInterns.filter(
-        (stinsint) => stinsint.inscription.id == selectedIntern
+        (stinsint) => stinsint.intern.id == selectedIntern
       );
     }
     rowsIndex = auxData.map((data, index) => ({
@@ -289,8 +292,59 @@ export default function ReportInscriptions() {
     setRows(rowsIndex);
   };
 
-  const exportExcel = () => {};
-  const exportPDF = () => {};
+  const exportExcel = () => {
+    let head: any = [];
+    const asCSV = apiRef.current.getDataAsCsv();
+    const rowsArray = asCSV.split(/\r?\n/);
+    head = rowsArray
+      .shift()
+      ?.split(",")
+      .map((header) => header.trim());
+    const body = rowsArray.map((row) =>
+      row.split(",").map((cell) => cell.trim())
+    );
+    const newDate = new Date().toLocaleDateString();
+    const date = newDate.replaceAll("/", "_");
+    const data = [head, ...body];
+    const ws: WorkSheet = utils.aoa_to_sheet(data);
+    ws["!cols"] = head.map(() => ({ wch: 22 }));
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, `${date}`);
+    writeFile(wb, "registro-de-inscripciones.xlsx");
+    handleClose();
+  };
+  const exportPDF = () => {
+    const doc = new jsPDF({
+      orientation: "landscape",
+    });
+    let title = "";
+    let ast;
+    const newDate = new Date().toLocaleDateString();
+    const date = newDate.replaceAll("/", "_");
+    let startY = 25;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Registro de inscripciones", 14, 15);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Fecha: ${newDate}`, 14, 20);
+    let head: any = [];
+    const asCSV = apiRef.current.getDataAsCsv();
+    const rowsArray = asCSV.split(/\r?\n/);
+    head = rowsArray
+      .shift()
+      ?.split(",")
+      .map((header) => header.trim());
+    const body = rowsArray.map((row) =>
+      row.split(",").map((cell) => cell.trim())
+    );
+    autoTable(doc, {
+      startY: startY,
+      head: [head],
+      body: body,
+    });
+    doc.save("registro-de-inscripciones.pdf");
+    handleClose();
+  };
   const searchData = () => {
     if (option == 1) {
       inscriptionByCourse();

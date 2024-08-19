@@ -3,4 +3,5 @@ export interface ActivityInternModel{
     title:string;
     content:string;
     course_id:number;
+    date:Date;
 }

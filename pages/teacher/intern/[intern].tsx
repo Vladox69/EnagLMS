@@ -75,7 +75,7 @@ export const TeacherInternById = () => {
           <Button
             variant="contained"
             color="error"
-            className="mb-2"
+            className="my-2"
             onClick={goToNewActivity}
           >
             Crear nueva actividad

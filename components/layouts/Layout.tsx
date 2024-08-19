@@ -16,6 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BookIcon from "@mui/icons-material/Book";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -37,22 +38,17 @@ import CastForEducationIcon from "@mui/icons-material/CastForEducation";
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import {
   useRouter,
-  useParams,
-  useSearchParams,
   usePathname,
 } from "next/navigation";
 import { enagApi } from "@/apis";
 import {
   CourseModel,
-  InscriptionModel,
   InternCourseModel,
-  InternInscriptionModel,
   ModuleModel,
   StudentModel,
   TeacherModel,
 } from "@/models";
-import { Nav } from "react-bootstrap";
-import Link from "next/link";
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 
 const drawerWidth = 240;
 
@@ -211,6 +207,10 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
     }
   };
 
+  const goProfile=()=>{
+    router.push(`/${homePath}/profile`)
+  }
+
   const buildData = async (profile: any) => {
     const { rol } = profile;
     if (rol == "ADMIN") {
@@ -272,6 +272,11 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
               name: "Inscripciones",
               path: "admin/reports/inscriptions",
               icon: <HowToRegIcon />,
+            },
+            {
+              name: "Pasantías",
+              path: "admin/reports/interns",
+              icon: <ShowChartIcon />,
             },
           ],
         },
@@ -491,6 +496,14 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
                 <HomeIcon />
               </ListItemIcon>
               <ListItemText primary={"Home"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton onClick={goProfile}>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Perfíl"} />
             </ListItemButton>
           </ListItem>
           {barItems.map((item, index) => (

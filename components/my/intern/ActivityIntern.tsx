@@ -126,48 +126,6 @@ const date = new Date();
 
 const formattedDate = new Intl.DateTimeFormat("es-ES").format(date);
 
-const PDFDocument = (data: PDFData) => (
-  <Document>
-    <Page size="A4" style={stylesTable.page}>
-      <View style={stylesTable.section}>
-        <View style={stylesTable.titleSection}>
-          <Text style={stylesTable.title}>Escuela de gastronomía ENAG</Text>
-          <Image style={stylesTable.image} src="/assets/logosf.png" />
-        </View>
-        <Text>
-          Nombre: {"data.student.names"} {"data.student.last_names"}{" "}
-        </Text>
-        <Text>Fecha: {formattedDate}</Text>
-        <Text>Tema: {data.title}</Text>
-        <View style={stylesTable.table}>
-          {/* Fila de encabezado */}
-          <View style={stylesTable.tableRow}>
-            <View style={stylesTable.tableColHeaderDate}>
-              <Text style={stylesTable.tableCellHeader}>Fecha</Text>
-            </View>
-            <View style={stylesTable.tableColHeaderTask}>
-              <Text style={stylesTable.tableCellHeader}>Actividad</Text>
-            </View>
-          </View>
-          {/* Filas de datos */}
-          {data.data.map((row) => (
-            <>
-              <View style={stylesTable.tableRow}>
-                <View style={stylesTable.tableColDate}>
-                  <Text style={stylesTable.tableCell}>{row.date}</Text>
-                </View>
-                <View style={stylesTable.tableColTask}>
-                  <Text style={stylesTable.tableCell}>{row.task}</Text>
-                </View>
-              </View>
-            </>
-          ))}
-        </View>
-      </View>
-    </Page>
-  </Document>
-);
-
 interface Props {
   activity: ActivityInternModel;
 }
@@ -184,16 +142,58 @@ interface PDFData {
 }
 
 export const ActivityIntern: FC<Props> = ({ activity }) => {
+  const PDFDocument = (data: PDFData) => (
+    <Document>
+      <Page size="A4" style={stylesTable.page}>
+        <View style={stylesTable.section}>
+          <View style={stylesTable.titleSection}>
+            <Text style={stylesTable.title}>Escuela de gastronomía ENAG</Text>
+            <Image style={stylesTable.image} src="/assets/logosf.png" />
+          </View>
+          <Text>
+            Nombre: {user?.names} {user?.last_names}{" "}
+          </Text>
+          <Text>Fecha: {formattedDate}</Text>
+          <Text>Tema: {data.title}</Text>
+          <View style={stylesTable.table}>
+            {/* Fila de encabezado */}
+            <View style={stylesTable.tableRow}>
+              <View style={stylesTable.tableColHeaderDate}>
+                <Text style={stylesTable.tableCellHeader}>Fecha</Text>
+              </View>
+              <View style={stylesTable.tableColHeaderTask}>
+                <Text style={stylesTable.tableCellHeader}>Actividad</Text>
+              </View>
+            </View>
+            {/* Filas de datos */}
+            {data.data.map((row) => (
+              <>
+                <View style={stylesTable.tableRow}>
+                  <View style={stylesTable.tableColDate}>
+                    <Text style={stylesTable.tableCell}>{row.date}</Text>
+                  </View>
+                  <View style={stylesTable.tableColTask}>
+                    <Text style={stylesTable.tableCell}>{row.task}</Text>
+                  </View>
+                </View>
+              </>
+            ))}
+          </View>
+        </View>
+      </Page>
+    </Document>
+  );
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [option, setOption] = useState("file");
-  const [user, setUser] = useState<UserModel>()
+  const [user, setUser] = useState<UserModel>();
   const [submission, setSubmission] = useState<SubmissionInternModel>({
     activity_id: 0,
     id: 0,
     student_id: 0,
     url_resource: "",
+    date: new Date(),
   });
   const [student, setStudent] = useState<StudentModel>({
     id: 0,
@@ -207,6 +207,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
     },
   ]);
   const [fileIntern, setFileIntern] = useState<any>();
+
   const addRow = () => {
     const newRow: FormTable = {
       date: "",
@@ -221,11 +222,26 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
     }
   }, [router.isReady]);
 
+  const dateActivity = (initialDateStr: string) => {
+    const datePart = initialDateStr.split("T")[0]; // '2024-08-17'
+
+    const initialDate = new Date(datePart);
+
+    const finalDate = new Date(initialDate);
+    finalDate.setDate(finalDate.getDate() + 4);
+
+    const startDateStr = initialDate.toISOString().split("T")[0];
+    const endDateStr = finalDate.toISOString().split("T")[0];
+    return `Semana ${startDateStr} a ${endDateStr}`;
+  };
+
   const getData = async () => {
     try {
       const { data: usr } = await enagApi.get(`/auth/profile`);
-      const {data:us}=await enagApi.get<UserModel>(`/users/user_id=${usr.user_id}`)
-      setUser(us)
+      const { data: us } = await enagApi.get<UserModel>(
+        `/users/user_id=${usr.user_id}`
+      );
+      setUser(us);
       const { data: std } = await enagApi.get<StudentModel>(
         `/students/user_id=${usr.user_id}`
       );
@@ -398,6 +414,7 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
           {" "}
           {activity.title}{" "}
         </Typography>
+
         {activity.content && (
           <Typography
             component="span"
@@ -406,6 +423,10 @@ export const ActivityIntern: FC<Props> = ({ activity }) => {
             }}
           />
         )}
+        <Typography component="p" fontWeight={700}>
+          {" "}
+          {dateActivity(activity.date.toString())}{" "}
+        </Typography>
         {submission.url_resource && (
           <>
             <Typography className="text-danger">

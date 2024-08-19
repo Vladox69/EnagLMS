@@ -40,11 +40,16 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
     title: "",
     content: "",
     course_id: course_id,
+    date:"00:00:00T00:00:00.000Z"
   });
   const [content, setContent] = useState("");
   const validateMessage = "Campo obligatorio";
   const validationSchema = yup.object({
     title: yup.string().required(validateMessage),
+    date: yup
+    .string()
+    .required(validateMessage)
+    .notOneOf(["00:00:00T00:00:00.000Z"], validateMessage),
   });
 
   const goBack = () => {
@@ -61,6 +66,8 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
         title: data.title,
         content: data.content,
         course_id: data.course_id,
+        date:data.date.toString()
+        .slice(0, data.date.toString().lastIndexOf("T"))
       });
       setContent(data.content);
     }
@@ -76,6 +83,7 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
         title: values.title,
         content: content,
         course_id: course_id,
+        date: `${values.date}T00:00:00.000z`,
       };
       let res: any;
       setIsLoading(true);
@@ -143,6 +151,18 @@ export const FormInternActivity: FC<Props> = ({ activity_id, course_id }) => {
             onBlur={formik.handleBlur}
             error={formik.touched.title && Boolean(formik.errors.title)}
             helperText={formik.touched.title && formik.errors.title}
+          />
+          <TextField
+            type="date"
+            variant="outlined"
+            label="Fecha límite de entrega"
+            id="date"
+            name="date"
+            value={formik.values.date}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.date && Boolean(formik.errors.date)}
+            helperText={formik.touched.date && formik.errors.date}
           />
           <div>
             <Typography className="fw-bold">

@@ -467,8 +467,6 @@ export default function ReportAsistances() {
     const doc = new jsPDF({
       orientation: "landscape",
     });
-    let title = "";
-    let ast;
     let head: any = [];
     const newDate = new Date().toLocaleDateString();
     const date = newDate.replaceAll("/", "_");

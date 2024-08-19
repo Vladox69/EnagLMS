@@ -1,17 +1,17 @@
 .swal2-confirm {
-  background-color: #d9534f !important; /* Rojo para el botón de Aceptar */
+  background-color: #d9534f !important; 
   color: white !important;
 }
 
 .swal2-confirm:hover {
-  background-color: #c9302c !important; /* Rojo más oscuro para hover */
+  background-color: #c9302c !important;
 }
 
-.swal2-cancel {
-  background-color: #000000 !important; /* Negro para el botón de Cancelar */
+.swal2-deny {
+  background-color: #000000 !important; 
   color: white !important;
 }
 
-.swal2-cancel:hover {
-  background-color: #333 !important; /* Gris oscuro para hover */
+.swal2-deny:hover {
+  background-color: #333 !important; 
 }

@@ -2,9 +2,7 @@ import { enagApi } from "@/apis";
 
 export const updateSubmission = async (submission: any) => {
   try {
-    const currentDate = new Date();
-    currentDate.setUTCHours(0, 0, 0, 0);
-    const date = currentDate.toISOString();
+
     const body = {
       id: submission.id,
       grade: submission.grade,
@@ -13,9 +11,10 @@ export const updateSubmission = async (submission: any) => {
       activity_id: submission.activity_id,
       state_gra: submission.state_gra,
       state_sub: submission.state_sub,
-      date,
+      date:submission.date,
     };
-
+    console.log(body);
+    
     const res = await enagApi.put(
       `/submissions/submission_id=${submission.id}`,
       body

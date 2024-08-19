@@ -32,12 +32,13 @@ const createInternActivity = async (
   res: NextApiResponse<Data>
 ) => {
   try {
-    const { title, content, course_id } = req.body;
+    const { title, content, course_id,date } = req.body;
     const activity_intern=await prisma.activity_intern.create({
         data:{
             title,
             content,
-            course_id
+            course_id,
+            date
         }
     })
     return res.status(200).json(activity_intern)

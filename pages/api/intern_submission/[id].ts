@@ -156,7 +156,7 @@ const createSubmissionsByIdStudents = async (
         activity_id: Number(activity_id),
         student_id: inscription,
         url_resource: "",
-        date
+        date:"2000-08-18T00:00:00.000z"
       };
     });
     const submission_count = await prisma.submission_intern.createMany({
@@ -189,7 +189,7 @@ const updateInternSubmission = async (
   try {
     const { id } = req.query;
     const submission_id = id?.toString().substring("submission_id=".length);
-    const { url_resource } = req.body;
+    const { url_resource,date } = req.body;
 
     const submission_temp = await prisma.submission_intern.findFirst({
       where: {
@@ -207,6 +207,7 @@ const updateInternSubmission = async (
       },
       data: {
         url_resource,
+        date
       },
     });
     if (!submission_intern) {

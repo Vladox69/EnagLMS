@@ -181,10 +181,7 @@ export const FormACourse: FC<Props> = ({ course_id }) => {
         setIsLoading(false)
       }
     } catch (error) {
-      Swal.fire({
-        icon: "info",
-        title: "Tenemos porblemas al cargar los datos",
-      });
+
       setIsLoading(false)
     }
   };

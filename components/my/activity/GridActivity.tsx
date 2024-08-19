@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { ItemActivity } from ".";
 import { ActivityModel } from "@/models";
 import { enagApi } from "@/apis";
@@ -24,6 +24,13 @@ export const GridActivity: FC<Props> = ({ section }) => {
 
   return (
     <>
+      {activities.length == 0 ? (
+        <Typography component="p" color="textSecondary">
+          No existen recursos
+        </Typography>
+      ) : (
+        <></>
+      )}
       {activities.map((activity, index) => (
         <ItemActivity key={index} activity={activity} />
       ))}

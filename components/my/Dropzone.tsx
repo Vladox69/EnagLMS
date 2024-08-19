@@ -24,6 +24,8 @@ import styles from "@/styles/Custom.module.css";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArticleIcon from "@mui/icons-material/Article";
 import { CustomDialog } from "./CustomDialog";
+import { updateSubmission } from "@/utils/submission/updateSubmission";
+import Swal from "sweetalert2";
 
 interface Props {
   submission: SubmissionModel;
@@ -105,7 +107,20 @@ export const Dropzone: FC<Props> = ({
     try {
       setIsLoading(true);
       const fileUploadPromises = [];
-
+      const currentDate = new Date();
+      currentDate.setUTCHours(0, 0, 0, 0);
+      const date = currentDate.toISOString();
+      const body = {
+        id: submission.id,
+        grade: submission.grade,
+        comment: submission.comment,
+        student_id: submission.student_id,
+        activity_id: submission.activity_id,
+        state_gra: submission.state_gra,
+        state_sub: submission.state_sub,
+        date,
+      };
+      await updateSubmission(body);
       if (resourceRemoved.length > 0) {
         const deletedResourcesPromises = [];
         for (const sub_res of resourceRemoved) {
@@ -133,11 +148,16 @@ export const Dropzone: FC<Props> = ({
           }
         }
         await Promise.all(resourcePromises);
-        setIsLoading(false);
       }
-
+      Swal.fire({
+        icon: "success",
+        title: "Los datos se guardaron",
+      }).then(() => {
+        router.back();
+      });
+    } catch (error) {
       router.back();
-    } catch (error) {}
+    }
   };
 
   // Quitar archivos

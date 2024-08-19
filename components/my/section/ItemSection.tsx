@@ -81,7 +81,7 @@ export const ItemSection: FC<Props> = ({ section }) => {
           </>
         )}
 
-        <Typography component="p" fontWeight={700} fontSize={18} > Actividad </Typography>
+        <Typography component="p" fontWeight={700} fontSize={18} > Actividades </Typography>
         <GridActivity section={section.id} />
       </Container>
     </Accordion>

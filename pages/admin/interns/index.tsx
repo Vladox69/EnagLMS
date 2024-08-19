@@ -2,13 +2,16 @@ import { enagApi } from "@/apis";
 import { InternModel } from "@/models";
 import React, { useEffect, useState } from "react";
 import { TableAIntern } from "../../../components/admin/intern/TableAIntern";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Swal from "sweetalert2";
 import { deleteIntern } from "@/utils/admin/intern/deleteIntern";
 import { CustomDialog } from "@/components/my/CustomDialog";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import CheckIcon from "@mui/icons-material/Check";
+import CloseIcon from "@mui/icons-material/Close";
+import emailjs from "emailjs-com";
 
 const DocumentDialog = (title: string, url: string) => {
   const [open, setOpen] = useState(false);
@@ -34,14 +37,19 @@ const DocumentDialog = (title: string, url: string) => {
 
 export default function Interns() {
   const [interns, setInterns] = useState<InternModel[]>([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     getData();
   }, []);
 
   const getData = async () => {
-    const { data } = await enagApi.get<InternModel[]>(`/interns`);
-    setInterns(data);
+    try {
+      const { data } = await enagApi.get<InternModel[]>(`/interns`);
+      setInterns(data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   const handleDelete = async (value: any) => {
@@ -72,6 +80,60 @@ export default function Interns() {
     });
   };
 
+  const sendAprove = (value: any) => {
+    emailjs.init("kDRJ6BHSeB43yKrmT");
+    setIsLoading(true);
+    const body = {
+      person: value.name,
+      message: `¡Nos complace informarte que has sido admitido/a en el programa de pasantías de ENAG! Estamos emocionados de tenerte con nosotros y confiamos en que tu experiencia será enriquecedora y valiosa.
+                Te enviaremos más detalles sobre los próximos pasos y el inicio del programa en breve. Si tienes alguna pregunta o necesitas más información, no dudes en ponerte en contacto con nosotros.`,
+      email: value.email,
+    };
+    emailjs
+      .send("service_8shx8ux", "template_21guyiq", body)
+      .then(() => {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "success",
+          title: "Correo enviado",
+        });
+      })
+      .catch((er) => {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "No se pudo enviar el correo",
+        });
+      });
+  };
+
+  const sendReject = (value: any) => {
+    emailjs.init("kDRJ6BHSeB43yKrmT");
+    setIsLoading(true);
+    const body = {
+      person: value.name,
+      message: `¡Lamentablemente, no has sido seleccionado/a para participar en el programa de pasantías de ENAG en esta ocasión. Agradecemos sinceramente tu interés y el tiempo que has dedicado al proceso de aplicación.
+Te animamos a postularte nuevamente en el futuro y te deseamos mucho éxito en tus futuros proyectos.`,
+      email: value.email,
+    };
+    emailjs
+      .send("service_8shx8ux", "template_21guyiq", body)
+      .then(() => {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "success",
+          title: "Correo enviado",
+        });
+      })
+      .catch((er) => {
+        setIsLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "No se pudo enviar el correo",
+        });
+      });
+  };
+
   const columns: GridColDef<(typeof interns)[number]>[] = [
     { field: "id", headerName: "ID", width: 90 },
     { field: "name", headerName: "Nombres", width: 300 },
@@ -94,9 +156,20 @@ export default function Interns() {
       renderCell: (params) => {
         return (
           <div>
+            <IconButton size="medium" onClick={() => sendAprove(params.row)}>
+              <CheckIcon style={{ color: "green", fontSize: 30 }} />
+            </IconButton>
             <IconButton
               aria-label="delete"
               size="medium"
+              onClick={() => sendReject(params.row)}
+            >
+              <CloseIcon style={{ color: "red", fontSize: 30 }} />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="medium"
+              color="error"
               onClick={() => handleDelete(params)}
             >
               <DeleteIcon fontSize="inherit" />
@@ -109,7 +182,24 @@ export default function Interns() {
 
   return (
     <>
-      <Typography component="p" fontSize={22} fontWeight={700}> Hojas de vida </Typography>
+      {isLoading && (
+        <Box
+          position="absolute"
+          display="flex"
+          width="100%"
+          height="100%"
+          justifyContent="center"
+          alignItems="center"
+          zIndex={999}
+          bgcolor="rgba(255, 255, 255, 0.8)"
+        >
+          <CircularProgress size={100} color="error" />
+        </Box>
+      )}
+      <Typography component="p" fontSize={22} fontWeight={700}>
+        {" "}
+        Hojas de vida{" "}
+      </Typography>
       <Box sx={{ height: 450, width: "100%" }}>
         <DataGrid
           rows={interns}

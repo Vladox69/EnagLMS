@@ -25,6 +25,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Image from "next/image";
 import DownloadIcon from "@mui/icons-material/Download";
 import { handleDownload } from "@/utils/file/handleDownload";
+import emailjs from "emailjs-com";
 interface Props {
   user_id?: number;
 }
@@ -231,26 +232,63 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
       setIsLoading(true);
       if (user_id != undefined) {
         res = await updateUser(body);
+        if (res.status == 200) {
+          setIsLoading(false);
+          Swal.fire({
+            icon: "success",
+            title: "Los datos se guardaron",
+          }).then(() => {
+            goBack();
+          });
+        } else {
+          setIsLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo guardar los datos",
+          }).then(() => {
+            goBack();
+          });
+        }
       } else {
         res = await newUser(body);
+        if (res.status == 200) {
+          const template = {
+            usuario: values.username,
+            email: values.email,
+            password: values.password,
+          };
+          emailjs.init("kDRJ6BHSeB43yKrmT");
+          emailjs
+            .send("service_8shx8ux", "template_sniu5rb", template)
+            .then(() => {
+              setIsLoading(false);
+              Swal.fire({
+                icon: "success",
+                title: "Los datos se guardaron",
+              }).then(() => {
+                goBack();
+              });
+            })
+            .catch((err) => {
+              setIsLoading(false);
+              Swal.fire({
+                icon: "success",
+                title: "No se pudo enviar el correo",
+              }).then(() => {
+                goBack();
+              });
+            });
+        } else {
+          setIsLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "No se pudo guardar los datos",
+          }).then(() => {
+            goBack();
+          });
+        }
       }
-      if (res.status == 200) {
-        setIsLoading(false);
-        Swal.fire({
-          icon: "success",
-          title: "Los datos se guardaron",
-        }).then(() => {
-          goBack()
-        });
-      } else {
-        setIsLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "No se pudo guardar los datos",
-        }).then(() => {
-          goBack()
-        });
-      }
+
       resetForm();
     },
   });
@@ -323,7 +361,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
         onSubmit={formik.handleSubmit}
         className="container w-75 d-flex flex-column gap-3 mt-5 mb-5"
       >
-        <Typography className="" component="p" fontSize={22} fontWeight={700} >
+        <Typography className="" component="p" fontSize={22} fontWeight={700}>
           Formulario de {user_id == null ? "creación " : "edición"} de usuarios
         </Typography>
         <TextField
@@ -374,6 +412,7 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
           error={formik.touched.email && Boolean(formik.errors.email)}
           helperText={formik.touched.email && formik.errors.email}
         />
+
         <TextField
           type={showPassword ? "text" : "password"}
           variant="outlined"
@@ -400,6 +439,38 @@ export const FormAUser: FC<Props> = ({ user_id }) => {
             ),
           }}
         />
+        {/* 
+        {user_id == undefined ? (
+          <TextField
+            type={showPassword ? "text" : "password"}
+            variant="outlined"
+            label="Contraseña"
+            id="password"
+            name="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        ) : (
+          <></>
+        )} */}
+
         <div>
           <Typography component="p"> Cédula </Typography>
           <TextField
