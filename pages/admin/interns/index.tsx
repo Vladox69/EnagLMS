@@ -81,7 +81,7 @@ export default function Interns() {
   };
 
   const sendAprove = (value: any) => {
-    emailjs.init("kDRJ6BHSeB43yKrmT");
+    emailjs.init('fUTA2N40QEofT2dXW');
     setIsLoading(true);
     const body = {
       person: value.name,
@@ -90,7 +90,7 @@ export default function Interns() {
       email: value.email,
     };
     emailjs
-      .send("service_8shx8ux", "template_21guyiq", body)
+      .send("service_g36pyuj","template_cjgex0o", body)
       .then(() => {
         setIsLoading(false);
         Swal.fire({
@@ -108,7 +108,7 @@ export default function Interns() {
   };
 
   const sendReject = (value: any) => {
-    emailjs.init("kDRJ6BHSeB43yKrmT");
+    emailjs.init('fUTA2N40QEofT2dXW');
     setIsLoading(true);
     const body = {
       person: value.name,
@@ -117,7 +117,7 @@ Te animamos a postularte nuevamente en el futuro y te deseamos mucho éxito en t
       email: value.email,
     };
     emailjs
-      .send("service_8shx8ux", "template_21guyiq", body)
+      .send("service_g36pyuj","template_cjgex0o", body)
       .then(() => {
         setIsLoading(false);
         Swal.fire({

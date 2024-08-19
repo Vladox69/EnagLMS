@@ -126,9 +126,9 @@ export const TableAUser: FC<Props> = ({ users: usr }) => {
               email: value.email,
               password: suggestedPassword,
             };
-            emailjs.init("kDRJ6BHSeB43yKrmT");
+            emailjs.init('fUTA2N40QEofT2dXW');
             emailjs
-              .send("service_8shx8ux", "template_sniu5rb", template)
+              .send("service_g36pyuj","template_j89xm69", template)
               .then(() => {
                 setIsLoading(false);
                 Swal.fire({
