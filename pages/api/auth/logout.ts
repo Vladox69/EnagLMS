@@ -4,6 +4,8 @@ import { serialize } from "cookie";
 
 export default async function logoutHandler(req: NextApiRequest, res: NextApiResponse) {
     const { enag_session } = req.cookies
+    console.log(enag_session);
+    
     if (!enag_session) {
         return res.status(401).json({ error: 'Token not found' })
     }
@@ -13,7 +15,7 @@ export default async function logoutHandler(req: NextApiRequest, res: NextApiRes
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 0,
+            maxAge: -1,
             path: '/'
         })
         res.setHeader('Set-Cookie',serealized)
