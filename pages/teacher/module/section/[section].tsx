@@ -130,8 +130,8 @@ export const TeacherSectionById: NextPage<Props> = ({}) => {
               onClose={handleClose}
               aria-labelledby="form-dialog-title"
             >
-              <DialogTitle id="form-dialog-title" className="text-center">
-                Formulario de nuevo recurso
+              <DialogTitle id="form-dialog-title" component="p" fontSize={20} fontWeight={700} className="text-center">
+                nuevo recurso
               </DialogTitle>
               <DialogContent>
                 <FormTResource

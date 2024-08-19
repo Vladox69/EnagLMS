@@ -8,9 +8,13 @@ import {
   SubmissionModel,
   UserModel,
 } from "@/models";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
   CircularProgress,
+  IconButton,
+  MenuItem,
+  TextField,
   Typography,
 } from "@mui/material";
 import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
@@ -29,7 +33,7 @@ export const StudentsModuleById = () => {
   const getStudentName = (student: any) => {
     try {
       const user = users.find((usr) => usr.id == student.user_id);
-      return user === undefined ? "N/A" : `${user.names} ${user.last_names}` ;
+      return user === undefined ? "N/A" : `${user.names} ${user.last_names}`;
     } catch (error) {
       return "N/A";
     }
@@ -64,12 +68,11 @@ export const StudentsModuleById = () => {
 
   const getSectionName = (activity: any) => {
     try {
-      const section=sections.find((sec)=>sec.id==activity.section_id)
+      const section = sections.find((sec) => sec.id == activity.section_id);
       return section == undefined ? "N/A" : section.title;
     } catch (error) {
-      return "N/A"
+      return "N/A";
     }
-    
   };
 
   const getStateGradeActivity = (submission: any) => {
@@ -84,12 +87,14 @@ export const StudentsModuleById = () => {
   const [students, setStudents] = useState<StudentModel[]>([]);
   const [submission, setSubmission] = useState<SubmissionModel[]>([]);
   const [activities, setActivities] = useState<ActivityModel[]>([]);
-  const [sections, setSections ] = useState<SectionModel[]>([])
+  const [sections, setSections] = useState<SectionModel[]>([]);
   const [module, setModule] = useState<ModuleModel>();
   const [users, setUsers] = useState<UserModel[]>([]);
   const [studentModuleActivitySubmission, setStudentModuleActivitySubmission] =
     useState<StudentModuleActivitySubmission[]>([]);
   const [rows, setRows] = useState<any>([]);
+  const [selectedStudent, setSelectedStudent] = useState<number>(0);
+  const [selectedActivity, setSelectedActivity] = useState<number>(0);
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -101,8 +106,8 @@ export const StudentsModuleById = () => {
       headerName: "Estudiante",
       width: 300,
       valueGetter: (value, row) => getStudentName(row.student),
-      renderCell:(params)=>{
-        const user=users.find((usr)=>usr.id==params.row.student.user_id)
+      renderCell: (params) => {
+        const user = users.find((usr) => usr.id == params.row.student.user_id);
         return (
           <div>
             <Link
@@ -111,17 +116,17 @@ export const StudentsModuleById = () => {
               target="_blank"
               className="text-decoration-none"
             >
-             {user?.names} {user?.last_names}
+              {user?.names} {user?.last_names}
             </Link>
           </div>
         );
-      }
+      },
     },
     {
-      field:"section",
-      headerName:"Sección",
-      width:200,
-      valueGetter:(value,row)=>getSectionName(row.activity)
+      field: "section",
+      headerName: "Sección",
+      width: 200,
+      valueGetter: (value, row) => getSectionName(row.activity),
     },
     {
       field: "activityname",
@@ -180,8 +185,8 @@ export const StudentsModuleById = () => {
         `/users/user_rol=STUDENT`
       );
       setUsers(usr);
-      const {data:secs}=await enagApi.get(`/sections/module_id=${mdl.id}`)
-      setSections(secs)
+      const { data: secs } = await enagApi.get(`/sections/module_id=${mdl.id}`);
+      setSections(secs);
       const { data: stds } = await enagApi.get<StudentModel[]>(
         `/students/course_id=${mdl.course_id}`
       );
@@ -206,11 +211,32 @@ export const StudentsModuleById = () => {
       setIsLoading(false);
     }
   };
+  const handleChangeStudent = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      const studentId = Number(event.target.value);
+      setSelectedStudent(studentId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleChangeActivity = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      const activityId = Number(event.target.value);
+      setSelectedActivity(activityId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const buildData = () => {
     let studentModulesActivitiesSubmissionsTemp: StudentModuleActivitySubmission[] =
       [];
-      let rowsIndex: any[] = [];
+    let rowsIndex: any[] = [];
     submission.map((sbm) => {
       const student = students.find((st) => st.id == sbm.student_id);
       const activity = activities.find((act) => act.id == sbm.activity_id);
@@ -240,6 +266,41 @@ export const StudentsModuleById = () => {
     setRows(rowsIndex);
   };
 
+  const searchData = () => {
+    let studentModulesActivitiesSubmissionsTemp: StudentModuleActivitySubmission[] =
+      [];
+    let rowsIndex: any[] = [];
+    if (selectedStudent > 0 && selectedActivity == 0) {
+      studentModulesActivitiesSubmissionsTemp =
+        studentModuleActivitySubmission.filter(
+          (auxSt) => auxSt.student.id == selectedStudent
+        );
+    } else if (selectedStudent == 0 && selectedActivity > 0) {
+      studentModulesActivitiesSubmissionsTemp =
+        studentModuleActivitySubmission.filter(
+          (auxSt) => auxSt.activity.id == selectedActivity
+        );
+    } else if (selectedStudent > 0 && selectedActivity > 0) {
+      studentModulesActivitiesSubmissionsTemp =
+        studentModuleActivitySubmission.filter(
+          (auxSt) => auxSt.student.id == selectedStudent
+        );
+      studentModulesActivitiesSubmissionsTemp =
+        studentModulesActivitiesSubmissionsTemp.filter(
+          (auxSt) => auxSt.activity.id == selectedActivity
+        );
+    } else {
+      studentModulesActivitiesSubmissionsTemp = studentModuleActivitySubmission;
+    }
+    rowsIndex = studentModulesActivitiesSubmissionsTemp.map((data, index) => ({
+      ...data,
+      id: index + 1,
+    }));
+    setRows(rowsIndex);
+  };
+
+
+
   useEffect(() => {
     if (router.isReady) {
       getData();
@@ -247,15 +308,13 @@ export const StudentsModuleById = () => {
   }, [router.isReady]);
 
   useEffect(() => {
-    if(!isLoading){
-      buildData()
+    if (!isLoading) {
+      buildData();
     }
-  }, [isLoading])
-  
+  }, [isLoading]);
 
   return (
     <>
-      <h3>Calificaciones</h3>
       {isLoading ? (
         <Box
           display="flex"
@@ -275,8 +334,42 @@ export const StudentsModuleById = () => {
           >
             Reportes de calificaciones
           </Typography>
+
           <div className="mt-2"></div>
-          <Box sx={{ height: 450, width: "100%" }}>
+          <Box display="flex" gap={2} alignItems="center">
+            <TextField
+              label="Estudiante"
+              select
+              variant="outlined"
+              value={selectedStudent}
+              onChange={handleChangeStudent}
+            >
+              <MenuItem value={0}>No seleccionado</MenuItem>
+              {students.map((student) => (
+                <MenuItem value={student.id} key={student.id}>
+                  {getStudentLasName(student)} {getStudentName(student)}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Actividad"
+              select
+              variant="outlined"
+              value={selectedActivity}
+              onChange={handleChangeActivity}
+            >
+              <MenuItem value={0}>No seleccionado</MenuItem>
+              {activities.map((activity) => (
+                <MenuItem value={activity.id} key={activity.id}>
+                  {activity.title}
+                </MenuItem>
+              ))}
+            </TextField>
+            <IconButton onClick={searchData}>
+              <SearchIcon />
+            </IconButton>
+          </Box>
+          <Box sx={{ height: 600, width: "100%" }}>
             <DataGrid
               apiRef={apiRef}
               rows={rows}
