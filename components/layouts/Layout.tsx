@@ -16,7 +16,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BookIcon from "@mui/icons-material/Book";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -35,8 +35,11 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import SchoolIcon from "@mui/icons-material/School";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CastForEducationIcon from "@mui/icons-material/CastForEducation";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import { useRouter, usePathname } from "next/navigation";
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import {
+  useRouter,
+  usePathname,
+} from "next/navigation";
 import { enagApi } from "@/apis";
 import {
   CourseModel,
@@ -45,7 +48,7 @@ import {
   StudentModel,
   TeacherModel,
 } from "@/models";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 
 const drawerWidth = 240;
 
@@ -155,9 +158,10 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   };
 
   const onLogout = async () => {
-    document.cookie =
-      "enag_session=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-    router.push("/");
+    const data= await enagApi.post(`/auth/logout`);
+    if(data.status==200){
+      router.push("/")
+    }
   };
 
   const onClickGoTo = (path: string) => {
@@ -205,9 +209,9 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
     }
   };
 
-  const goProfile = () => {
-    router.push(`/${homePath}/profile`);
-  };
+  const goProfile=()=>{
+    router.push(`/${homePath}/profile`)
+  }
 
   const buildData = async (profile: any) => {
     const { rol } = profile;
