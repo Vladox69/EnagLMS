@@ -1,19 +1,18 @@
-import { StudentQualif } from '@/pages/teacher/module/students/[students]';
+// import { StudentQualif } from '@/pages/teacher/module/students/[students]';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import React, { FC } from 'react'
 
 interface Props{
-    student:StudentQualif
 }
 
-export const TableStudentGrade:FC<Props> = ({student}) => {
+export const TableStudentGrade:FC<Props> = ({}) => {
     
     let total:number=0;
     const calculateTotal=()=>{
-        student.sections.map((section)=>{
-            total = total + section.total
-        })
-        total = total / student.sections.length;
+        // student.sections.map((section)=>{
+        //     total = total + section.total
+        // })
+        // total = total / student.sections.length;
     }
     calculateTotal();
 
@@ -31,7 +30,7 @@ export const TableStudentGrade:FC<Props> = ({student}) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {student.sections.map((section) => (
+                        {/* {student.sections.map((section) => (
                             <>
                                 <TableRow key={section.id} >
                                     <Typography className='ms-2 fw-bold' variant="h6" >{section.title}</Typography>
@@ -50,7 +49,7 @@ export const TableStudentGrade:FC<Props> = ({student}) => {
                                     <Typography className='fw-bold ms-2' variant="h6">Total {isNaN(section.total)? "-":section.total}</Typography>
                                 </TableRow>
                             </>
-                        ))}
+                        ))} */}
                     </TableBody>
                 </Table>
     </>
