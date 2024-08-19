@@ -548,6 +548,13 @@ export default function ReportCourse() {
       orientation: "landscape",
     });
     let head: any = [];
+    const newDate = new Date().toLocaleDateString();
+    const date = newDate.replaceAll("/", "_");
+    let startY = 20;
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Registro de calificaciones", 14, 15);
+    doc.text(`Fecha: ${newDate}`, 14, 25);
     const asCSV = apiRef.current.getDataAsCsv();
     const rowsArray = asCSV.split(/\r?\n/);
     head = rowsArray
