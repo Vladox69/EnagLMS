@@ -332,7 +332,7 @@ export const StudentsModuleById = () => {
             fontWeight={700}
             className="mb-2"
           >
-            Reportes de calificaciones
+            Calificaciones
           </Typography>
 
           <div className="mt-2"></div>
@@ -369,7 +369,8 @@ export const StudentsModuleById = () => {
               <SearchIcon />
             </IconButton>
           </Box>
-          <Box sx={{ height: 600, width: "100%" }}>
+          <div className="mt-2"></div>
+          <Box sx={{ height: 450, width: "100%" }}>
             <DataGrid
               apiRef={apiRef}
               rows={rows}
