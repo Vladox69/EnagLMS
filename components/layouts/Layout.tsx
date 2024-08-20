@@ -160,7 +160,7 @@ export const Layout: FC<Props> = ({ title = "OpenJira", children }) => {
   const onLogout = async () => {
     const data= await enagApi.post(`/auth/logout`);
     if(data.status==200){
-      router.push("/")
+      router.push("/login")
     }
   };
 
